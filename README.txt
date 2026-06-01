@@ -37,3 +37,9 @@ Archivos modificados/nuevos:
 - data/studies.seed.json
 - netlify/functions/studies-search.mjs
 - netlify/functions/refresh-official-data.mjs
+
+
+ITINERA v0.6
+- Corrección de Netlify Functions: eliminado el uso de __filename y __dirname para evitar el error 'Identifier __filename has already been declared'.
+- Se mantiene la lectura de data/studies.seed.json mediante import.meta.url.
+- No requiere Supabase ni SQL.

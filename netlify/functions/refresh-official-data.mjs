@@ -1,10 +1,9 @@
 import { getStore } from '@netlify/blobs';
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const seed = JSON.parse(readFileSync(join(__dirname, '../../data/studies.seed.json'), 'utf8'));
+
+const seed = JSON.parse(
+  readFileSync(new URL('../../data/studies.seed.json', import.meta.url), 'utf8')
+);
 
 const OFFICIAL_SOURCES = [
   'https://www.todofp.es/inicio.html',
@@ -18,25 +17,47 @@ const OFFICIAL_SOURCES = [
   'https://www.infoartisticas.gob.es/ensenanzas.html'
 ];
 
-async function checkSource(url){
-  try{
-    const res=await fetch(url,{method:'GET',headers:{'user-agent':'ITINERA academic guidance updater'}});
-    return {url,status:res.status,ok:res.ok,checked_at:new Date().toISOString()};
-  }catch(error){
-    return {url,status:0,ok:false,error:String(error?.message||error),checked_at:new Date().toISOString()};
+async function checkSource(url) {
+  try {
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: { 'user-agent': 'ITINERA academic guidance updater' }
+    });
+    return { url, status: res.status, ok: res.ok, checked_at: new Date().toISOString() };
+  } catch (error) {
+    return {
+      url,
+      status: 0,
+      ok: false,
+      error: String(error?.message || error),
+      checked_at: new Date().toISOString()
+    };
   }
 }
 
 export default async () => {
-  const checks=await Promise.all(OFFICIAL_SOURCES.map(checkSource));
-  const dataset={
-    ...seed,
-    source_mode:'scheduled-official-cache',
-    last_updated:new Date().toISOString().slice(0,10),
-    source_checks:checks,
-    note:'La estructura está preparada para incorporar conectores parseadores específicos por fuente oficial. Esta función valida disponibilidad de fuentes y mantiene una caché oficial para la app.'
-  };
-  const store=getStore('itinera-official-cache');
-  await store.setJSON('studies-latest',dataset);
-  return new Response(JSON.stringify({ok:true,updated_at:dataset.last_updated,source_checks:checks}),{headers:{'content-type':'application/json; charset=utf-8'}});
+  try {
+    const checks = await Promise.all(OFFICIAL_SOURCES.map(checkSource));
+    const dataset = {
+      ...seed,
+      source_mode: 'scheduled-official-cache',
+      last_updated: new Date().toISOString().slice(0, 10),
+      source_checks: checks,
+      note:
+        'La estructura está preparada para incorporar conectores parseadores específicos por fuente oficial. Esta función valida disponibilidad de fuentes y mantiene una caché oficial para la app.'
+    };
+
+    const store = getStore('itinera-official-cache');
+    await store.setJSON('studies-latest', dataset);
+
+    return new Response(
+      JSON.stringify({ ok: true, updated_at: dataset.last_updated, source_checks: checks }),
+      { headers: { 'content-type': 'application/json; charset=utf-8' } }
+    );
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ ok: false, error: String(error?.message || error) }),
+      { status: 500, headers: { 'content-type': 'application/json; charset=utf-8' } }
+    );
+  }
 };
