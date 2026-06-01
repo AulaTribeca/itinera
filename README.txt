@@ -297,3 +297,19 @@ ITINERA v0.25
 - Simulador rediseñado y mejorado en contenido.
 - Solo dos ajustes de ruta: ruta más corta o todas las rutas.
 - No requiere SQL.
+
+
+ITINERA v0.25.1
+- Elimina botones rápidos del buscador.
+- Mejora el simulador con camino literal, movimiento y nodos visuales.
+- Permite navegar libremente entre pasos 1, 2 y 3.
+- Etiqueta los estudios precargados como ejemplos.
+- Añade selección de rutas para PDF.
+- Genera PDF compacto y claro de las rutas seleccionadas.
+- Elimina el recuadro/halo giratorio de portada sin tocar la brújula.
+
+
+ITINERA v0.25.2
+- Repara el simulador vacío de v0.25.1.
+- El simulador ya no depende de funciones internas no accesibles.
+- Mantiene camino literal, movimiento, navegación libre entre pasos y PDF selectivo.
