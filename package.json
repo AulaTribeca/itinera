@@ -1,6 +1,6 @@
 {
-  "name": "itinera-v0-22",
-  "version": "0.22.4-legacy-tls-cache",
+  "name": "itinera-v0-23",
+  "version": "0.23.0-definitiva-operativa",
   "private": true,
   "type": "module",
   "description": "ITINERA: GitHub Pages + Supabase official catalog + ItineraBot documental.",
@@ -14,6 +14,7 @@
     "import:official": "node tools/official-load/import-official-catalogs.mjs",
     "import:seed": "node tools/official-load/import-official-catalogs.mjs --seed-only",
     "import:macrointegral": "node tools/official-load/import-v022-macrointegral.mjs",
-    "import:all": "node tools/official-load/import-official-catalogs.mjs && node tools/official-load/import-v022-macrointegral.mjs"
+    "import:all": "node tools/official-load/import-official-catalogs.mjs && node tools/official-load/import-v022-macrointegral.mjs",
+    "import:definitive": "node tools/official-load/import-v022-macrointegral.mjs"
   }
 }

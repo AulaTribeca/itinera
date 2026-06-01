@@ -261,3 +261,14 @@ ITINERA v0.22.4
 - Usa curl -k, TLS 1.2 y CipherString DEFAULT:@SECLEVEL=0.
 - Mantiene lectura desde cache en el importador macrointegral.
 - Añade SQL `supabase/itinera_v0_22_4_legacy_tls_cache_fix.sql`.
+
+
+ITINERA v0.23 · versión definitiva operativa
+- Navegación simplificada y presentación lógica.
+- Inicio rediseñado con acciones claras y panel de fiabilidad.
+- Universidad depurada mediante `itinera_university_catalog_clean`.
+- Se evita mostrar la tabla bruta de 110.160 registros como catálogo final.
+- CIUG se presenta con notas, ponderaciones o índice de consulta sin inventar coeficientes.
+- FP Galicia muestra aviso si la oferta por centro sigue siendo mínima.
+- Añadidos controles de calidad en `itinera_quality_checks`.
+- SQL obligatorio: `supabase/itinera_v0_23_definitiva.sql`.

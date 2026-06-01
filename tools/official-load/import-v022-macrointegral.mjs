@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- ITINERA v0.22 · macrointegral official loader.
+ ITINERA v0.23 · definitive official loader.
  Ejecuta con SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY.
  El objetivo es cargar SOLO datos que puedan vincularse a fuente oficial.
  Cuando una fuente no ofrece datos estructurados directamente, se actualiza el estado y se conserva el enlace oficial.
@@ -284,16 +284,16 @@ function universityAggregateRows(records, level, sourceId, sourceUrl){
     const branch = field(r, ['Rama de enseñanza','Rama']);
     const credits = field(r, ['Número de créditos del plan de estudio','Créditos','Numero de creditos']);
     const centerType = field(r, ['Tipo de centro']);
-    const count = field(r, ['Total','Titulaciones','Número de titulaciones','Numero de titulaciones']);
-    const year = field(r, ['Periodo','Curso','Año']) || '2023-2024';
-    if(!university || /^total$/i.test(university)) continue;
+    const count = field(r, ['Total','Titulaciones','Número de titulaciones','Numero de titulaciones','Valor']);
+    const year = field(r, ['Periodo','Curso','Año']) || '2024-2025';
+    if(!isUsefulUniversity(university)) continue;
     const title = `${level} · ${university}${branch ? ' · '+branch : ''}${credits ? ' · '+credits+' ECTS' : ''}`;
     out.push({
       id: `${level === 'Grado' ? 'grado' : 'master'}-${slug(university)}-${slug(branch)}-${slug(credits)}-${slug(centerType)}-${slug(year)}`,
       title,
       level,
       university,
-      university_type: '',
+      university_type: centerType || '',
       center: '',
       province: '',
       community: '',
@@ -306,14 +306,79 @@ function universityAggregateRows(records, level, sourceId, sourceUrl){
       source_id: sourceId,
       source_url: sourceUrl,
       official: true,
-      data_status: 'aggregate_official',
-      notes: `Registro agregado EDUCAbase/SIIU. No sustituye la consulta título a título en QEDU/RUCT. Recuento original: ${count || 'no especificado'}.`,
-      metadata: {raw:r, year, count}
+      data_status: 'aggregate_official_raw',
+      notes: `Dato oficial agregado EDUCAbase/SIIU. No sustituye la consulta título a título en QEDU/RUCT. Recuento original: ${count || 'no especificado'}.`,
+      metadata: {raw:r, year, count, v:'0.23'}
     });
   }
-  // dedupe
   return [...new Map(out.map(x=>[x.id,x])).values()];
 }
+
+function isUsefulUniversity(value=''){
+  const u = clean(value);
+  if(!u) return false;
+  if(/^total$/i.test(u)) return false;
+  if(/^universidad$/i.test(u)) return false;
+  if(/^(no consta|sin especificar|nan|null|undefined)$/i.test(u)) return false;
+  if(u.length < 4) return false;
+  return true;
+}
+
+function cleanCreditValue(value=''){
+  const v = clean(value).replace(/,0$/,'');
+  if(!v) return '';
+  const m = v.match(/\b(60|90|120|180|210|240|300|360)\b/);
+  return m ? m[1] : v.slice(0,18);
+}
+
+function universityCleanCatalogRows(rawRows=[]){
+  const groups = new Map();
+  for(const r of rawRows){
+    const university = clean(r.university);
+    if(!isUsefulUniversity(university)) continue;
+    const level = clean(r.level || '');
+    const branch = clean(r.branch || 'Rama no especificada');
+    const credits = cleanCreditValue(r.credits || '');
+    const centerType = clean(r.university_type || '');
+    const key = `${level}|${university}|${branch}|${credits}|${centerType}`;
+    const prev = groups.get(key) || {
+      id: `${level === 'Grado' ? 'grado' : 'master'}-clean-${slug(university)}-${slug(branch)}-${slug(credits)}-${slug(centerType)}`,
+      title: `${level} · ${university}${branch ? ' · '+branch : ''}${credits ? ' · '+credits+' ECTS' : ''}`,
+      level,
+      university,
+      university_type: centerType,
+      center: '',
+      province: '',
+      community: '',
+      branch,
+      field: '',
+      credits,
+      modality: '',
+      cut_off_note: '',
+      places: null,
+      source_id: r.source_id,
+      source_url: r.source_url,
+      official: true,
+      data_status: 'aggregate_official_clean',
+      notes: 'Dato oficial agregado y depurado desde EDUCAbase/SIIU. Útil para orientación general; la oficialidad de un título concreto debe verificarse siempre en RUCT/QEDU.',
+      metadata: {raw_count:0, years:[], v:'0.23', source:'EDUCAbase/SIIU'}
+    };
+    prev.metadata.raw_count += 1;
+    const year = r.metadata?.year || '';
+    if(year && !prev.metadata.years.includes(year)) prev.metadata.years.push(year);
+    groups.set(key, prev);
+  }
+  return [...groups.values()].sort((a,b)=>String(a.title).localeCompare(String(b.title),'es')).slice(0,6000);
+}
+
+function cleanRowsForUniversityOffers(cleanRows=[]){
+  return cleanRows.map(r => ({
+    ...r,
+    data_status:'aggregate_official_clean',
+    notes:r.notes || 'Dato oficial agregado y depurado desde EDUCAbase/SIIU. Verificación título a título en RUCT/QEDU.'
+  }));
+}
+
 
 function extractSpecializationRows(html){
   const text = html.replace(/<script[\s\S]*?<\/script>/gi,' ').replace(/<style[\s\S]*?<\/style>/gi,' ');
@@ -352,15 +417,20 @@ async function importUniversityAggregates(){
   let total=0;
   let gradoCount=0;
   let masterCount=0;
+  let gradoRaw=0;
+  let masterRaw=0;
   const errors=[];
 
   try{
     const {url, records} = await getFirstRecordsCached(['univbase_grados_2024.csv_bd','univbase_grados_2024.csv_bdsc','univbase_grados_2024.csv','univbase_grados_2024.xlsx','univbase_grados_2024.px'], SOURCES.gradoCandidates);
-    const rows = universityAggregateRows(records, 'Grado', 'educabase-grados-univ-2024', url);
-    await upsert('itinera_university_offers', rows);
-    gradoCount = rows.length;
-    total += rows.length;
-    await updateStatus('v022-university-grados-educabase', 'Universidad · Grados EDUCAbase/SIIU', rows.length ? 'imported_aggregate' : 'no_rows', rows.length, 'educabase-grados-univ-2024', `Carga agregada por universidad/rama/créditos desde ${url}. Para título concreto se mantiene verificación QEDU/RUCT.`, {sample: rows.slice(0,3), url});
+    const rawRows = universityAggregateRows(records, 'Grado', 'educabase-grados-univ-2024', url);
+    const cleanRows = universityCleanCatalogRows(rawRows);
+    await upsert('itinera_university_catalog_clean', cleanRows);
+    await upsert('itinera_university_offers', cleanRowsForUniversityOffers(cleanRows));
+    gradoRaw = rawRows.length;
+    gradoCount = cleanRows.length;
+    total += cleanRows.length;
+    await updateStatus('v022-university-grados-educabase', 'Universidad · Grados EDUCAbase/SIIU', cleanRows.length ? 'imported_clean_aggregate' : 'no_rows', cleanRows.length, 'educabase-grados-univ-2024', `Catálogo depurado desde ${url}: ${cleanRows.length} agrupaciones útiles a partir de ${rawRows.length} registros oficiales agregados. RUCT/QEDU siguen siendo verificación título a título.`, {sample: cleanRows.slice(0,3), url, rawRows:rawRows.length});
   }catch(e){
     errors.push(`Grados: ${e.message}`);
     console.warn(e.message);
@@ -369,11 +439,14 @@ async function importUniversityAggregates(){
 
   try{
     const {url, records} = await getFirstRecordsCached(['univbase_masteres_2024.csv_bd','univbase_masteres_2024.csv_bdsc','univbase_masteres_2024.csv','univbase_masteres_2024.xlsx','univbase_masteres_2024.px'], SOURCES.masterCandidates);
-    const rows = universityAggregateRows(records, 'Máster', 'educabase-masteres-univ-2024', url);
-    await upsert('itinera_university_offers', rows);
-    masterCount = rows.length;
-    total += rows.length;
-    await updateStatus('v022-university-masteres-educabase', 'Universidad · Másteres EDUCAbase/SIIU', rows.length ? 'imported_aggregate' : 'no_rows', rows.length, 'educabase-masteres-univ-2024', `Carga agregada por universidad/rama/créditos desde ${url}. Para título concreto se mantiene verificación QEDU/RUCT.`, {sample: rows.slice(0,3), url});
+    const rawRows = universityAggregateRows(records, 'Máster', 'educabase-masteres-univ-2024', url);
+    const cleanRows = universityCleanCatalogRows(rawRows);
+    await upsert('itinera_university_catalog_clean', cleanRows);
+    await upsert('itinera_university_offers', cleanRowsForUniversityOffers(cleanRows));
+    masterRaw = rawRows.length;
+    masterCount = cleanRows.length;
+    total += cleanRows.length;
+    await updateStatus('v022-university-masteres-educabase', 'Universidad · Másteres EDUCAbase/SIIU', cleanRows.length ? 'imported_clean_aggregate' : 'no_rows', cleanRows.length, 'educabase-masteres-univ-2024', `Catálogo depurado desde ${url}: ${cleanRows.length} agrupaciones útiles a partir de ${rawRows.length} registros oficiales agregados. RUCT/QEDU siguen siendo verificación título a título.`, {sample: cleanRows.slice(0,3), url, rawRows:rawRows.length});
   }catch(e){
     errors.push(`Másteres: ${e.message}`);
     console.warn(e.message);
@@ -383,13 +456,13 @@ async function importUniversityAggregates(){
   await updateStatus(
     'v022-university-offers',
     'Universidad estructurada',
-    total ? 'imported_aggregate' : 'fetch_failed',
+    total ? 'imported_clean_aggregate' : 'fetch_failed',
     total,
     'qedu-ayuda',
     total
-      ? `Carga universitaria agregada realizada: ${gradoCount} registros de grado y ${masterCount} registros de máster. QEDU/RUCT siguen siendo verificación título a título.`
+      ? `Catálogo universitario depurado: ${gradoCount} agrupaciones de grado y ${masterCount} de máster. Base bruta procesada: ${gradoRaw + masterRaw} registros. QEDU/RUCT siguen siendo verificación título a título.`
       : `No se cargaron registros universitarios. ${errors.join(' || ')}`,
-    {gradoCount, masterCount, errors}
+    {gradoCount, masterCount, gradoRaw, masterRaw, errors, v:'0.23'}
   );
 
   return total;
@@ -500,37 +573,85 @@ function parseCiugCutoffText(text, sourceUrl){
 }
 
 function parseCiugPonderationText(text, sourceUrl){
-  const lines = text.split(/\n+/).map(clean).filter(Boolean);
-  const subjects = ['Bioloxía','Biología','Matemáticas II','Matemáticas aplicadas','Química','Física','Debuxo Técnico','Dibujo Técnico','Empresa','Xeografía','Geografía','Historia da Arte','Historia del Arte','Latín','Grego','Griego','Tecnoloxía','Tecnología','Deseño','Diseño'];
+  const rawLines = text.split(/\n+/).map(clean).filter(Boolean);
+  const compactText = rawLines.join('\n');
+  const subjects = [
+    'Bioloxía','Biología','Matemáticas II','Matemáticas aplicadas ás Ciencias Sociais II','Matemáticas aplicadas','Química','Física',
+    'Debuxo Técnico II','Dibujo Técnico II','Debuxo Técnico','Dibujo Técnico','Empresa e Deseño de Modelos de Negocio','Empresa',
+    'Xeografía','Geografía','Historia da Arte','Historia del Arte','Latín II','Latín','Grego II','Griego II','Grego','Griego',
+    'Tecnoloxía e Enxeñaría II','Tecnología e Ingeniería II','Tecnoloxía','Tecnología','Deseño','Diseño','Ciencias Xerais','Ciencias Generales',
+    'Artes Escénicas II','Cultura Audiovisual','Análise Musical II','Análisis Musical II'
+  ];
   const rows = [];
-  for(const line of lines){
-    const code = (line.match(/\b\d{5}\b/)||[])[0] || '';
-    if(!code && !/Grao|Grado/i.test(line)) continue;
-    const degree = clean(line.replace(/\b\d{5}\b/g,'').split(/\s{2,}/)[0]).slice(0,140);
-    if(!degree || degree.length < 8) continue;
+
+  function addRow({degree, code='', subject, coeff=null, raw_line='', status='pdf_text_imported_needs_review'}){
+    degree = clean(degree).replace(/^[-–—·\s]+/,'').slice(0,180);
+    if(!degree || degree.length < 8) return;
+    rows.push({
+      id:`ciug-pond-2026-${slug(code || degree)}-${slug(subject)}-${coeff ?? 'consultar'}`,
+      access_year:'2026-2027',
+      degree_name:degree,
+      university:'',
+      branch:'',
+      subject,
+      coefficient:coeff,
+      source_id:'ciug-ponderaciones-2026',
+      source_url:sourceUrl,
+      data_status:status,
+      metadata:{raw_line, v:'0.23'}
+    });
+  }
+
+  // Estrategia 1: líneas donde aparecen materia y coeficiente.
+  for(const line of rawLines){
+    const code = (line.match(/\b\d{4,6}\b/)||[])[0] || '';
+    const hasDegree = /Grao|Grado|Dobre Grao|Doble Grado/i.test(line);
+    if(!code && !hasDegree) continue;
+    const degree = clean(line.replace(/\b\d{4,6}\b/g,'').split(/\s{2,}/)[0]);
     for(const subj of subjects){
       const idx = normalise(line).indexOf(normalise(subj));
       if(idx < 0) continue;
-      const tail = line.slice(idx, idx+80);
-      const coeff = (tail.match(/\b0[,.][12]\b/)||[])[0];
-      if(!coeff) continue;
-      rows.push({
-        id:`ciug-pond-2026-${slug(code || degree)}-${slug(subj)}`,
-        access_year:'2026-2027',
-        degree_name:degree,
-        university:'',
-        branch:'',
+      const tail = line.slice(idx, idx+120);
+      const coeffMatch = tail.match(/\b0[,.][12]\b/);
+      addRow({
+        degree,
+        code,
         subject:subj,
-        coefficient:Number(coeff.replace(',','.')),
-        source_id:'ciug-ponderaciones-2026',
-        source_url:sourceUrl,
-        data_status:'pdf_text_imported_needs_review',
-        metadata:{raw_line:line, v:'0.22.2'}
+        coeff: coeffMatch ? Number(coeffMatch[0].replace(',','.')) : null,
+        raw_line:line,
+        status: coeffMatch ? 'pdf_text_imported_needs_review' : 'pdf_index_needs_manual_review'
       });
     }
   }
+
+  // Estrategia 2: si el texto del PDF queda descuadrado, crea índice de titulaciones sin inventar coeficientes.
+  // Sirve para que la herramienta localice la titulación y lleve a la matriz oficial sin falsear ponderaciones.
+  if(rows.length < 25){
+    const candidates = rawLines.filter(line =>
+      (/\b\d{4,6}\b/.test(line) || /Grao|Grado|Dobre Grao|Doble Grado/i.test(line)) &&
+      /Grao|Grado|Dobre|Doble|Enxeñaría|Ingeniería|Educación|Dereito|Derecho|Medicina|Psicoloxía|Psicología|Bioloxía|Biología|Química|Física|Economía|Administración/i.test(line)
+    );
+    for(const line of candidates){
+      const code = (line.match(/\b\d{4,6}\b/)||[])[0] || '';
+      let degree = line.replace(/\b\d{4,6}\b/g,' ');
+      degree = degree.replace(/\b0[,.][12]\b/g,' ');
+      degree = degree.replace(/\s+/g,' ').trim();
+      const m = degree.match(/((?:Dobre|Doble)?\s*Gra[od][^0-9]{5,160})/i);
+      degree = clean(m ? m[1] : degree).slice(0,180);
+      addRow({
+        degree,
+        code,
+        subject:'Consultar matriz oficial CIUG',
+        coeff:null,
+        raw_line:line,
+        status:'pdf_index_needs_manual_review'
+      });
+    }
+  }
+
   return [...new Map(rows.map(x=>[x.id,x])).values()].slice(0,3000);
 }
+
 
 async function importCiugTables(){
   let cut=0, pon=0;
@@ -558,7 +679,7 @@ async function importCiugTables(){
     cut + pon,
     'ciug-admision',
     (cut || pon)
-      ? `v0.22.2 importó texto tabular desde PDF CIUG: ${cut} filas de notas y ${pon} filas de ponderaciones. Revisión visual obligatoria antes de usar como dato definitivo.`
+      ? `v0.23 importó datos desde PDF CIUG: ${cut} filas de notas y ${pon} filas/índices de ponderación. Las filas sin coeficiente se muestran como índice de consulta, no como ponderación definitiva.`
       : `CIUG queda enlazada y pendiente de extracción tabular validada. ${errors.join(' || ')}`,
     {cutoffs:cut, ponderations:pon, errors}
   );
@@ -566,7 +687,7 @@ async function importCiugTables(){
 }
 
 async function main(){
-  console.log('ITINERA v0.22 macrointegral loader started');
+  console.log('ITINERA v0.23 definitive loader started');
   const university = await importUniversityAggregates();
   const specializations = await importFpSpecializations();
   const centers = await importGaliciaCenters();

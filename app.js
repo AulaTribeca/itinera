@@ -2420,3 +2420,377 @@ document.addEventListener('DOMContentLoaded',init);
     };
   })(init);
 })();
+
+
+
+/* ITINERA v0.23 · versión definitiva operativa: UX, limpieza, confianza y datos depurados */
+(function(){
+  const V023 = '0.23';
+
+  function v23EnsureState(){
+    state.integral = state.integral || {};
+    state.v23 = state.v23 || {
+      cleanUniversity: [],
+      quality: [],
+      loaded: false,
+      loading: false,
+      error: ''
+    };
+    return state.v23;
+  }
+
+  function arr(x){ return Array.isArray(x) ? x : []; }
+  function numberFmt(n){ return Number(n||0).toLocaleString('es-ES'); }
+  function compactStatusLabel(status=''){
+    const s=String(status||'').replaceAll('_',' ');
+    if(!s) return 'pendiente';
+    return s.length > 34 ? s.slice(0,31)+'…' : s;
+  }
+  function trustClass(status='', severity=''){
+    const s=String(status+' '+severity).toLowerCase();
+    if(s.includes('ready') || s.includes('verified') || s.includes('clean')) return 'trust-ok';
+    if(s.includes('review') || s.includes('progress') || s.includes('minimum') || s.includes('warning')) return 'trust-review';
+    if(s.includes('failed') || s.includes('pending')) return 'trust-pending';
+    return 'trust-neutral';
+  }
+  function v23Status(status='', severity=''){
+    return `<span class="v23-status ${trustClass(status,severity)}">${escapeHTML(compactStatusLabel(status))}</span>`;
+  }
+  function v23Note(text){
+    return `<p class="v23-note">${escapeHTML(text)}</p>`;
+  }
+  function sourceMini(ids=[]){
+    return `<div class="v23-source-strip">${sourceLinks(ids)}</div>`;
+  }
+
+  async function v23LoadData(){
+    const v23 = v23EnsureState();
+    if(v23.loaded || v23.loading || !supabaseReady || !supabaseReady()) return v23;
+    v23.loading = true;
+    try{
+      const [cleanUniversity, quality, cutoffs, ponderations, fpOffer, specs, status] = await Promise.all([
+        sbFetch('/rest/v1/itinera_university_catalog_clean?select=*&order=title.asc&limit=1200').catch(()=>[]),
+        sbFetch('/rest/v1/itinera_quality_checks?select=*&order=block.asc&limit=100').catch(()=>[]),
+        sbFetch('/rest/v1/itinera_ciug_cutoffs?select=*&order=degree_name.asc&limit=700').catch(()=>[]),
+        sbFetch('/rest/v1/itinera_ciug_ponderations?select=*&order=degree_name.asc,subject.asc&limit=1200').catch(()=>[]),
+        sbFetch('/rest/v1/itinera_fp_galicia_offer?select=*&order=province.asc,municipality.asc,center_name.asc&limit=500').catch(()=>[]),
+        sbFetch('/rest/v1/itinera_fp_specializations?select=*&order=name.asc&limit=200').catch(()=>[]),
+        sbFetch('/rest/v1/itinera_integral_status?select=*&order=block.asc&limit=100').catch(()=>[])
+      ]);
+      v23.cleanUniversity = arr(cleanUniversity);
+      v23.quality = arr(quality);
+      v23.loaded = true;
+      v23.error = '';
+      state.integral = state.integral || {};
+      state.integral.ciug_cutoffs = arr(cutoffs);
+      state.integral.ciug_ponderations = arr(ponderations);
+      state.integral.fp_galicia_offer = arr(fpOffer);
+      state.integral.fp_specializations = arr(specs);
+      state.integral.status = arr(status);
+      state.integral.loaded = true;
+    }catch(e){
+      v23.error = e.message || String(e);
+    }finally{
+      v23.loading = false;
+    }
+    return v23;
+  }
+
+  function v23Counts(){
+    const v23 = v23EnsureState();
+    const integral = ensureIntegralState ? ensureIntegralState() : (state.integral || {});
+    const studies = state.data?.studies?.length || 0;
+    const cleanUni = v23.cleanUniversity.length || arr(integral.university_offers).length;
+    const cut = arr(integral.ciug_cutoffs).length;
+    const pon = arr(integral.ciug_ponderations).length;
+    const fp = arr(integral.fp_galicia_offer).length;
+    const specs = arr(integral.fp_specializations).length;
+    return {studies, cleanUni, cut, pon, fp, specs};
+  }
+
+  function v23DecisionCards(){
+    return [
+      {route:'estudios', title:'Buscar un estudio', text:'FP, universidad, pruebas, becas y rutas en una búsqueda directa.', tag:'Inicio recomendado'},
+      {route:'aventura', title:'Simular itinerario', text:'Parte desde ESO, Bachillerato o FP y construye una ruta realista.', tag:'Ruta guiada'},
+      {route:'asistente', title:'Preguntar a ItineraBot', text:'Resuelve dudas complejas y te lleva a la fuente oficial adecuada.', tag:'Asistente'},
+      {route:'fp', title:'Explorar FP', text:'Ciclos, cursos de especialización y oferta oficial que debe verificarse.', tag:'FP'},
+      {route:'universidad', title:'Ver universidad', text:'QEDU/RUCT, SIIU y catálogo depurado para orientación universitaria.', tag:'Universidad'},
+      {route:'ponderaciones', title:'Notas y ponderaciones', text:'CIUG, notas de corte, ABAU, admisión y avisos de vigencia.', tag:'CIUG'}
+    ].map(c=>`<button class="v23-decision-card" data-route="${c.route}">
+      <span>${escapeHTML(c.tag)}</span>
+      <strong>${escapeHTML(c.title)}</strong>
+      <p>${escapeHTML(c.text)}</p>
+    </button>`).join('');
+  }
+
+  function v23QualityDashboardHTML(){
+    const v23 = v23EnsureState();
+    const integral = ensureIntegralState ? ensureIntegralState() : (state.integral || {});
+    const counts = v23Counts();
+    const quality = arr(v23.quality);
+    const statusRows = arr(integral.status);
+    const sourceRows = [
+      {label:'Catálogo universitario depurado', value:counts.cleanUni, status: counts.cleanUni ? 'clean_catalog_ready' : 'pending', note:'Dato agregado oficial. RUCT/QEDU verifican título concreto.'},
+      {label:'Notas CIUG', value:counts.cut, status: counts.cut ? 'imported_needs_review' : 'pending', note:'Importación desde PDF oficial, sujeta a revisión visual.'},
+      {label:'Ponderaciones CIUG', value:counts.pon, status: counts.pon ? 'index_or_values_imported_needs_review' : 'official_pdf_linked', note: counts.pon ? 'Mostrar solo con aviso de revisión.' : 'Consulta directa en PDF CIUG hasta extracción segura.'},
+      {label:'Cursos especialización FP', value:counts.specs, status: counts.specs ? 'imported_needs_review' : 'pending', note:'TodoFP, requisitos título a título.'},
+      {label:'Oferta FP Galicia', value:counts.fp, status: counts.fp > 20 ? 'offer_imported_needs_review' : 'minimum_layer_only', note:'No sustituye Xunta FP por centro, curso y plazas.'}
+    ];
+    return `<section class="v23-dashboard" id="v23Dashboard">
+      <div class="v23-dashboard-head">
+        <div>
+          <p class="eyebrow">ITINERA v0.23</p>
+          <h2>Orientación clara, oficial y verificable</h2>
+          <p>Busca, simula y verifica. ITINERA separa los datos consolidados de los datos dinámicos que dependen de convocatoria.</p>
+        </div>
+        <div class="v23-trust-seal">
+          <strong>Verificación</strong>
+          <span>Fuentes oficiales + avisos de revisión</span>
+        </div>
+      </div>
+      <div class="v23-metrics">
+        <article><strong>${numberFmt(counts.studies)}</strong><span>estudios base</span></article>
+        <article><strong>${numberFmt(counts.cleanUni)}</strong><span>registros universitarios depurados</span></article>
+        <article><strong>${numberFmt(counts.cut)}</strong><span>notas CIUG</span></article>
+        <article><strong>${numberFmt(counts.specs)}</strong><span>cursos de especialización FP</span></article>
+      </div>
+      <div class="v23-decision-grid">${v23DecisionCards()}</div>
+      <details class="v23-quality" open>
+        <summary>Estado de fiabilidad de los datos</summary>
+        <div class="v23-quality-grid">
+          ${sourceRows.map(r=>`<article>
+            <div><strong>${escapeHTML(r.label)}</strong>${v23Status(r.status)}</div>
+            <p><b>${numberFmt(r.value)}</b> registros</p>
+            <small>${escapeHTML(r.note)}</small>
+          </article>`).join('')}
+        </div>
+      </details>
+      ${quality.length ? `<details class="v23-quality"><summary>Controles técnicos</summary><div class="v23-quality-grid">${quality.map(q=>`<article><div><strong>${escapeHTML(q.block)}</strong>${v23Status(q.status,q.severity)}</div><p><b>${numberFmt(q.value)}</b></p><small>${escapeHTML(q.notes||'')}</small></article>`).join('')}</div></details>` : ''}
+      ${v23Note('ITINERA orienta y organiza la información. Las plazas, notas, ponderaciones, oferta por centro y requisitos sujetos a convocatoria deben confirmarse siempre en la fuente oficial vigente.')}
+    </section>`;
+  }
+
+  function v23SimplifyHome(){
+    const home = document.getElementById('inicio');
+    if(!home) return;
+    document.getElementById('coveragePanel')?.remove();
+    document.getElementById('v022StatusPanel')?.remove();
+    document.getElementById('v23Dashboard')?.remove();
+    const cardsPanel = home.querySelector('.cards-panel');
+    if(cardsPanel) cardsPanel.insertAdjacentHTML('beforebegin', v23QualityDashboardHTML());
+    else home.insertAdjacentHTML('beforeend', v23QualityDashboardHTML());
+    home.querySelectorAll('.v23-decision-card[data-route]').forEach(btn=>btn.onclick=()=>routeTo(btn.dataset.route));
+  }
+
+  function v23SimplifyNav(){
+    const nav = document.getElementById('mainNav');
+    if(!nav) return;
+    nav.classList.add('v23-nav');
+    nav.innerHTML = `
+      <a href="#inicio" data-route="inicio" class="active">Inicio</a>
+      <a href="#estudios" data-route="estudios">Buscar</a>
+      <a href="#aventura" data-route="aventura">Simular</a>
+      <a href="#asistente" data-route="asistente">ItineraBot</a>
+      <a href="#fp" data-route="fp">FP</a>
+      <a href="#universidad" data-route="universidad">Universidad</a>
+      <a href="#ponderaciones" data-route="ponderaciones">CIUG</a>
+      <a href="#becas" data-route="becas">Becas</a>
+      <a href="#fuentes" data-route="fuentes">Fuentes</a>
+    `;
+    bindRoutes();
+  }
+
+  function v23UniversityHTML(){
+    const v23 = v23EnsureState();
+    const rows = v23.cleanUniversity.length ? v23.cleanUniversity : arr((state.integral||{}).university_offers);
+    const sample = rows.slice(0,9).map(r=>v23UniversityCard(r)).join('');
+    return `<section class="v23-panel" id="v23UniversityPanel">
+      <div class="v23-panel-head">
+        <div><p class="eyebrow">Universidad oficial</p><h2>Catálogo depurado para decidir mejor</h2><p>Explora por universidad, rama y créditos. Para saber si un título concreto es oficial, verifica RUCT/QEDU.</p></div>
+        <span class="v23-pill">${numberFmt(rows.length)} registros depurados</span>
+      </div>
+      <div class="v23-search-line">
+        <input id="v23UniversitySearch" type="search" placeholder="Buscar: Psicología, Vigo, Ciencias de la Salud, 240 ECTS...">
+        <button type="button" class="button primary" id="v23UniversitySearchBtn">Buscar</button>
+      </div>
+      <div id="v23UniversityResults" class="v23-card-grid">${sample || '<p>No hay catálogo depurado cargado. Ejecuta el SQL v0.23 y el workflow macrointegral.</p>'}</div>
+      ${v23Note('Esta capa procede de datos oficiales agregados. No equivale a una ficha administrativa individual de cada título. La oficialidad se comprueba en RUCT y QEDU.')}
+      ${sourceMini(['qedu','qedu-ayuda','ruct','educabase-grados-univ-2024','educabase-masteres-univ-2024','educabase-grados-univ-2024-csvbd','educabase-masteres-univ-2024-csvbd'])}
+    </section>`;
+  }
+
+  function v23UniversityCard(r){
+    return `<article class="v23-card">
+      <h3>${escapeHTML(r.title || [r.level,r.university,r.branch].filter(Boolean).join(' · '))}</h3>
+      <p>${escapeHTML([r.level,r.university_type,r.credits?`${r.credits} ECTS`:'' ].filter(Boolean).join(' · '))}</p>
+      <small>${escapeHTML(r.notes || 'Dato agregado oficial. Verifica el título concreto en RUCT/QEDU.')}</small>
+      ${v23Status(r.data_status || 'aggregate_official_clean')}
+    </article>`;
+  }
+
+  function v23FilterUniversity(term=''){
+    const q = normalise(term);
+    const rows = (v23EnsureState().cleanUniversity.length ? v23EnsureState().cleanUniversity : arr((state.integral||{}).university_offers))
+      .filter(r => !q || normalise([r.title,r.level,r.university,r.branch,r.credits,r.university_type].join(' ')).includes(q))
+      .slice(0,30);
+    const target = document.getElementById('v23UniversityResults');
+    if(target) target.innerHTML = rows.length ? rows.map(v23UniversityCard).join('') : '<p>No hay coincidencias en el catálogo depurado. Prueba una búsqueda más amplia o verifica directamente en QEDU/RUCT.</p>';
+  }
+
+  function v23RenderUniversity(){
+    const section = document.getElementById('universidad');
+    if(!section) return;
+    document.getElementById('v022UniversityPanel')?.remove();
+    document.getElementById('v23UniversityPanel')?.remove();
+    section.insertAdjacentHTML('beforeend', v23UniversityHTML());
+    document.getElementById('v23UniversitySearchBtn')?.addEventListener('click',()=>v23FilterUniversity(document.getElementById('v23UniversitySearch')?.value||''));
+    document.getElementById('v23UniversitySearch')?.addEventListener('keydown',e=>{if(e.key==='Enter') v23FilterUniversity(e.currentTarget.value)});
+  }
+
+  function v23CiugHTML(){
+    const integral = state.integral || {};
+    const cut = arr(integral.ciug_cutoffs);
+    const pon = arr(integral.ciug_ponderations);
+    const sampleCut = cut.slice(0,8).map(v23CutoffCard).join('');
+    const samplePon = pon.slice(0,8).map(v23PonderCard).join('');
+    return `<section class="v23-panel" id="v23CiugPanel">
+      <div class="v23-panel-head">
+        <div><p class="eyebrow">CIUG · Galicia</p><h2>Notas, admisión y ponderaciones</h2><p>Usa las notas como referencia histórica. Las ponderaciones y plazas deben comprobarse por curso, grado y convocatoria.</p></div>
+        <span class="v23-pill">${numberFmt(cut.length)} notas · ${numberFmt(pon.length)} ponderaciones/índices</span>
+      </div>
+      <div class="v23-search-line">
+        <input id="v23CiugSearch" type="search" placeholder="Buscar grado: Medicina, Dereito, Psicoloxía, Educación...">
+        <button type="button" class="button primary" id="v23CiugSearchBtn">Buscar</button>
+      </div>
+      <div id="v23CiugResults" class="v23-card-grid">${sampleCut || '<p>No hay notas importadas.</p>'}${samplePon}</div>
+      ${pon.length ? v23Note('Las ponderaciones importadas desde PDF se muestran con estado de revisión. Si una fila no tiene coeficiente, sirve como índice de consulta, no como dato final.') : v23Note('Las ponderaciones CIUG siguen enlazadas al PDF oficial cuando la extracción no es suficientemente segura. ITINERA no inventa coeficientes.')}
+      ${sourceMini(['ciug-admision','ciug-ponderaciones-2026','ciug-notas-corte-2025','ciug-notas-corte-ultimos','ciug-preinscripcion-2025'])}
+    </section>`;
+  }
+
+  function v23CutoffCard(r){
+    return `<article class="v23-card">
+      <h3>${escapeHTML(r.degree_name || 'Grado SUG')}</h3>
+      <p>${escapeHTML([r.academic_year,r.university,r.campus].filter(Boolean).join(' · '))}</p>
+      <small><strong>Nota general:</strong> ${escapeHTML(r.general_cutoff || 'consultar documento oficial')}</small>
+      ${v23Status(r.data_status || 'pdf_text_imported_needs_review')}
+    </article>`;
+  }
+  function v23PonderCard(r){
+    const coeff = r.coefficient === null || r.coefficient === undefined ? 'consultar matriz oficial' : r.coefficient;
+    return `<article class="v23-card">
+      <h3>${escapeHTML(r.degree_name || 'Ponderación CIUG')}</h3>
+      <p>${escapeHTML(r.subject || 'Materia')}</p>
+      <small><strong>Coeficiente:</strong> ${escapeHTML(String(coeff))}</small>
+      ${v23Status(r.data_status || 'pdf_index_needs_manual_review')}
+    </article>`;
+  }
+
+  function v23FilterCiug(term=''){
+    const q = normalise(term);
+    const integral = state.integral || {};
+    const cut = arr(integral.ciug_cutoffs).filter(r=>!q || normalise([r.degree_name,r.university,r.campus,r.academic_year].join(' ')).includes(q)).slice(0,20);
+    const pon = arr(integral.ciug_ponderations).filter(r=>!q || normalise([r.degree_name,r.subject,r.university].join(' ')).includes(q)).slice(0,20);
+    const target=document.getElementById('v23CiugResults');
+    if(target) target.innerHTML = (cut.map(v23CutoffCard).join('') + pon.map(v23PonderCard).join('')) || '<p>No hay coincidencias cargadas. Consulta CIUG directamente para ese grado o curso.</p>';
+  }
+
+  function v23RenderCiug(){
+    const section = document.getElementById('ponderaciones');
+    if(!section) return;
+    document.getElementById('v022CiugPanel')?.remove();
+    document.getElementById('v23CiugPanel')?.remove();
+    section.insertAdjacentHTML('beforeend', v23CiugHTML());
+    document.getElementById('v23CiugSearchBtn')?.addEventListener('click',()=>v23FilterCiug(document.getElementById('v23CiugSearch')?.value||''));
+    document.getElementById('v23CiugSearch')?.addEventListener('keydown',e=>{if(e.key==='Enter') v23FilterCiug(e.currentTarget.value)});
+  }
+
+  function v23FpHTML(){
+    const integral = state.integral || {};
+    const fp = arr(integral.fp_galicia_offer);
+    const specs = arr(integral.fp_specializations);
+    const sample = specs.slice(0,10).map(s=>`<article class="v23-card"><h3>${escapeHTML(s.name)}</h3><p>${escapeHTML(s.family || 'Familia pendiente de revisión')}</p><small>${escapeHTML(s.access_type || 'Requisitos según ficha oficial')}</small>${v23Status(s.data_status || 'imported_needs_review')}</article>`).join('');
+    return `<section class="v23-panel" id="v23FpPanel">
+      <div class="v23-panel-head">
+        <div><p class="eyebrow">FP</p><h2>Catálogo útil, con aviso de oferta dinámica</h2><p>Ciclos y cursos de especialización se orientan desde fuentes oficiales. La oferta por centro, plazas y modalidad se confirma en Xunta FP.</p></div>
+        <span class="v23-pill">${numberFmt(specs.length)} cursos E · ${numberFmt(fp.length)} registros Galicia</span>
+      </div>
+      <div class="v23-search-line">
+        <input id="v23FpSearch" type="search" placeholder="Buscar: ciberseguridad, automatización, centro, concello...">
+        <button type="button" class="button primary" id="v23FpSearchBtn">Buscar</button>
+      </div>
+      <div id="v23FpResults" class="v23-card-grid">${sample || '<p>No hay cursos de especialización cargados.</p>'}</div>
+      ${fp.length < 20 ? v23Note('La capa de FP Galicia por centro todavía es mínima. Para matrícula, plazas y modalidad, usa siempre Xunta FP.') : v23Note('Oferta FP Galicia importada con revisión pendiente de plazas y curso vigente.')}
+      ${sourceMini(['todofp-cursos-especializacion','todofp-grados-e-info','xunta-fp-oferta-2025-2026','xunta-fp-mapas-oferta','xunta-fp-ciclos'])}
+    </section>`;
+  }
+
+  function v23FilterFp(term=''){
+    const q = normalise(term);
+    const integral = state.integral || {};
+    const fp = arr(integral.fp_galicia_offer).filter(r=>!q || normalise([r.cycle_name,r.center_name,r.municipality,r.province,r.family,r.modality].join(' ')).includes(q)).slice(0,20);
+    const specs = arr(integral.fp_specializations).filter(r=>!q || normalise([r.name,r.family,r.access_type].join(' ')).includes(q)).slice(0,20);
+    const target=document.getElementById('v23FpResults');
+    const fpHTML = fp.map(r=>`<article class="v23-card"><h3>${escapeHTML(r.center_name || r.cycle_name)}</h3><p>${escapeHTML([r.cycle_name,r.municipality,r.province].filter(Boolean).join(' · '))}</p><small>${escapeHTML(r.data_status || 'Verificar Xunta FP')}</small>${v23Status(r.data_status || 'needs_review')}</article>`).join('');
+    const specHTML = specs.map(s=>`<article class="v23-card"><h3>${escapeHTML(s.name)}</h3><p>${escapeHTML(s.family || 'Familia pendiente de revisión')}</p><small>${escapeHTML(s.access_type || 'Requisitos según ficha oficial')}</small>${v23Status(s.data_status || 'imported_needs_review')}</article>`).join('');
+    if(target) target.innerHTML = fpHTML + specHTML || '<p>No hay coincidencias cargadas. Comprueba TodoFP o Xunta FP directamente.</p>';
+  }
+
+  function v23RenderFp(){
+    const section = document.getElementById('fp');
+    if(!section) return;
+    document.getElementById('v022FpPanel')?.remove();
+    document.getElementById('v23FpPanel')?.remove();
+    section.insertAdjacentHTML('beforeend', v23FpHTML());
+    document.getElementById('v23FpSearchBtn')?.addEventListener('click',()=>v23FilterFp(document.getElementById('v23FpSearch')?.value||''));
+    document.getElementById('v23FpSearch')?.addEventListener('keydown',e=>{if(e.key==='Enter') v23FilterFp(e.currentTarget.value)});
+  }
+
+  function v23PruneText(){
+    document.body.classList.add('v23-definitive');
+    const heroLead = document.getElementById('heroLead');
+    if(heroLead) heroLead.textContent = 'Orientación académica práctica: busca estudios, simula rutas y verifica datos cambiantes en fuentes oficiales.';
+    const finderDescription = document.getElementById('finderDescription');
+    if(finderDescription) finderDescription.textContent = 'Escribe una profesión, estudio o familia. ITINERA prioriza coincidencias útiles y fuentes oficiales.';
+    const chatWarning = document.getElementById('chatWarning');
+    if(chatWarning) chatWarning.textContent = 'ItineraBot orienta, pero no sustituye la convocatoria oficial, RUCT, QEDU, CIUG, Xunta FP ni las sedes administrativas.';
+  }
+
+  async function v23RenderAll(){
+    await v23LoadData();
+    v23SimplifyNav();
+    v23SimplifyHome();
+    v23RenderUniversity();
+    v23RenderCiug();
+    v23RenderFp();
+    v23PruneText();
+    document.getElementById('v022StatusPanel')?.remove();
+    document.getElementById('coveragePanel')?.remove();
+    const badge=document.getElementById('updateBadge');
+    if(badge){
+      badge.textContent = `ITINERA v0.23 · fuentes oficiales`;
+      badge.title = 'Versión definitiva operativa: datos depurados, estados de revisión y fuentes oficiales.';
+    }
+  }
+
+  const previousAsk = askItineraBot;
+  askItineraBot = async function(text){
+    await v23LoadData();
+    const q = normalise(text);
+    const counts = v23Counts();
+    if(q.includes('completa') || q.includes('fiable') || q.includes('actualizada') || q.includes('verificada')){
+      return `<p>ITINERA trabaja con fuentes oficiales y muestra estados de revisión para datos cambiantes. Ahora mismo hay ${numberFmt(counts.cleanUni)} registros universitarios depurados, ${numberFmt(counts.cut)} notas CIUG, ${numberFmt(counts.specs)} cursos de especialización FP y ${numberFmt(counts.fp)} registros de FP Galicia. Para decisiones definitivas, verifica siempre RUCT/QEDU, CIUG o Xunta FP según corresponda.</p>${sourceMini(['qedu','ruct','ciug-admision','xunta-fp-oferta-2025-2026','todofp-familias'])}`;
+    }
+    if(q.includes('ponderacion') || q.includes('ponderación')){
+      return `<p>Las ponderaciones dependen del curso, grado y universidad. ITINERA solo muestra coeficientes si puede extraerlos con suficiente seguridad; si no, enlaza la matriz oficial CIUG para evitar errores.</p>${sourceMini(['ciug-ponderaciones-2026','ciug-admision'])}`;
+    }
+    return previousAsk(text);
+  };
+
+  init = (function(previousInit){
+    return function(){
+      previousInit();
+      setTimeout(v23RenderAll, 1100);
+    };
+  })(init);
+})();

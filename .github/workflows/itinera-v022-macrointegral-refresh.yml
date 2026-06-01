@@ -1,4 +1,4 @@
-name: ITINERA v0.22 macrointegral refresh
+name: ITINERA v0.23 definitive refresh
 
 on:
   workflow_dispatch:
@@ -67,7 +67,7 @@ jobs:
           NODE_TLS_REJECT_UNAUTHORIZED: "0"
         run: node tools/official-load/import-official-catalogs.mjs
 
-      - name: Run v0.22 macrointegral importer
+      - name: Run v0.23 definitive importer
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
