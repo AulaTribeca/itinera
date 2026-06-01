@@ -1,6 +1,6 @@
 {
-  "name": "itinera-v0-17",
-  "version": "0.17.0-phase3",
+  "name": "itinera-v0-22",
+  "version": "0.22.0-macrointegral",
   "private": true,
   "type": "module",
   "description": "ITINERA: GitHub Pages + Supabase official catalog + ItineraBot documental.",
@@ -10,6 +10,8 @@
   },
   "scripts": {
     "import:official": "node tools/official-load/import-official-catalogs.mjs",
-    "import:seed": "node tools/official-load/import-official-catalogs.mjs --seed-only"
+    "import:seed": "node tools/official-load/import-official-catalogs.mjs --seed-only",
+    "import:macrointegral": "node tools/official-load/import-v022-macrointegral.mjs",
+    "import:all": "node tools/official-load/import-official-catalogs.mjs && node tools/official-load/import-v022-macrointegral.mjs"
   }
 }

@@ -2102,3 +2102,321 @@ document.addEventListener('DOMContentLoaded',init);
     };
   })(init);
 })();
+
+
+
+/* ITINERA v0.22 · macrointegral: universidad, CIUG, FP Galicia y Grados E */
+(function(){
+  const V022 = '0.22';
+  const LIMITS = {offers:250, ciug:250, fp:250, spec:120};
+
+  function ensureIntegralState(){
+    state.integral = state.integral || {
+      university_offers: [],
+      ciug_cutoffs: [],
+      ciug_ponderations: [],
+      fp_galicia_offer: [],
+      fp_specializations: [],
+      status: [],
+      loaded: false,
+      error: ''
+    };
+    return state.integral;
+  }
+
+  function safeArray(x){ return Array.isArray(x) ? x : []; }
+
+  function statusBadge(status=''){
+    const s=String(status||'').toLowerCase();
+    const cls = s.includes('verified') || s.includes('imported') ? 'status-ok' :
+      s.includes('progress') || s.includes('structured') || s.includes('schema') ? 'status-progress' :
+      s.includes('failed') || s.includes('error') ? 'status-error' :
+      s.includes('pending') ? 'status-pending' : 'status-neutral';
+    return `<span class="data-status ${cls}">${escapeHTML(String(status||'pendiente').replaceAll('_',' '))}</span>`;
+  }
+
+  function officialWarning(){
+    return `<p class="warning-box small">ITINERA no sustituye la consulta oficial vigente. Los datos de plazas, notas, ponderaciones, oferta por centro y requisitos pueden cambiar por convocatoria.</p>`;
+  }
+
+  async function loadV022IntegralData(){
+    const integral = ensureIntegralState();
+    if(integral.loaded || !supabaseReady || !supabaseReady()) return integral;
+    try{
+      const [offers, cutoffs, ponders, fpOffer, specs, status] = await Promise.all([
+        sbFetch(`/rest/v1/itinera_university_offers?select=*&order=title.asc&limit=${LIMITS.offers}`).catch(()=>[]),
+        sbFetch(`/rest/v1/itinera_ciug_cutoffs?select=*&order=degree_name.asc&limit=${LIMITS.ciug}`).catch(()=>[]),
+        sbFetch(`/rest/v1/itinera_ciug_ponderations?select=*&order=degree_name.asc&limit=${LIMITS.ciug}`).catch(()=>[]),
+        sbFetch(`/rest/v1/itinera_fp_galicia_offer?select=*&order=province.asc,municipality.asc,center_name.asc&limit=${LIMITS.fp}`).catch(()=>[]),
+        sbFetch(`/rest/v1/itinera_fp_specializations?select=*&order=name.asc&limit=${LIMITS.spec}`).catch(()=>[]),
+        sbFetch('/rest/v1/itinera_integral_status?select=*&order=block.asc&limit=100').catch(()=>[])
+      ]);
+      Object.assign(integral, {
+        university_offers: safeArray(offers),
+        ciug_cutoffs: safeArray(cutoffs),
+        ciug_ponderations: safeArray(ponders),
+        fp_galicia_offer: safeArray(fpOffer),
+        fp_specializations: safeArray(specs),
+        status: safeArray(status),
+        loaded: true,
+        error: ''
+      });
+      state.data.studies = mergeById(state.data.studies || [], safeArray(specs).map(s => ({
+        id: s.id,
+        name: s.name,
+        type: 'curso-especializacion-fp',
+        level: s.level || 'Curso de especialización de FP',
+        family: s.family || 'Familia profesional pendiente de revisión',
+        route: s.access_type ? `Acceso según título requerido: ${s.access_type}` : 'Acceso según título de FP requerido para cada curso de especialización.',
+        sources: [s.source_id || 'todofp-cursos-especializacion'],
+        source_url: s.source_url,
+        data_quality: s.data_status || 'imported_needs_review'
+      })));
+    }catch(e){
+      integral.error = e.message || String(e);
+    }
+    return integral;
+  }
+
+  function statusPanelHTML(){
+    const integral = ensureIntegralState();
+    const rows = safeArray(integral.status);
+    const body = rows.length
+      ? rows.map(r=>`<article class="mini-status-card"><strong>${escapeHTML(r.block)}</strong>${statusBadge(r.status)}<p>${escapeHTML(r.notes||'')}</p><small>${escapeHTML(r.source_id||'')}</small></article>`).join('')
+      : `<p>Ejecuta el SQL y el workflow v0.22 para activar los indicadores macrointegrales.</p>`;
+    return `<section class="macro-panel" id="v022StatusPanel">
+      <div class="section-heading compact">
+        <p class="eyebrow">ITINERA v0.22</p>
+        <h2>Estado macrointegral</h2>
+        <p>Control de universidad, CIUG, oferta FP Galicia y cursos de especialización.</p>
+      </div>
+      <div class="macro-status-grid">${body}</div>
+    </section>`;
+  }
+
+  function renderStatusPanel(){
+    const home = document.getElementById('inicio');
+    if(!home) return;
+    document.getElementById('v022StatusPanel')?.remove();
+    const coverage = document.getElementById('coveragePanel');
+    if(coverage) coverage.insertAdjacentHTML('afterend', statusPanelHTML());
+    else home.insertAdjacentHTML('beforeend', statusPanelHTML());
+  }
+
+  function universityMacroHTML(){
+    const integral = ensureIntegralState();
+    const rows = safeArray(integral.university_offers);
+    const cards = rows.slice(0,12).map(r=>`<article class="macro-data-card">
+      <h3>${escapeHTML(r.title)}</h3>
+      <p><strong>${escapeHTML(r.level||'')}</strong>${r.branch?` · ${escapeHTML(r.branch)}`:''}${r.credits?` · ${escapeHTML(r.credits)} ECTS`:''}</p>
+      <p>${escapeHTML(r.notes || 'Dato oficial agregado. Para el título concreto, verificar QEDU/RUCT.')}</p>
+      ${statusBadge(r.data_status)}
+    </article>`).join('');
+    return `<section class="macro-panel" id="v022UniversityPanel">
+      <div class="section-heading compact">
+        <p class="eyebrow">Universidade</p>
+        <h2>Universidade estruturada: RUCT, QEDU e SIIU</h2>
+        <p>ITINERA distingue datos agregados oficiais, exploración QEDU e verificación RUCT título a título.</p>
+      </div>
+      <div class="macro-search-row">
+        <input id="v022UniversitySearch" class="adventure-target-input" type="search" placeholder="Buscar universidad, rama o nivel: Psicología, Vigo, Máster, Ciencias da Saúde...">
+        <button type="button" class="button primary" id="v022UniversitySearchBtn">Buscar</button>
+      </div>
+      <div class="macro-count-row">
+        <span>${rows.length} rexistros universitarios estruturados/agregados</span>
+        <span>QEDU e RUCT seguen sendo verificación obrigatoria</span>
+      </div>
+      <div id="v022UniversityResults" class="macro-data-grid">${cards || '<p>Ejecuta el SQL y el workflow v0.22 para cargar los datos universitarios disponibles.</p>'}</div>
+      ${officialWarning()}
+      ${sourceLinks(['qedu','qedu-ayuda','ruct','educabase-grados-univ-2023','educabase-masteres-univ-2023'])}
+    </section>`;
+  }
+
+  function filterUniversity(term=''){
+    const q = normalise(term);
+    const rows = safeArray(ensureIntegralState().university_offers).filter(r => {
+      const hay = normalise([r.title,r.level,r.university,r.branch,r.credits,r.notes].join(' '));
+      return !q || hay.includes(q);
+    }).slice(0,30);
+    const target = document.getElementById('v022UniversityResults');
+    if(!target) return;
+    target.innerHTML = rows.length ? rows.map(r=>`<article class="macro-data-card">
+      <h3>${escapeHTML(r.title)}</h3>
+      <p><strong>${escapeHTML(r.level||'')}</strong>${r.branch?` · ${escapeHTML(r.branch)}`:''}${r.university?` · ${escapeHTML(r.university)}`:''}</p>
+      <p>${escapeHTML(r.notes || '')}</p>
+      ${statusBadge(r.data_status)}
+      ${r.source_url ? `<a class="source-link compact" target="_blank" rel="noopener noreferrer" href="${escapeHTML(r.source_url)}"><strong>Fonte oficial</strong><span>${escapeHTML(r.source_id||'')}</span></a>`:''}
+    </article>`).join('') : '<p>No hay coincidencias en la capa estructurada. Usa QEDU/RUCT para búsqueda directa título a título.</p>';
+  }
+
+  function renderUniversityMacro(){
+    const section = document.getElementById('universidad');
+    if(!section) return;
+    document.getElementById('v022UniversityPanel')?.remove();
+    section.insertAdjacentHTML('beforeend', universityMacroHTML());
+    document.getElementById('v022UniversitySearchBtn')?.addEventListener('click',()=>filterUniversity(document.getElementById('v022UniversitySearch')?.value||''));
+    document.getElementById('v022UniversitySearch')?.addEventListener('keydown',e=>{if(e.key==='Enter') filterUniversity(e.currentTarget.value)});
+  }
+
+  function ciugMacroHTML(){
+    const integral = ensureIntegralState();
+    const cut = safeArray(integral.ciug_cutoffs);
+    const pon = safeArray(integral.ciug_ponderations);
+    return `<section class="macro-panel" id="v022CiugPanel">
+      <div class="section-heading compact">
+        <p class="eyebrow">CIUG</p>
+        <h2>Notas, ponderacións, admisión e matrícula SUG</h2>
+        <p>Consulta por curso e convocatoria. As notas de corte son retrospectivas; as ponderacións deben verificarse por grao e universidade.</p>
+      </div>
+      <div class="macro-count-row">
+        <span>${cut.length} rexistros de notas cargados</span>
+        <span>${pon.length} rexistros de ponderación cargados</span>
+      </div>
+      <div class="macro-search-row">
+        <input id="v022CiugSearch" class="adventure-target-input" type="search" placeholder="Buscar grao: Psicoloxía, Medicina, Dereito, Enxeñaría...">
+        <button type="button" class="button primary" id="v022CiugSearchBtn">Buscar CIUG</button>
+      </div>
+      <div id="v022CiugResults" class="macro-data-grid">
+        <p>Se aínda non hai táboas extraídas, usa as fontes oficiais enlazadas. ITINERA non inventa notas nin ponderacións.</p>
+      </div>
+      ${officialWarning()}
+      ${sourceLinks(['ciug-admision','ciug-ponderaciones-2026','ciug-notas-corte-2025','ciug-notas-corte-ultimos','ciug-preinscripcion-2025','ciug-matricula-sug'])}
+    </section>`;
+  }
+
+  function filterCiug(term=''){
+    const q = normalise(term);
+    const integral = ensureIntegralState();
+    const cut = safeArray(integral.ciug_cutoffs).filter(r => !q || normalise([r.degree_name,r.university,r.campus,r.academic_year].join(' ')).includes(q)).slice(0,20);
+    const pon = safeArray(integral.ciug_ponderations).filter(r => !q || normalise([r.degree_name,r.university,r.subject,r.branch,r.access_year].join(' ')).includes(q)).slice(0,20);
+    const target=document.getElementById('v022CiugResults');
+    if(!target) return;
+    const cutHTML = cut.map(r=>`<article class="macro-data-card">
+      <h3>${escapeHTML(r.degree_name)}</h3>
+      <p>${escapeHTML(r.university||'SUG')} ${r.campus?` · ${escapeHTML(r.campus)}`:''} · ${escapeHTML(r.academic_year||'')}</p>
+      <p><strong>Xeral:</strong> ${escapeHTML(r.general_cutoff||'Consultar documento oficial')}</p>
+      ${statusBadge(r.data_status)}
+    </article>`).join('');
+    const ponHTML = pon.map(r=>`<article class="macro-data-card">
+      <h3>${escapeHTML(r.degree_name)}</h3>
+      <p><strong>${escapeHTML(r.subject)}</strong>: ${r.coefficient ?? 'consultar'}</p>
+      <p>${escapeHTML(r.access_year||'')} ${r.university?` · ${escapeHTML(r.university)}`:''}</p>
+      ${statusBadge(r.data_status)}
+    </article>`).join('');
+    target.innerHTML = cutHTML + ponHTML || '<p>No hay dato tabular cargado para esa búsqueda. Consulta directamente CIUG y la convocatoria vigente.</p>';
+  }
+
+  function renderCiugMacro(){
+    const section = document.getElementById('ponderaciones');
+    if(!section) return;
+    document.getElementById('v022CiugPanel')?.remove();
+    section.insertAdjacentHTML('beforeend', ciugMacroHTML());
+    document.getElementById('v022CiugSearchBtn')?.addEventListener('click',()=>filterCiug(document.getElementById('v022CiugSearch')?.value||''));
+    document.getElementById('v022CiugSearch')?.addEventListener('keydown',e=>{if(e.key==='Enter') filterCiug(e.currentTarget.value)});
+  }
+
+  function fpMacroHTML(){
+    const integral = ensureIntegralState();
+    const fp = safeArray(integral.fp_galicia_offer);
+    const specs = safeArray(integral.fp_specializations);
+    const specsCards = specs.slice(0,16).map(s=>`<article class="macro-data-card">
+      <h3>${escapeHTML(s.name)}</h3>
+      <p>${escapeHTML(s.family||'Familia pendiente de revisión')} ${s.access_type?` · ${escapeHTML(s.access_type)}`:''}</p>
+      ${statusBadge(s.data_status)}
+    </article>`).join('');
+    return `<section class="macro-panel" id="v022FpPanel">
+      <div class="section-heading compact">
+        <p class="eyebrow">FP Galicia e Grados E</p>
+        <h2>Oferta por centros, cursos de especialización e revisión de prazas</h2>
+        <p>As prazas e a oferta por centro cambian por curso. ITINERA pode cargar centros e cursos, pero a decisión debe contrastarse na Xunta FP.</p>
+      </div>
+      <div class="macro-count-row">
+        <span>${fp.length} rexistros Galicia cargados</span>
+        <span>${specs.length} cursos de especialización cargados</span>
+      </div>
+      <div class="macro-search-row">
+        <input id="v022FpSearch" class="adventure-target-input" type="search" placeholder="Buscar centro, concello, ciclo, provincia ou curso de especialización...">
+        <button type="button" class="button primary" id="v022FpSearchBtn">Buscar FP</button>
+      </div>
+      <div id="v022FpResults" class="macro-data-grid">${specsCards || '<p>Ejecuta el workflow v0.22 para intentar cargar Grados E desde TodoFP.</p>'}</div>
+      ${officialWarning()}
+      ${sourceLinks(['xunta-fp-oferta-2025-2026','xunta-fp-mapas-oferta','xunta-centros-educativos-csv','xunta-fp-ciclos','todofp-cursos-especializacion','todofp-grados-e-info'])}
+    </section>`;
+  }
+
+  function filterFp(term=''){
+    const q = normalise(term);
+    const integral = ensureIntegralState();
+    const fp = safeArray(integral.fp_galicia_offer).filter(r => !q || normalise([r.cycle_name,r.center_name,r.municipality,r.province,r.family,r.modality].join(' ')).includes(q)).slice(0,24);
+    const specs = safeArray(integral.fp_specializations).filter(r => !q || normalise([r.name,r.family,r.access_type].join(' ')).includes(q)).slice(0,24);
+    const target = document.getElementById('v022FpResults');
+    if(!target) return;
+    const fpHTML = fp.map(r=>`<article class="macro-data-card">
+      <h3>${escapeHTML(r.center_name||r.cycle_name)}</h3>
+      <p>${escapeHTML(r.cycle_name||'Oferta FP pendiente de cruce')} ${r.municipality?` · ${escapeHTML(r.municipality)}`:''} ${r.province?` · ${escapeHTML(r.province)}`:''}</p>
+      <p>${escapeHTML(r.data_status||'')}</p>
+      ${statusBadge(r.data_status)}
+    </article>`).join('');
+    const specHTML = specs.map(s=>`<article class="macro-data-card">
+      <h3>${escapeHTML(s.name)}</h3>
+      <p>${escapeHTML(s.family||'Familia pendiente de revisión')} ${s.access_type?` · ${escapeHTML(s.access_type)}`:''}</p>
+      ${statusBadge(s.data_status)}
+    </article>`).join('');
+    target.innerHTML = fpHTML + specHTML || '<p>No hay coincidencias cargadas. Revisa Xunta FP o TodoFP directamente.</p>';
+  }
+
+  function renderFpMacro(){
+    const section = document.getElementById('fp');
+    if(!section) return;
+    document.getElementById('v022FpPanel')?.remove();
+    section.insertAdjacentHTML('beforeend', fpMacroHTML());
+    document.getElementById('v022FpSearchBtn')?.addEventListener('click',()=>filterFp(document.getElementById('v022FpSearch')?.value||''));
+    document.getElementById('v022FpSearch')?.addEventListener('keydown',e=>{if(e.key==='Enter') filterFp(e.currentTarget.value)});
+  }
+
+  async function renderV022Panels(){
+    await loadV022IntegralData();
+    renderStatusPanel();
+    renderUniversityMacro();
+    renderCiugMacro();
+    renderFpMacro();
+  }
+
+  function v022BotAnswer(text){
+    const q = normalise(text);
+    const integral = ensureIntegralState();
+
+    if(q.includes('curso') && (q.includes('especializacion') || q.includes('especialización') || q.includes('grado e') || q.includes('grados e'))){
+      const rows = safeArray(integral.fp_specializations).filter(s => !q || normalise(s.name+' '+(s.family||'')).split(' ').some(w => q.includes(w))).slice(0,6);
+      const list = rows.length ? rows.map(s=>`<li><strong>${escapeHTML(s.name)}</strong>${s.access_type?`: ${escapeHTML(s.access_type)}`:''}</li>`).join('') : '';
+      return `<p>Los cursos de especialización de FP son Grados E. Requieren uno de los títulos de FP indicados para cada curso concreto y su duración debe comprobarse en TodoFP. ${rows.length?'He encontrado estas coincidencias cargadas:':''}</p>${list?`<ul>${list}</ul>`:''}${sourceLinks(['todofp-cursos-especializacion','todofp-grados-e-info','todofp-fp-cifras'])}`;
+    }
+
+    if(q.includes('fp') && (q.includes('galicia') || q.includes('xunta') || q.includes('centro') || q.includes('concello') || q.includes('plaza') || q.includes('praza'))){
+      return `<p>La oferta de FP en Galicia debe verificarse por curso, centro, localidad, modalidad, régimen y plazas en la Xunta. ITINERA v0.22 incorpora una capa de centros/oferta cuando la fuente es estructurada, pero las plazas pueden modificarse y no deben tratarse como dato definitivo sin convocatoria vigente.</p>${sourceLinks(['xunta-fp-oferta-2025-2026','xunta-fp-mapas-oferta','xunta-fp-ciclos','xunta-centros-educativos-csv'])}`;
+    }
+
+    if((q.includes('qedu') || q.includes('ruct') || q.includes('universidad') || q.includes('universidade')) && (q.includes('completo') || q.includes('todas') || q.includes('todos') || q.includes('titulos') || q.includes('títulos'))){
+      return `<p>QEDU permite consultar titulaciones oficiales universitarias ofertadas por universidades españolas y su ayuda oficial indica que no incluye títulos propios. Para verificar oficialidad administrativa de un título concreto, debe usarse RUCT. ITINERA v0.22 puede cargar datos agregados SIIU/EDUCAbase y orientar la búsqueda, pero no debe sustituir QEDU/RUCT título a título.</p>${sourceLinks(['qedu-ayuda','qedu','ruct','educabase-grados-univ-2023','educabase-masteres-univ-2023'])}`;
+    }
+
+    return '';
+  }
+
+  const previousAskV022 = askItineraBot;
+  askItineraBot = async function(text){
+    await loadV022IntegralData();
+    const specific = v022BotAnswer(text);
+    if(specific) return specific;
+    return previousAskV022(text);
+  };
+
+  init = (function(previousInit){
+    return function(){
+      previousInit();
+      setTimeout(renderV022Panels, 1400);
+      const badge=document.getElementById('updateBadge');
+      if(badge) badge.title=(badge.title||'')+' · ITINERA v0.22 macrointegral';
+    };
+  })(init);
+})();

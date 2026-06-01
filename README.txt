@@ -219,3 +219,14 @@ ITINERA v0.21.1
 - Las preguntas sobre QEDU, RUCT, oficialidad, títulos propios, créditos ECTS, másteres habilitantes y CIUG se responden antes de buscar estudios.
 - Evita que una pregunta conceptual universitaria devuelva una ficha aleatoria de FP.
 - No requiere SQL.
+
+
+ITINERA v0.22 · macrointegral
+- Crea tablas nuevas para universidad, CIUG, FP Galicia, cursos de especialización y estado integral.
+- Añade `supabase/itinera_v0_22_macrointegral_schema.sql`.
+- Añade importador `tools/official-load/import-v022-macrointegral.mjs`.
+- Añade workflow `.github/workflows/itinera-v022-macrointegral-refresh.yml`.
+- Añade paneles visuales en Inicio, Universidad, Ponderaciones y FP.
+- Añade respuestas de ItineraBot para cursos de especialización, FP Galicia, QEDU/RUCT y alcance universitario.
+- La versión no inventa datos. Lo que no pueda extraerse con seguridad queda como `in_progress_structured` o `pending_review`.
+- Requiere ejecutar SQL en Supabase antes del workflow.
