@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ITINERA | Orientación académica oficial</title>
-  <meta name="description" content="Ferramenta de orientación académica baseada en fontes oficiais para consultar itinerarios, Bacharelato, FP, universidade, ponderacións e másteres habilitantes.">
+  <meta name="description" content="Ferramenta de orientación académica conectada a fontes oficiais: itinerarios, FP, universidade, becas, cupos, ponderacións e simulación de rutas.">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -14,284 +14,190 @@
     <div class="shell topbar">
       <a class="brand" href="#inicio" data-route="inicio" aria-label="Ir ao inicio de ITINERA">
         <img src="assets/itinera-symbol.png" alt="ITINERA" class="brand-mark">
-        <div class="brand-copy">
-          <strong>ITINERA</strong>
-          <small id="brandSubtitle"></small>
-        </div>
+        <div class="brand-copy"><strong>ITINERA</strong><small id="brandSubtitle"></small></div>
       </a>
-
-      <div class="header-tools">
-        <div class="update-pill" id="updateBadge"></div>
-        <a class="header-link" href="#fuentes" data-route="fuentes" id="headerSourcesBtn"></a>
-        <a class="header-action simulator-action" href="#aventura" data-route="aventura" id="headerSimulatorBtn"></a>
-        <a class="header-action bot-action" href="#asistente" data-route="asistente" id="headerItinerabotBtn"></a>
-        <label class="lang-picker" for="languageSelect">
-          <span id="languageLabel"></span>
-          <select id="languageSelect" aria-label="Idioma da ferramenta">
-            <option value="gl">Galego</option>
-            <option value="es">Castellano</option>
-            <option value="en">English</option>
-            <option value="pt">Português</option>
-          </select>
-        </label>
+      <div class="header-actions">
+        <a href="#fuentes" data-route="fuentes" class="top-link" id="headerSourcesBtn"></a>
+        <a href="#faq" data-route="faq" class="top-link" id="headerFaqBtn"></a>
+        <a href="#aventura" data-route="aventura" class="premium-btn sim" id="headerSimulatorBtn"></a>
+        <a href="#asistente" data-route="asistente" class="premium-btn bot" id="headerItinerabotBtn"></a>
+        <span class="update-pill" id="updateBadge"></span>
+        <label class="compact-select" for="languageSelect"><span id="languageLabel"></span><select id="languageSelect"></select></label>
+        <label class="compact-select" for="fontSelect"><span id="fontLabel"></span><select id="fontSelect"></select></label>
         <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav">Menú</button>
       </div>
     </div>
-
     <nav id="mainNav" class="main-nav shell" aria-label="Navegación principal">
-      <a href="#inicio" data-route="inicio" class="active" id="navInicio"></a>
-      <a href="#itinerarios" data-route="itinerarios" id="navItinerarios"></a>
-      <a href="#bachillerato" data-route="bachillerato" id="navBach"></a>
-      <a href="#ponderaciones" data-route="ponderaciones" id="navPonderaciones"></a>
-      <a href="#fp" data-route="fp" id="navFP"></a>
-      <a href="#universidad" data-route="universidad" id="navUniversidad"></a>
-      <a href="#aventura" data-route="aventura" id="navAventura"></a>
+      <a href="#inicio" data-route="inicio" class="active nav-home" id="navInicio"></a>
+      <details class="official-dropdown" id="officialDropdown">
+        <summary id="officialLinksSummary">Enlaces oficiais</summary>
+        <div class="official-menu">
+          <a href="#itinerarios" data-route="itinerarios" id="navItinerarios"></a>
+          <a href="#bachillerato" data-route="bachillerato" id="navBach"></a>
+          <a href="#ponderaciones" data-route="ponderaciones" id="navPonderaciones"></a>
+          <a href="#fp" data-route="fp" id="navFP"></a>
+          <a href="#estudios" data-route="estudios" id="navEstudios">Todos os estudos</a>
+          <a href="#pruebas" data-route="pruebas" id="navPruebas">Probas de acceso</a>
+          <a href="#universidad" data-route="universidad" id="navUniversidad"></a>
+          <a href="#becas" data-route="becas" id="navBecas"></a>
+          <a href="#cupos" data-route="cupos" id="navCupos"></a>
+          <a href="#convalidaciones" data-route="convalidaciones" id="navConvalidaciones">Convalidaciones</a>
+        </div>
+      </details>
     </nav>
   </header>
 
   <main id="contenido" class="shell">
     <section id="inicio" class="view active-view" tabindex="-1">
-      <div class="hero hero-single">
-        <div class="hero-text card-soft">
+      <div class="hero-grid">
+        <article class="hero-card green-card">
           <p class="eyebrow" id="heroEyebrow"></p>
           <h1 id="heroTitle"></h1>
           <p class="lead" id="heroLead"></p>
           <div class="hero-actions">
-            <a class="button primary" href="#asistente" data-route="asistente" id="heroPrimaryCta"></a>
-            <a class="button ghost" href="#fuentes" data-route="fuentes" id="heroSecondaryCta"></a>
+            <a href="#aventura" data-route="aventura" class="button action-sim" id="heroSimulatorCta"></a>
+            <a href="#asistente" data-route="asistente" class="button action-bot" id="heroBotCta"></a>
           </div>
-        </div>
+        </article>
+        <article class="living-map-card" aria-label="Mapa visual académico">
+          
+          
+          <div class="academic-landscape compass-hero" aria-hidden="true">
+            <div class="compass-core">
+              <span class="compass-ring"></span>
+              <span class="compass-needle"></span>
+              <span class="compass-center"></span>
+              <span class="compass-n">N</span>
+              <span class="compass-e">E</span>
+              <span class="compass-s">S</span>
+              <span class="compass-w">O</span>
+            </div>
+            <span class="study-word word-a"><i>◈</i>Bacharelato</span>
+            <span class="study-word word-b"><i>▣</i>FP</span>
+            <span class="study-word word-c"><i>◎</i>ABAU</span>
+            <span class="study-word word-d"><i>✦</i>Grao</span>
+            <span class="study-word word-e"><i>◇</i>Máster</span>
+            <span class="study-word word-f"><i>☉</i>Créditos</span>
+            <span class="study-word word-g"><i>✓</i>Título oficial</span>
+            <span class="study-word word-h"><i>↗</i>Itinerario</span>
+            <span class="study-word word-i"><i>✧</i>Becas</span>
+            <span class="study-word word-j"><i>⌂</i>Centros</span>
+            <span class="study-glow glow-a"></span>
+            <span class="study-glow glow-b"></span>
+            <span class="study-glow glow-c"></span>
+          </div>
+        </article>
       </div>
 
-      <section class="panel">
-        <div class="section-heading compact">
-          <p class="eyebrow" id="homeQuestionsEyebrow"></p>
-          <h2 id="homeQuestionsTitle"></h2>
-        </div>
-        <div id="homeQuestions" class="grid three"></div>
-      </section>
-
-      <section class="panel">
-        <div class="section-heading compact">
-          <p class="eyebrow" id="finderEyebrow"></p>
-          <h2 id="finderTitle"></h2>
-          <p id="finderDescription"></p>
-        </div>
+      <section class="panel search-panel">
+        <div class="section-heading compact"><p class="eyebrow" id="finderEyebrow"></p><h2 id="finderTitle"></h2><p id="finderDescription"></p></div>
         <div class="finder">
           <label for="studySearch" id="finderLabel"></label>
-          <div class="search-row">
-            <input id="studySearch" type="search" autocomplete="off">
-            <button id="studySearchBtn" class="button primary"></button>
-          </div>
-          <div class="search-filters" aria-label="Filtros do buscador">
+          <div class="search-row"><input id="studySearch" type="search" autocomplete="off"><button id="studySearchBtn" class="button primary"></button></div>
+          <div class="search-filters">
             <label><span id="typeFilterLabel"></span><select id="studyTypeFilter"></select></label>
             <label><span id="familyFilterLabel"></span><select id="familyFilter"></select></label>
-            <label class="residence-filter"><span id="residenceFilterLabel"></span><input id="residenceFilter" type="text"></label>
+            <label><span id="residenceFilterLabel"></span><input id="residenceFilter" type="text"></label>
           </div>
           <div class="quick-tags" id="quickTags"></div>
           <div id="studyResults" class="results" aria-live="polite"></div>
         </div>
       </section>
+
+      <section class="panel cards-panel"><div class="section-heading compact"><p class="eyebrow" id="homeQuestionsEyebrow"></p><h2 id="homeQuestionsTitle"></h2></div><div id="homeQuestions" class="grid three"></div></section>
     </section>
 
-    <section id="itinerarios" class="view" tabindex="-1">
-      <div class="section-heading wide">
-        <p class="eyebrow" id="routesEyebrow"></p>
-        <h1 id="routesTitle"></h1>
-        <p id="routesDescription"></p>
-      </div>
-      <div id="routeCards" class="grid two"></div>
-    </section>
 
-    <section id="bachillerato" class="view" tabindex="-1">
+    <section id="estudios" class="view" tabindex="-1">
       <div class="section-heading wide">
-        <p class="eyebrow" id="bachEyebrow"></p>
-        <h1 id="bachTitle"></h1>
-        <p id="bachDescription"></p>
+        <p class="eyebrow" id="studiesEyebrow"></p>
+        <h1 id="studiesTitle"></h1>
+        <p id="studiesDescription"></p>
       </div>
-      <div id="bachCards" class="grid two"></div>
-      <div class="warning-box" id="bachWarning"></div>
-    </section>
-
-    <section id="ponderaciones" class="view" tabindex="-1">
-      <div class="section-heading wide">
-        <p class="eyebrow" id="pondEyebrow"></p>
-        <h1 id="pondTitle"></h1>
-        <p id="pondDescription"></p>
-      </div>
-      <div class="grid two">
-        <article class="content-card highlighted">
-          <h2 id="ruleCardTitle"></h2>
-          <p id="ruleCardP1"></p>
-          <p id="ruleCardP2"></p>
-        </article>
-        <article class="content-card">
-          <h2 id="pondSourceTitle"></h2>
-          <p id="pondSourceDescription"></p>
-          <div class="link-stack" id="ponderationLinks"></div>
-        </article>
-      </div>
-      <section class="panel">
-        <div class="section-heading compact">
-          <h2 id="areaPanelTitle"></h2>
-          <p id="areaPanelDescription"></p>
+      <div class="panel studies-browser-panel">
+        <div class="study-browser-toolbar">
+          <label for="allStudiesSearch" id="allStudiesSearchLabel"></label>
+          <input id="allStudiesSearch" type="search" autocomplete="off">
+          <label for="allStudiesType" id="allStudiesTypeLabel"></label>
+          <select id="allStudiesType"></select>
+          <label for="allStudiesFamily" id="allStudiesFamilyLabel"></label>
+          <select id="allStudiesFamily"></select>
+          <button type="button" class="button primary studies-search-btn" id="allStudiesSearchBtn">Buscar coincidencias</button>
         </div>
-        <div id="areaButtons" class="quick-tags"></div>
-        <div id="areaOutput" class="results"></div>
-      </section>
+        <div class="warning-box small" id="allStudiesNote"></div>
+        <div id="allStudiesList" class="all-studies-list"></div>
+      </div>
     </section>
 
-    <section id="fp" class="view" tabindex="-1">
-      <div class="section-heading wide">
-        <p class="eyebrow" id="fpEyebrow"></p>
-        <h1 id="fpTitle"></h1>
-        <p id="fpDescription"></p>
-      </div>
-      <div id="fpCards" class="grid two"></div>
-    </section>
-
-    <section id="universidad" class="view" tabindex="-1">
-      <div class="section-heading wide">
-        <p class="eyebrow" id="uniEyebrow"></p>
-        <h1 id="uniTitle"></h1>
-        <p id="uniDescription"></p>
-      </div>
-      <div id="universityCards" class="grid two"></div>
-      <div class="section-heading compact extra-top">
-        <h2 id="mastersTitle"></h2>
-        <p id="mastersDescription"></p>
-      </div>
-      <div id="masterCards" class="grid two"></div>
-    </section>
+    <section id="itinerarios" class="view" tabindex="-1"><div class="section-heading wide"><p class="eyebrow" id="routesEyebrow"></p><h1 id="routesTitle"></h1><p id="routesDescription"></p></div><div id="routeCards" class="grid two source-oriented"></div></section>
+    <section id="bachillerato" class="view" tabindex="-1"><div class="section-heading wide"><p class="eyebrow" id="bachEyebrow"></p><h1 id="bachTitle"></h1><p id="bachDescription"></p></div><div id="bachCards" class="grid two source-oriented"></div><div class="warning-box" id="bachWarning"></div></section>
+    <section id="ponderaciones" class="view" tabindex="-1"><div class="section-heading wide"><p class="eyebrow" id="pondEyebrow"></p><h1 id="pondTitle"></h1><p id="pondDescription"></p></div><div class="grid two"><article class="content-card highlighted"><h2 id="ruleCardTitle"></h2><p id="ruleCardP1"></p><p id="ruleCardP2"></p></article><article class="content-card"><h2 id="pondSourceTitle"></h2><p id="pondSourceDescription"></p><div id="ponderationLinks" class="link-stack"></div></article></div><section class="panel"><div class="section-heading compact"><h2 id="areaPanelTitle"></h2><p id="areaPanelDescription"></p></div><div id="areaButtons" class="quick-tags"></div><div id="areaOutput" class="results"></div></section></section>
+    <section id="fp" class="view" tabindex="-1"><div class="section-heading wide"><p class="eyebrow" id="fpEyebrow"></p><h1 id="fpTitle"></h1><p id="fpDescription"></p></div><div id="fpCards" class="grid two source-oriented"></div></section>
+    <section id="universidad" class="view" tabindex="-1"><div class="section-heading wide"><p class="eyebrow" id="uniEyebrow"></p><h1 id="uniTitle"></h1><p id="uniDescription"></p></div><div id="universityCards" class="grid two source-oriented"></div><div class="section-heading compact extra-top"><h2 id="mastersTitle"></h2><p id="mastersDescription"></p></div><div id="masterCards" class="grid two"></div></section>
 
     <section id="aventura" class="view" tabindex="-1">
-      <div class="section-heading wide">
-        <p class="eyebrow" id="adventureEyebrow"></p>
-        <h1 id="adventureTitle"></h1>
-        <p id="adventureDescription"></p>
-      </div>
-      <div class="adventure-card">
-        <div class="adventure-stage">
-          <h2 id="adventureStartTitle"></h2>
-          <div id="adventureStartOptions" class="adventure-options"></div>
-        </div>
-        <div class="adventure-stage">
-          <h2 id="adventureGoalTitle"></h2>
-          <div id="adventureGoalOptions" class="adventure-options"></div>
-          <label class="adventure-target-label" for="adventureGoalSearch" id="adventureGoalSearchLabel"></label>
-          <input id="adventureGoalSearch" class="adventure-target-input" type="search" autocomplete="off">
-        </div>
-        <div id="adventureResult" class="adventure-result board-view"></div>
-      </div>
-    </section>
-
-    <section id="fuentes" class="view" tabindex="-1">
-      <div class="section-heading wide">
-        <p class="eyebrow" id="sourcesEyebrow"></p>
-        <h1 id="sourcesTitle"></h1>
-        <p id="sourcesDescription"></p>
-      </div>
-      <div class="license-box">
-        <h2 id="licenseTitle"></h2>
-        <p id="licenseDescription"></p>
-        <a id="licenseLink" class="button ghost" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a>
-      </div>
-      <div class="filters" id="sourceFilters" role="group" aria-label="Filtrar fontes"></div>
-      <div id="sourceCards" class="grid two"></div>
-    </section>
-
-    <section id="asistente" class="view" tabindex="-1">
-      <div class="section-heading wide">
-        <p class="eyebrow" id="chatEyebrow"></p>
-        <h1 id="chatTitle"></h1>
-        <p id="chatDescription"></p>
-      </div>
-      <div class="chat-layout">
-        <section class="chat-panel">
-          <div id="chatLog" class="chat-log" aria-live="polite"></div>
-          <form id="chatForm" class="chat-form">
-            <label for="chatInput" id="chatLabel"></label>
-            <div class="chat-row">
-              <input id="chatInput" type="text">
-              <button class="button primary" type="submit" id="chatSend"></button>
-            </div>
-          </form>
-        </section>
-        <aside class="chat-help">
-          <h2 id="chatSuggestionsTitle"></h2>
-          <div id="questionChips"></div>
-          <div class="warning-box small" id="chatWarning"></div>
+      <div class="section-heading wide"><p class="eyebrow" id="adventureEyebrow"></p><h1 id="adventureTitle"></h1><p id="adventureDescription"></p></div>
+      <div class="simulator-shell">
+        <aside class="sim-wizard">
+          <div class="wizard-progress"><span id="stepDot1" class="active">1</span><span id="stepDot2">2</span><span id="stepDot3">3</span></div>
+          <section class="wizard-step active" id="wizardStep1"><h2 id="adventureStartTitle"></h2><div id="adventureStartOptions" class="adventure-options"></div></section>
+          <section class="wizard-step" id="wizardStep2"><h2 id="adventureGoalTitle"></h2><input id="adventureGoalSearch" class="adventure-target-input" type="search" autocomplete="off">
+              <div id="adventureSuggestions" class="adventure-suggestions" role="listbox" aria-label="Suxestións de estudos"></div><div id="adventureGoalOptions" class="adventure-options compact-options"></div><div id="adventureDisambiguation" class="disambiguation"></div></section>
+          <section class="wizard-step" id="wizardStep3"><h2 id="adventureQuestionsTitle"></h2><div id="adventureQuestions" class="adventure-questions"></div><button type="button" class="button pdf-button full-width" id="adventurePdfBtn"></button></section>
         </aside>
+        <section class="route-stage" id="adventureResult" aria-live="polite"></section>
       </div>
     </section>
+
+
+    <section id="pruebas" class="view" tabindex="-1">
+      <div class="section-heading wide">
+        <p class="eyebrow" id="accessEyebrow"></p>
+        <h1 id="accessTitle"></h1>
+        <p id="accessDescription"></p>
+      </div>
+      <div id="accessCards" class="grid two"></div>
+    </section>
+
+    <section id="becas" class="view" tabindex="-1"><div class="section-heading wide"><p class="eyebrow" id="scholarshipEyebrow"></p><h1 id="scholarshipTitle"></h1><p id="scholarshipDescription"></p></div><div id="scholarshipCards" class="grid two"></div></section>
+    <section id="cupos" class="view" tabindex="-1"><div class="section-heading wide"><p class="eyebrow" id="reservedEyebrow"></p><h1 id="reservedTitle"></h1><p id="reservedDescription"></p></div><div id="reservedCards" class="grid two"></div></section>
+
+    <section id="convalidaciones" class="view" tabindex="-1">
+      <div class="section-heading wide">
+        <p class="eyebrow" id="convEyebrow"></p>
+        <h1 id="convTitle"></h1>
+        <p id="convDescription"></p>
+      </div>
+      <div id="convalidationCards" class="grid three"></div>
+    </section>
+
+    <section id="faq" class="view" tabindex="-1"><div class="section-heading wide"><p class="eyebrow" id="faqEyebrow"></p><h1 id="faqTitle"></h1><p id="faqDescription"></p></div><input id="faqSearch" class="faq-search" type="search"><div id="faqList" class="faq-list"></div></section>
+
+    <section id="fuentes" class="view" tabindex="-1"><div class="section-heading wide"><p class="eyebrow" id="sourcesEyebrow"></p><h1 id="sourcesTitle"></h1><p id="sourcesDescription"></p></div><div class="license-box"><h2 id="licenseTitle"></h2><p id="licenseDescription"></p><a class="button ghost" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a></div><div id="sourceFilters" class="filters"></div><div id="sourceCards" class="grid two"></div></section>
+
+    <section id="asistente" class="view" tabindex="-1"><div class="section-heading wide"><p class="eyebrow" id="chatEyebrow"></p><h1 id="chatTitle"></h1><p id="chatDescription"></p></div><div class="chat-layout"><section class="chat-panel"><div id="chatLog" class="chat-log" aria-live="polite"></div><form id="chatForm" class="chat-form"><label for="chatInput" id="chatLabel"></label><div class="chat-row"><input id="chatInput" type="text"><button class="button action-bot" type="submit" id="chatSend"></button></div></form></section><aside class="chat-help"><h2 id="chatSuggestionsTitle"></h2><div id="questionChips"></div><div class="warning-box small" id="chatWarning"></div></aside></div></section>
   </main>
 
-  <footer class="site-footer">
-    <div class="shell footer-inner">
-      <div class="footer-brand">
-        <img src="assets/tribeca-shield.png" alt="Tribeca Academia" class="footer-mark">
-        <div>
-          <p class="footer-brand-name">Tribeca Academia</p>
-          <p class="footer-brand-sub" id="footerBrandSub"></p>
-          <p class="footer-address">Calle Rafael Juan, 33, 15130, Corcubión, A Coruña</p>
-        </div>
-      </div>
-      <div class="footer-description">
-        <div id="footerDescription"></div>
-        <a class="footer-license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="noopener noreferrer">Creative Commons CC BY-NC-SA 4.0</a>
-      </div>
-      <div class="footer-links">
-        <button type="button" class="footer-link-button" data-modal-open="aboutModal" id="footerAbout"></button>
-        <button type="button" class="footer-link-button" data-modal-open="legalModal" id="footerLegal"></button>
-        <button type="button" class="footer-link-button" data-modal-open="contactModal" id="footerContact"></button>
-      </div>
-    </div>
-  </footer>
-
+  <footer class="site-footer"><div class="shell footer-inner"><div class="footer-brand"><img src="assets/tribeca-shield.png" alt="Tribeca Academia" class="footer-mark"><div><p class="footer-brand-name">Tribeca Academia</p><p class="footer-brand-sub" id="footerBrandSub"></p><p class="footer-address">Calle Rafael Juan, 33, 15130, Corcubión, A Coruña</p></div></div><div class="footer-description" id="footerDescription"></div><div class="footer-license"><strong>Creative Commons</strong><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a></div><div class="footer-links"><button type="button" class="footer-link-button" data-modal-open="aboutModal" id="footerAbout"></button><button type="button" class="footer-link-button" data-modal-open="legalModal" id="footerLegal"></button><button type="button" class="footer-link-button" data-modal-open="contactModal" id="footerContact"></button></div></div></footer>
   <div class="modal-backdrop" id="modalBackdrop" hidden></div>
+  <section class="modal" id="aboutModal" hidden aria-modal="true" role="dialog"><div class="modal-header"><h2 id="aboutModalTopLabel"></h2><button type="button" class="modal-close" data-modal-close>×</button></div><div class="modal-body about-layout"><img src="assets/patricia-tribeca.png" alt="Retrato profesional" class="about-photo"><div><p class="modal-kicker" id="aboutKicker"></p><h3 id="aboutTitle"></h3><p id="aboutP1"></p><p id="aboutP2"></p><p id="aboutP3"></p></div></div></section>
+  <section class="modal" id="legalModal" hidden aria-modal="true" role="dialog"><div class="modal-header"><h2 id="legalModalTopLabel"></h2><button type="button" class="modal-close" data-modal-close>×</button></div><div class="modal-body"><h3 id="legalTitle"></h3><p id="legalP1"></p><p id="legalP2"></p><p id="legalP3"></p><p id="legalP4"></p></div></section>
+  <section class="modal" id="contactModal" hidden aria-modal="true" role="dialog"><div class="modal-header"><h2 id="contactModalTopLabel"></h2><button type="button" class="modal-close" data-modal-close>×</button></div><div class="modal-body"><h3 id="contactTitle"></h3><p id="contactP1"></p><p id="contactP2"></p><p id="contactP3"></p></div></section>
 
-  <section class="modal" id="aboutModal" hidden aria-modal="true" role="dialog" aria-labelledby="aboutTitle">
+  <section class="modal detail-modal" id="studyDetailModal" hidden aria-modal="true" role="dialog" aria-labelledby="studyDetailTitle">
     <div class="modal-header">
-      <h2 id="aboutModalTopLabel"></h2>
+      <h2 id="studyDetailTopLabel">Ficha del estudio</h2>
       <button type="button" class="modal-close" data-modal-close aria-label="Pechar">×</button>
     </div>
-    <div class="modal-body about-layout">
-      <img src="assets/patricia-tribeca.png" alt="Retrato profesional" class="about-photo">
-      <div>
-        <p class="modal-kicker" id="aboutKicker"></p>
-        <h3 id="aboutTitle"></h3>
-        <p id="aboutP1"></p>
-        <p id="aboutP2"></p>
-        <p id="aboutP3"></p>
-      </div>
-    </div>
+    <div class="modal-body" id="studyDetailBody"></div>
   </section>
 
-  <section class="modal" id="legalModal" hidden aria-modal="true" role="dialog" aria-labelledby="legalTitle">
+  <section class="modal detail-modal route-link-modal" id="routeLinkModal" hidden aria-modal="true" role="dialog" aria-labelledby="routeLinkTitle">
     <div class="modal-header">
-      <h2 id="legalModalTopLabel"></h2>
+      <h2 id="routeLinkTitle">Información del enlace</h2>
       <button type="button" class="modal-close" data-modal-close aria-label="Pechar">×</button>
     </div>
-    <div class="modal-body">
-      <h3 id="legalTitle"></h3>
-      <p id="legalP1"></p>
-      <p id="legalP2"></p>
-      <p id="legalP3"></p>
-      <p id="legalP4"></p>
-    </div>
-  </section>
-
-  <section class="modal" id="contactModal" hidden aria-modal="true" role="dialog" aria-labelledby="contactTitle">
-    <div class="modal-header">
-      <h2 id="contactModalTopLabel"></h2>
-      <button type="button" class="modal-close" data-modal-close aria-label="Pechar">×</button>
-    </div>
-    <div class="modal-body">
-      <h3 id="contactTitle"></h3>
-      <p id="contactP1"></p>
-      <p id="contactP2"></p>
-      <p id="contactP3"></p>
-    </div>
+    <div class="modal-body" id="routeLinkBody"></div>
   </section>
 
   <script src="app.js"></script>

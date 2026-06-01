@@ -1,45 +1,135 @@
-ITINERA v0.5
+ITINERA v0.8 fase 1
 
 Cambios principales:
-- El buscador de estudios ya no permite introducir ciudad ni centro como filtros directos.
-- Se mantiene una localidad de residencia opcional para poder priorizar ofertas cercanas cuando el backend oficial esté activo.
-- El buscador permite buscar sin introducir nombre de estudio, usando solo tipo y/o familia.
-- El buscador muestra la estructura preparada para oferta en Galicia por provincias y centros, y evita inventar centros cuando no hay actualización oficial conectada.
-- ItineraBot tiene botón propio y diferenciado en el encabezado.
-- “Simula tu itinerario” tiene botón propio y diferenciado en el encabezado.
-- El apartado Fuentes oficiales pasa a la zona derecha del encabezado.
-- La licencia Creative Commons CC BY-NC-SA 4.0 aparece de forma clara en el pie de página.
-- La portada incorpora un bloque verde para mejorar contraste visual.
-- El simulador de itinerario se rediseña con tablero gráfico de nodos, más parecido a un recorrido visual.
-- Se añade exportación a PDF mediante impresión del informe generado por el navegador.
-- Se añaden archivos de backend para Netlify Functions con caché oficial y actualización programada.
+- Rediseño de portada con mejor contraste en el bloque verde.
+- Nueva animación de portada con paisaje académico, nodos y camino más cuidado.
+- Idiomas disponibles: gallego por defecto, castellano, inglés, francés, polaco y alemán.
+- Selector de idioma compacto.
+- Selector de tipografía: predeterminada, Comic Sans y modo de lectura compatible con dislexia sin incluir archivos de fuentes externas.
+- Simulador reorganizado en tres pasos: punto de partida, meta y ajuste de ruta.
+- El simulador avanza automáticamente del paso 1 al 2 y del 2 al 3.
+- Desambiguación cuando una palabra puede corresponder a varios estudios.
+- Electricidad ya no deriva a soldadura; muestra opciones de Electricidad y Electrónica.
+- Tarjetas de ruta clicables y sin solapamientos.
+- Visualización de bifurcaciones cuando existen varias rutas.
+- El simulador muestra materias, ponderaciones cuando aplican, disponibilidad o fuente oficial donde comprobarla.
+- PDFs premium mediante impresión: cabecera con logo de ITINERA y pie con Tribeca Academia, dirección, licencia y fecha.
+- Nuevas secciones: becas oficiales, cupos/reservas de plazas y FAQ extensa.
+- ItineraBot ampliado para notas de corte, becas, cupos, matemáticas/psicología, FP y estudios concretos.
+- Netlify Functions actualizadas con soporte opcional para Supabase.
 
-Backend / actualización:
-- Se incluye netlify.toml.
-- Se incluye package.json con @netlify/blobs.
-- Se incluye netlify/functions/studies-search.mjs.
-- Se incluye netlify/functions/refresh-official-data.mjs, programada diariamente.
-- Se incluye data/studies.seed.json como base inicial/fallback.
+Archivos nuevos/importantes:
+- supabase/itinera_v0_8_schema.sql
 
-Importante:
-- Para actualización constante real, esta versión debe desplegarse en Netlify con Functions y Netlify Blobs.
-- No requiere Supabase.
-- No requiere SQL.
-- Si se publica solo como archivos estáticos, funcionará con la base local y enlaces oficiales, pero no con actualización persistente automática.
+Supabase:
+- Para activar la base de datos, ejecutar supabase/itinera_v0_8_schema.sql en Supabase SQL Editor.
+- Después, en Netlify, añadir variables de entorno:
+  SUPABASE_URL
+  SUPABASE_SERVICE_ROLE_KEY
+- Sin esas variables, la app funciona con data/studies.seed.json y Netlify Blobs.
 
-Archivos modificados/nuevos:
-- index.html
-- styles.css
-- app.js
-- README.txt
-- netlify.toml
-- package.json
-- data/studies.seed.json
-- netlify/functions/studies-search.mjs
-- netlify/functions/refresh-official-data.mjs
+No se debe usar el navegador para subir carpetas a GitHub. Usar GitHub Desktop, commit y push.
 
 
-ITINERA v0.6
-- Corrección de Netlify Functions: eliminado el uso de __filename y __dirname para evitar el error 'Identifier __filename has already been declared'.
-- Se mantiene la lectura de data/studies.seed.json mediante import.meta.url.
-- No requiere Supabase ni SQL.
+ITINERA v0.9
+- Corrección visual del bloque verde de portada para mejorar contraste y legibilidad.
+- Sustitución del menú principal de Itinerarios, Bachillerato, Ponderaciones, FP, Universidad, Becas y Cupos por un desplegable único llamado “Enlaces oficiales”.
+- Reducción de escala visual general para que la herramienta no se vea tan ampliada.
+- Mejora del mapa visual de portada con más movimiento, profundidad y acabado premium.
+- Simulador reforzado: más metas visibles, desambiguación antes de avanzar, bifurcaciones por ruta y tarjetas clicables sin solaparse.
+- El simulador ya no debería llevar “electricidad” a soldadura: ofrece opciones de Electricidad y Electrónica y familias afines.
+- Añadidos más estudios y alias a la base local, especialmente de Electricidad y Electrónica, Energía, Educación, ADE y Biología.
+- Se amplía la sección Universidad con información sobre ECTS, títulos oficiales, títulos propios, RUCT, QEDU, CIUG y másteres habilitantes.
+- ItineraBot mejora respuestas sobre discapacidad/enfermedad y reservas de plazas, notas de corte, ECTS, becas, títulos oficiales, másteres habilitantes y materias difíciles.
+- FAQ ampliada con más preguntas sobre sistema universitario, créditos, títulos oficiales, notas de corte, becas, cupos, FP y acceso.
+- Los PDFs mantienen cabecera con logo de ITINERA y pie de Tribeca Academia.
+
+No requiere cambios adicionales de Supabase en esta fase. El esquema de Supabase de v0.8 sigue siendo válido.
+
+
+ITINERA v0.10
+- Corrección del simulador para evitar rutas imposibles, por ejemplo, ESO → ciclo superior como salto directo.
+- Las rutas distinguen entre acceso directo, indicado con flecha, y puntos críticos/pruebas de acceso, indicados con nodo parpadeante clicable.
+- Añadidas rutas alternativas válidas: ESO → Bachillerato → ciclo superior; ESO → grado medio → ciclo superior; y vía con prueba de acceso a grado superior cuando proceda.
+- Añadida información específica sobre pruebas de acceso a ciclos formativos de grado medio y grado superior en Galicia.
+- Añadido apartado nuevo “Pruebas de acceso” dentro de “Enlaces oficiales”.
+- Añadidas fuentes oficiales de Xunta FP sobre pruebas de acceso, convocatorias, información general y exámenes de años anteriores.
+- ItineraBot incorpora una función backend opcional `itinerabot-rag.mjs` preparada para funcionar con OpenAI Responses API.
+- La función de IA documental exige `OPENAI_API_KEY`; si no está configurada, la app mantiene el modo local prudente.
+- No requiere SQL nuevo. El esquema de Supabase de v0.8 sigue siendo válido.
+- Para activar el modo IA documental, añadir en Netlify las variables:
+  OPENAI_API_KEY
+  ITINERA_OPENAI_MODEL, opcional
+
+
+ITINERA v0.11
+- Rediseño del simulador para que la ruta sea más serena, menos alarmista y visualmente más clara.
+- Las conexiones entre pasos ahora son clicables: flecha para acceso directo, conector destacado para prueba/requisito y conector crítico para PAU/ABAU, ponderaciones o admisión.
+- Al hacer clic en tarjetas o conectores del simulador se abre una ventana modal con la información, sin desplazar al usuario hacia abajo.
+- La portada dinámica se reorienta visualmente hacia el símbolo de ITINERA, en lugar de una escena genérica.
+- El desplegable de “Enlaces oficiales” se repliega automáticamente al seleccionar una opción.
+- Se añade la sección “Todos los estudios” con buscador, filtro por tipo y filtro por familia.
+- Las fichas completas de estudio se abren en pantalla modal y contienen ruta, materias/base, ponderaciones cuando proceda, información importante, demanda/empleo, dónde comprobar oferta, PDF, simulador y fuentes oficiales.
+- Se corrige la sección Universidad para que no muestre fichas de técnico superior dentro del bloque de másteres habilitantes.
+- Se añade FAQ: diferencia entre doble titulación y titulación combinada.
+- Se refuerza la explicación de que el listado completo requiere ingesta oficial en Supabase; la base local muestra las fichas incorporadas y enlaza siempre a fuentes oficiales.
+- Los PDF se reformulan con una estructura más premium: cabecera con ITINERA, cuerpo organizado y pie con Tribeca Academia.
+
+No requiere SQL nuevo. El esquema de Supabase de v0.8 sigue siendo válido para la fase de ingesta completa.
+
+
+ITINERA v0.12
+- La portada dinámica se rediseña tomando el símbolo de ITINERA como elemento central: no aparecen palabras ESO/UNI/FP/META y se añaden caminos animados con puntos de luz.
+- El apartado Pruebas de acceso se convierte en una presentación visual con tarjetas, flujo resumido y botones para abrir detalles en ventana.
+- Mejora de contraste del botón “Pruebas de acceso” dentro del desplegable.
+- El menú desplegable “Enlaces oficiales” se reordena por grupos lógicos.
+- El apartado Todos los estudios se organiza por tipo y familia, muestra estudios disponibles de primeras y añade botón “Buscar coincidencias”.
+- Se añade Grado en Criminología con aliases como criminologia/criminología/criminalística/seguridad.
+- Se añade sección “Convalidaciones y créditos”.
+- Se incorpora información sobre convalidación de módulos de FP, reconocimiento de créditos universitarios, reconocimiento desde FP superior a grado, cambios de grado y doble titulación/titulación combinada.
+- Se amplía la FAQ con preguntas sobre convalidaciones, reconocimiento de créditos y Criminología.
+- La FAQ se organiza por grupos temáticos.
+- No requiere SQL nuevo. La ingesta completa de todos los títulos oficiales sigue correspondiendo a la fase Supabase.
+
+Fuentes oficiales incorporadas o reforzadas:
+- Ministerio de Educación: convalidaciones de estudios nacionales y FP.
+- BOE / Real Decreto 822/2021: reconocimiento y transferencia de créditos.
+- QEDU y RUCT para verificación de grados como Criminología.
+
+
+ITINERA v0.13
+- Se cambia por completo la presentación dinámica de portada: desaparece el planteamiento de logo/camino anterior y se sustituye por palabras e iconos dinámicos relacionados con orientación académica, estudios, becas, ABAU, másteres, créditos e itinerarios.
+- Se corrige el menú desplegable “Enlaces oficiales”: los enlaces vuelven a funcionar tras agruparse y el menú se repliega al seleccionar una opción.
+- El buscador del paso 2 del simulador muestra sugerencias desde la tercera letra y se actualiza a medida que se escribe.
+- Las sugerencias del simulador permiten seleccionar directamente el estudio meta.
+- Se eliminan los círculos visuales bajo las flechas de acceso directo en el simulador.
+- Las rutas largas del simulador ya no quedan cortadas: ahora permiten salto de línea y flujo completo.
+- Se refuerza el movimiento visual del simulador sin dificultar la lectura.
+- La FAQ se ajusta para evitar cortes y permitir navegación vertical normal.
+- No requiere SQL nuevo. La ingesta completa de todos los estudios oficiales sigue pendiente de fase Supabase.
+
+
+ITINERA v0.14
+- La presentación dinámica de portada se cambia a una brújula central, sin logo de ITINERA ni otros dibujos centrales.
+- Se mantienen palabras e iconos dinámicos relacionados con orientación académica y estudios.
+- Se corrige el error de ponderaciones que podía mostrar: “Materias que poden ponderar máis: (), (), ()”.
+- El simulador recibe una capa visual más premium: tarjetas con más profundidad, fondo refinado, rutas más amplias y conectores más limpios.
+- Se refuerza la navegación del desplegable “Enlaces oficiales” con un sistema robusto por delegación de eventos.
+- Las sugerencias del simulador mantienen aviso de consulta oficial si un estudio no está todavía incorporado a la base local.
+- No requiere SQL nuevo.
+
+Nota importante:
+El buscador no ofrece literalmente todos los estudios existentes porque la base local actual es parcial. Para cubrir todos los títulos oficiales hace falta completar la fase de ingesta en Supabase desde fuentes oficiales: TodoFP/Xunta FP para ciclos, QEDU/RUCT para universidad, CIUG para acceso en Galicia y otras fuentes oficiales según enseñanzas.
+
+
+ITINERA v0.15 · Fase 2
+- Se añade arquitectura Supabase real para catálogo oficial.
+- Se añade SQL específico: `supabase/itinera_v0_15_phase2_schema.sql`.
+- Se añade función de ingesta oficial: `/.netlify/functions/import-official-data`.
+- Se añade función de estado del catálogo: `/.netlify/functions/catalog-status`.
+- Se actualiza `studies-search.mjs` para consultar Supabase y usar seed solo como fallback.
+- Se actualiza `itinerabot-rag.mjs` para recuperar contexto desde Supabase cuando esté disponible.
+- Se añade cliente común `netlify/functions/_lib/supabase.mjs`.
+- Se añade guía: `INSTRUCCIONES_SUPABASE_FASE2.md`.
+- Esta fase requiere ejecutar SQL en Supabase y añadir variables de entorno en Netlify.
+- La ingesta completa de fuentes oficiales debe validarse progresivamente. ITINERA no debe anunciar “todos los estudios” hasta que `catalog-status` confirme cobertura suficiente y se revisen los datos críticos.

@@ -7,3 +7,12 @@
 
 [functions."refresh-official-data"]
   schedule = "0 5 * * *"
+
+[functions."import-official-data"]
+  timeout = 26
+
+[functions."catalog-status"]
+  timeout = 10
+
+[functions."itinerabot-rag"]
+  timeout = 26

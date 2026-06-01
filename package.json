@@ -1,10 +1,11 @@
 {
-  "name": "itinera-v0-5",
-  "version": "0.5.0",
+  "name": "itinera-v0-15",
+  "version": "0.15.0-phase2",
   "private": true,
   "type": "module",
-  "description": "ITINERA: orientación académica con backend de actualización oficial para Netlify Functions.",
+  "description": "ITINERA: orientación académica con Supabase, ingesta oficial, buscador y RAG documental.",
   "dependencies": {
-    "@netlify/blobs": "^8.1.0"
+    "@netlify/blobs": "^8.1.0",
+    "@supabase/supabase-js": "^2.45.4"
   }
 }
