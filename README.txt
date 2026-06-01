@@ -178,3 +178,10 @@ ITINERA v0.18 · ItineraBot
 - Se filtran fuentes técnicas de OpenAI en la interfaz del alumnado.
 - Se añade workflow `deploy-itinerabot.yml` para desplegar la Edge Function desde GitHub Actions.
 - La IA completa requiere desplegar la función en Supabase y configurar `OPENAI_API_KEY`.
+
+
+ITINERA v0.18.1
+- Añade cache busting en index.html para que GitHub Pages cargue app.js?v=0.18.1 y app-config.js?v=0.18.1.
+- Refuerza ItineraBot para que nunca muestre respuestas técnicas internas sobre OpenAI/implementación.
+- Elimina fuentes técnicas de OpenAI de la base local visible.
+- Corrige de forma dura el fallback local de ItineraBot aunque la Edge Function no esté desplegada.

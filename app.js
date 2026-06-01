@@ -1674,4 +1674,105 @@ askItineraBot = async function(text){
   return await smartLocalBotAnswer(text);
 };
 
+
+
+/* ITINERA v0.18.1 · hard override: no technical bot answers, no OpenAI technical source cards */
+(function(){
+  const TECH_SOURCE_IDS = new Set(['openai-responses','openai-vector-stores']);
+  function stripTechnicalSources(){
+    try{
+      if(state?.data?.official_sources){
+        state.data.official_sources = state.data.official_sources.filter(s => !TECH_SOURCE_IDS.has(String(s.id||'')) && !['tecnica','técnica'].includes(String(s.category||'').toLowerCase()));
+      }
+    }catch(e){}
+  }
+  function endpoint(){
+    const cfg = window.ITINERA_CONFIG || {};
+    if(cfg.ITINERABOT_ENDPOINT) return cfg.ITINERABOT_ENDPOINT;
+    if(cfg.SUPABASE_URL) return String(cfg.SUPABASE_URL).replace(/\/+$/,'') + '/functions/v1/itinerabot';
+    return '';
+  }
+  function cleanSources(sources=[]){
+    return (sources||[]).filter(s=>{
+      const id=String(s.id||'').toLowerCase();
+      const cat=String(s.category||'').toLowerCase();
+      return !TECH_SOURCE_IDS.has(id) && cat!=='tecnica' && cat!=='técnica';
+    });
+  }
+  function cleanSourceLinks(sources=[]){
+    return cleanSources(sources).map(s=>`<a class="source-link" target="_blank" rel="noopener noreferrer" href="${s.url}"><strong>${escapeHTML(s.title||s.url)}</strong><span>${escapeHTML(s.usefulness||s.use||'Fonte oficial')}</span></a>`).join('');
+  }
+  function htmlFromStudy(p){
+    if(!p) return '';
+    const subjects=(p.subjects||[]).filter(Boolean);
+    const ponders=(p.ponderation_subjects||[]).map(x=>typeof x==='string'?x:(x.subject||x.name||'')).filter(Boolean);
+    return `<article class="bot-study-answer result-card">
+      <h3>${escapeHTML(p.name)}</h3>
+      <p><strong>${escapeHTML(p.level||'')}</strong>${p.family ? ` · ${escapeHTML(p.family)}` : ''}</p>
+      ${p.route ? `<p><strong>Ruta orientativa:</strong> ${escapeHTML(p.route)}</p>` : ''}
+      ${subjects.length ? `<p><strong>Materias/base recomendable:</strong> ${subjects.map(escapeHTML).join(', ')}</p>` : ''}
+      ${ponders.length ? `<p><strong>Materias que pueden ponderar o deben revisarse:</strong> ${ponders.map(escapeHTML).join(', ')}</p>` : ''}
+      ${p.regulated ? `<p><strong>Información importante:</strong> ${escapeHTML(p.regulated)}</p>` : ''}
+      <p class="warning-box small">Para plazas, centros, notas de corte, ponderaciones exactas o convocatoria vigente, comprueba siempre la fuente oficial enlazada.</p>
+      ${sourceLinks((p.sources||[]).filter(id=>!TECH_SOURCE_IDS.has(String(id))))}
+    </article>`;
+  }
+  async function localAnswer(text){
+    stripTechnicalSources();
+    const q=normalise(text);
+    let list=[];
+    try{ if(typeof supabaseSearchStudies==='function') list=await supabaseSearchStudies(text,'all','all',8); }catch(e){}
+    if(!list.length) list=programs(text,'all','all').slice(0,8);
+    const p=list[0];
+
+    if(q.includes('matematic') && q.includes('psicolog')){
+      return `<p>Si quieres estudiar Psicología pero las matemáticas no se te dan bien, no conviene decidir solo por la ponderación. Compara la ponderación oficial de cada materia, la nota realista que puedes obtener y la base que te aporta para el grado. En Galicia debes comprobar la tabla vigente de la CIUG para el grado y campus concretos. Una materia con mayor ponderación puede no ser la opción más rentable si previsiblemente obtendrás una calificación baja.</p>${sourceLinks(['ciug-ponderaciones-2026','ciug-admision','qedu','ruct'])}`;
+    }
+    if(q.includes('nota') || q.includes('corte') || q.includes('ponder')){
+      return `<p>Las notas de corte y las ponderaciones cambian por curso, convocatoria, universidad, campus y grado. En Galicia deben comprobarse en CIUG. ITINERA puede orientarte, pero no debe sustituir la consulta oficial vigente.</p>${sourceLinks(['ciug-admision','ciug-ponderaciones-2026','qedu'])}`;
+    }
+    if(q.includes('beca') || q.includes('neae')){
+      return document.getElementById('scholarshipCards')?.innerHTML || `<p>Las becas oficiales dependen de convocatoria, nivel educativo y requisitos económicos, académicos y personales. Revisa siempre el portal oficial de Becas Educación y la convocatoria vigente.</p>${sourceLinks(['becas-portada','beca-general','beca-neae'])}`;
+    }
+    if(q.includes('discapacidad') || q.includes('deportista') || q.includes('cupo')){
+      return document.getElementById('reservedCards')?.innerHTML || `<p>Existen cupos o reservas específicas en determinados procesos de admisión, pero dependen de la enseñanza, convocatoria y documentación. No implican plaza automática. Consulta la fuente oficial del procedimiento aplicable.</p>${sourceLinks(['ciug-admision'])}`;
+    }
+    if(p && Number(p.score||0)>.25) return htmlFromStudy(p);
+    return `<p>No he encontrado una ficha suficientemente precisa en la base oficial incorporada. No voy a inventar la respuesta. Prueba con el nombre exacto del estudio, familia profesional o etapa, o revisa las fuentes oficiales.</p>${sourceLinks(['todofp-familias','xunta-fp-oferta','qedu','ruct','ciug-admision'])}`;
+  }
+  window.ITINERA_LOCAL_BOT_VERSION='0.18.1';
+  botAnswer = function(text){ return localAnswer(text); };
+  askItineraBot = async function(text){
+    stripTechnicalSources();
+    const url=endpoint();
+    if(url){
+      try{
+        const res=await fetch(url,{
+          method:'POST',
+          headers:{
+            'content-type':'application/json',
+            'apikey': window.ITINERA_CONFIG?.SUPABASE_ANON_KEY || '',
+            'authorization': `Bearer ${window.ITINERA_CONFIG?.SUPABASE_ANON_KEY || ''}`
+          },
+          body:JSON.stringify({question:text,lang:state.lang})
+        });
+        if(res.ok){
+          const data=await res.json();
+          if(data?.answer) return formatBotPlainText(data.answer)+cleanSourceLinks(data.sources||[]);
+        }
+      }catch(e){
+        console.warn('ItineraBot Edge no disponible; usando fallback local v0.18.1', e);
+      }
+    }
+    return await localAnswer(text);
+  };
+  init = (function(previousInit){
+    return async function(){
+      previousInit();
+      stripTechnicalSources();
+      const badge=document.getElementById('updateBadge');
+      if(badge) badge.title=(badge.title||'')+' · ITINERA v0.18.1';
+    };
+  })(init);
+})();
 document.addEventListener('DOMContentLoaded',init);

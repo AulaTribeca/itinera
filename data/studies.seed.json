@@ -1615,20 +1615,6 @@
       "use": "Información estatal sobre pruebas de acceso a grados C y D de Formación Profesional en el ámbito del Ministerio."
     },
     {
-      "id": "openai-responses",
-      "title": "OpenAI: Responses API",
-      "url": "https://platform.openai.com/docs/api-reference/responses",
-      "category": "tecnica",
-      "use": "Documentación oficial para generar respuestas mediante API."
-    },
-    {
-      "id": "openai-vector-stores",
-      "title": "OpenAI: Vector stores",
-      "url": "https://platform.openai.com/docs/api-reference/vector-stores",
-      "category": "tecnica",
-      "use": "Documentación oficial sobre almacenes vectoriales y búsqueda documental."
-    },
-    {
       "id": "mefp-convalidaciones-fp",
       "title": "Ministerio: convalidaciones de Formación Profesional",
       "url": "https://www.educacionfpydeportes.gob.es/servicios-al-ciudadano/catalogo/gestion-titulos/estudios-no-universitarios/titulos-espanoles/convalidaciones.html",
