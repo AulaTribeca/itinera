@@ -192,3 +192,13 @@ ITINERA v0.19
 - Si TodoFP u otra fuente oficial carga datos útiles, el workflow termina en verde aunque QEDU/CIUG/InfoArtísticas fallen temporalmente.
 - Los fallos se registran como avisos en el reporte y en `itinera_official_import_queue`.
 - No requiere SQL nuevo.
+
+
+ITINERA v0.20
+- Mejora la depuración de FP importada desde TodoFP.
+- Añade reglas de inferencia de familias profesionales por título.
+- Corrige la URL oficial de TodoFP para FP de Grado Básico.
+- Añade SQL de limpieza: `supabase/itinera_v0_20_fp_cleanup.sql`.
+- Añade panel visible de cobertura oficial en portada.
+- Mejora las fichas de estudio con estado del dato: importado, pendiente, verificado, etc.
+- No debe afirmarse aún que ITINERA contiene todos los estudios oficiales. La cobertura universitaria sigue pendiente.

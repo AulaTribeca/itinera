@@ -49,17 +49,52 @@ function cleanTitle(title = '') {
     .replace(/\s+/g, ' ')
     .trim();
 }
-function inferFamily(text = '') {
-  const families = [
-    'Actividades Físicas y Deportivas','Administración y Gestión','Agraria','Artes Gráficas','Artes y Artesanías',
-    'Comercio y Marketing','Edificación y Obra Civil','Electricidad y Electrónica','Energía y Agua','Fabricación Mecánica',
-    'Hostelería y Turismo','Imagen Personal','Imagen y Sonido','Industrias Alimentarias','Industrias Extractivas',
-    'Informática y Comunicaciones','Instalación y Mantenimiento','Madera, Mueble y Corcho','Marítimo-Pesquera','Química',
-    'Sanidad','Seguridad y Medio Ambiente','Servicios Socioculturales y a la Comunidad','Textil, Confección y Piel',
-    'Transporte y Mantenimiento de Vehículos','Vidrio y Cerámica'
-  ];
-  const n = normalise(text);
-  return families.find(f => n.includes(normalise(f))) || 'Familia profesional pendiente de revisión';
+const FP_FAMILIES = [
+  'Actividades Físicas y Deportivas','Administración y Gestión','Agraria','Artes Gráficas','Artes y Artesanías',
+  'Comercio y Marketing','Edificación y Obra Civil','Electricidad y Electrónica','Energía y Agua','Fabricación Mecánica',
+  'Hostelería y Turismo','Imagen Personal','Imagen y Sonido','Industrias Alimentarias','Industrias Extractivas',
+  'Informática y Comunicaciones','Instalación y Mantenimiento','Madera, Mueble y Corcho','Marítimo-Pesquera','Química',
+  'Sanidad','Seguridad y Medio Ambiente','Servicios Socioculturales y a la Comunidad','Textil, Confección y Piel',
+  'Transporte y Mantenimiento de Vehículos','Vidrio y Cerámica'
+];
+
+const FP_FAMILY_RULES = [
+  ['Electricidad y Electrónica', ['electric', 'electrotecn', 'telecomunic', 'automatiz', 'mantenimiento electronico', 'instalaciones electricas', 'redes electricas', 'sistemas electrotecnicos']],
+  ['Fabricación Mecánica', ['soldadura', 'caldereria', 'mecanizado', 'fabricacion mecanica', 'programacion de la produccion', 'construcciones metalicas', 'moldeo', 'metales', 'utillaje', 'diseño en fabricacion mecanica']],
+  ['Madera, Mueble y Corcho', ['carpinter', 'mueble', 'madera', 'corcho', 'amueblamiento']],
+  ['Sanidad', ['emergencias sanitarias', 'cuidados auxiliares', 'farmacia', 'parafarmacia', 'anatomia patologica', 'laboratorio clinico', 'higiene bucodental', 'protesis dental', 'radioterapia', 'imagen para el diagnostico', 'documentacion sanitaria', 'audiologia', 'ortoprotesis']],
+  ['Servicios Socioculturales y a la Comunidad', ['educacion infantil', 'integracion social', 'atencion a personas', 'mediacion comunicativa', 'promocion de igualdad', 'animacion sociocultural']],
+  ['Informática y Comunicaciones', ['informatica', 'sistemas microinformaticos', 'redes', 'desarrollo de aplicaciones', 'administracion de sistemas', 'ciberseguridad', 'big data', 'inteligencia artificial']],
+  ['Administración y Gestión', ['administracion', 'gestion administrativa', 'finanzas', 'asistencia a la direccion']],
+  ['Comercio y Marketing', ['comercio', 'marketing', 'ventas', 'transporte y logistica', 'actividades comerciales', 'gestion de ventas']],
+  ['Hostelería y Turismo', ['cocina', 'gastronomia', 'restauracion', 'alojamientos', 'agencias de viajes', 'guia informacion asistencia turisticas', 'turismo']],
+  ['Imagen Personal', ['estetica', 'peluqueria', 'cosmetica', 'caracterizacion', 'asesoria de imagen', 'termalismo']],
+  ['Transporte y Mantenimiento de Vehículos', ['automocion', 'vehiculos', 'carroceria', 'electromecanica', 'mantenimiento de material rodante', 'aeromecanica', 'avionica']],
+  ['Instalación y Mantenimiento', ['instalaciones frigorificas', 'climatizacion', 'produccion de calor', 'mantenimiento industrial', 'mecatronica', 'prevencion de riesgos profesionales']],
+  ['Agraria', ['agropecuaria', 'jardineria', 'floristeria', 'forestal', 'paisajismo', 'aprovechamiento', 'ganaderia', 'agricola']],
+  ['Actividades Físicas y Deportivas', ['acondicionamiento fisico', 'ensenanza y animacion sociodeportiva', 'guia en el medio natural', 'instalaciones deportivas']],
+  ['Artes Gráficas', ['impresion grafica', 'preimpresion', 'diseno y edicion', 'publicaciones impresas', 'graficas']],
+  ['Edificación y Obra Civil', ['construccion', 'obra civil', 'proyectos de edificacion', 'organizacion y control de obras', 'reforma y mantenimiento de edificios']],
+  ['Energía y Agua', ['energia', 'agua', 'eficiencia energetica', 'energias renovables', 'centrales electricas', 'redes de agua']],
+  ['Imagen y Sonido', ['video', 'sonido', 'audiovisuales', 'iluminacion', 'animaciones 3d', 'realizacion', 'produccion de audiovisuales']],
+  ['Industrias Alimentarias', ['alimentaria', 'panaderia', 'reposteria', 'aceites', 'vinos', 'elaboracion de productos alimenticios']],
+  ['Marítimo-Pesquera', ['acuicultura', 'pesca', 'maritima', 'buceo', 'transporte maritimo', 'navegacion']],
+  ['Química', ['quimica', 'laboratorio', 'planta quimica', 'fabricacion de productos farmaceuticos', 'operaciones de laboratorio']],
+  ['Seguridad y Medio Ambiente', ['emergencias y proteccion civil', 'educacion y control ambiental', 'quimica ambiental', 'seguridad']],
+  ['Textil, Confección y Piel', ['textil', 'confeccion', 'piel', 'calzado', 'moda', 'patronaje']],
+  ['Vidrio y Cerámica', ['vidrio', 'ceramica']]
+];
+
+function inferFamily(text = '', title = '') {
+  const joined = `${text} ${title}`;
+  const n = normalise(joined);
+  const direct = FP_FAMILIES.find(f => n.includes(normalise(f)));
+  if (direct) return direct;
+
+  for (const [family, terms] of FP_FAMILY_RULES) {
+    if (terms.some(term => n.includes(normalise(term)))) return family;
+  }
+  return 'Familia profesional pendiente de revisión';
 }
 function aliasesFor(name = '', keywords = []) {
   const base = name.replace(/^Técnico Superior en\s+/i, '').replace(/^Técnico en\s+/i, '').replace(/^Título Profesional Básico en\s+/i, '').replace(/^Curso de especialización en\s+/i, '').trim();
@@ -103,7 +138,7 @@ function parseTodoFpTitles(html, sourceId, url) {
       name,
       type: cfg.type,
       level: cfg.level,
-      family: inferFamily(around),
+      family: inferFamily(around, name),
       branch: 'Formación Profesional',
       official_title: true,
       route: cfg.type === 'fpgm'

@@ -1775,4 +1775,139 @@ askItineraBot = async function(text){
     };
   })(init);
 })();
+
+
+/* ITINERA v0.20 · cobertura visible, depuración FP y fichas más claras */
+(function(){
+  const STATUS_LABELS = {
+    imported_needs_review: 'Importado · revisar',
+    in_progress: 'En progreso',
+    pending: 'Pendiente',
+    verified: 'Verificado',
+    verified_official: 'Verificado',
+    seed_v0_17: 'Base inicial',
+    seed_v0_16_1: 'Base inicial'
+  };
+  function statusLabel(status=''){
+    const key = String(status || '').trim();
+    return STATUS_LABELS[key] || key.replaceAll('_',' ') || 'Dato incorporado';
+  }
+  function statusClass(status=''){
+    const s=String(status||'').toLowerCase();
+    if(s.includes('verified')) return 'status-ok';
+    if(s.includes('imported') || s.includes('progress')) return 'status-progress';
+    if(s.includes('pending')) return 'status-pending';
+    return 'status-neutral';
+  }
+  function niceTypeLabel(type){
+    return type==='fpb'?'FP · Grado básico':
+      type==='fpgm'?'FP · Grado medio':
+      type==='fpgs'?'FP · Grado superior':
+      type==='curso-especializacion-fp'?'FP · Curso de especialización':
+      type==='grado'?'Universidad · Grado':
+      type==='master'?'Universidad · Máster':'Otros estudios';
+  }
+  function studyQualityNote(p){
+    const q = p.data_quality || '';
+    if(String(q).includes('imported')) return 'Ficha importada desde fuente oficial. Debe verificarse la oferta concreta, plazas, modalidad y centro en la fuente vigente.';
+    if(String(q).includes('seed')) return 'Ficha inicial curada manualmente. Revisa la fuente oficial antes de tomar decisiones académicas.';
+    return 'Ficha conectada a la base de ITINERA. Comprueba siempre datos cambiantes en la fuente oficial.';
+  }
+  function coverageHTML(){
+    const studies = state.data?.studies || [];
+    const total = studies.length;
+    const byType = studies.reduce((acc,p)=>{ const k=niceTypeLabel(p.type); acc[k]=(acc[k]||0)+1; return acc; },{});
+    const pendingFamily = studies.filter(p=>String(p.family||'').toLowerCase().includes('pendiente')).length;
+    const imported = studies.filter(p=>String(p.data_quality||'').includes('imported')).length;
+    const docs = state.officialDocumentsCount || null;
+    const cov = state.officialCoverage || [];
+    return `<section class="coverage-panel" id="coveragePanel">
+      <div class="coverage-head">
+        <p class="eyebrow">Cobertura oficial</p>
+        <h2>Estado actual do catálogo</h2>
+        <p>ITINERA distingue entre datos xa importados, bloques en revisión e información que debe comprobarse na fonte oficial vixente.</p>
+      </div>
+      <div class="coverage-metrics">
+        <article><strong>${total}</strong><span>estudos na base</span></article>
+        <article><strong>${imported}</strong><span>importados desde fonte oficial</span></article>
+        <article><strong>${pendingFamily}</strong><span>con familia pendente</span></article>
+        <article><strong>${docs ?? '—'}</strong><span>documentos oficiais</span></article>
+      </div>
+      <div class="coverage-type-grid">${Object.entries(byType).sort().map(([k,v])=>`<div><strong>${escapeHTML(k)}</strong><span>${v}</span></div>`).join('')}</div>
+      ${cov.length ? `<div class="coverage-blocks">${cov.map(row=>`<article class="${statusClass(row.current_status)}"><strong>${escapeHTML(row.scope||'Bloque')}</strong><span>${escapeHTML(statusLabel(row.current_status))}</span><p>${escapeHTML(row.notes||'')}</p></article>`).join('')}</div>` : `<p class="warning-box small">Cobertura detallada pendente de cargar desde Supabase.</p>`}
+    </section>`;
+  }
+  function injectCoveragePanel(){
+    const homeQuestions = document.getElementById('homeQuestions');
+    if(!homeQuestions) return;
+    let panel = document.getElementById('coveragePanel');
+    if(panel) panel.remove();
+    homeQuestions.insertAdjacentHTML('afterend', coverageHTML());
+  }
+  async function loadOfficialDocsCount(){
+    if(!supabaseReady || !supabaseReady()) return;
+    try{
+      const rows = await sbFetch('/rest/v1/itinera_official_documents?select=id&limit=1000');
+      state.officialDocumentsCount = Array.isArray(rows) ? rows.length : null;
+    }catch(e){}
+  }
+  const oldProgramCard = programCard;
+  programCard = function(p,approx=false){
+    const subjects = (p.subjects||[]).filter(Boolean);
+    const ponders = (p.ponderation_subjects||[]).map(x=>typeof x==='string'?x:(x.subject||x.name||'')).filter(Boolean);
+    return `<article class="result-card enhanced-card">${approx?`<p class="eyebrow">${T('maybe')}: ${escapeHTML(p.name)}</p>`:''}
+      <div class="study-card-head">
+        <div>
+          <h3>${escapeHTML(p.name)}</h3>
+          <div class="badges">
+            <span class="badge">${escapeHTML(p.level||niceTypeLabel(p.type))}</span>
+            <span class="badge">${escapeHTML(p.family||'Familia por revisar')}</span>
+            <span class="badge ${statusClass(p.data_quality)}">${escapeHTML(statusLabel(p.data_quality))}</span>
+          </div>
+        </div>
+      </div>
+      ${p.route?`<p><strong>${T('route')}:</strong> ${escapeHTML(p.route)}</p>`:''}
+      ${subjects.length?`<p><strong>${T('subjects')}:</strong> ${subjects.map(escapeHTML).join(', ')}</p>`:''}
+      ${ponders.length?`<p><strong>Materias que poden ponderar máis:</strong> ${ponders.map(escapeHTML).join(', ')}</p>`:''}
+      ${p.regulated?`<p><strong>${T('important')}:</strong> ${escapeHTML(p.regulated)}</p>`:''}
+      ${p.demand?`<p><strong>Demanda / emprego:</strong> ${escapeHTML(p.demand)}</p>`:''}
+      ${availabilityHTML(p)}
+      <p class="warning-box small">${escapeHTML(studyQualityNote(p))}</p>
+      <div class="result-actions">
+        <button type="button" class="button pdf-button" onclick="exportPDF('studyResults','ITINERA · ${escapeHTML(p.name)}')">${T('pdf')}</button>
+        <button type="button" class="button action-sim" onclick="simulateProgram('${p.id}')">${T('sim')}</button>
+      </div>
+      ${sourceLinks(p.sources||[])}
+    </article>`;
+  };
+  const oldGroupedStudiesHTML = groupedStudiesHTML;
+  groupedStudiesHTML = function(list){
+    const byType = {};
+    list.forEach(p=>{
+      const typeLabel = niceTypeLabel(p.type);
+      byType[typeLabel] ||= {};
+      const fam = p.family || 'Familia por revisar';
+      byType[typeLabel][fam] ||= [];
+      byType[typeLabel][fam].push(p);
+    });
+    return Object.entries(byType).sort().map(([type,families])=>`<section class="studies-group"><h2>${escapeHTML(type)}</h2>${Object.entries(families).sort().map(([fam,items])=>`<details open class="family-group ${String(fam).toLowerCase().includes('pendiente')?'needs-review':''}"><summary>${escapeHTML(fam)} <span>${items.length}</span></summary><div class="family-study-grid">${items.map(p=>`<button class="study-list-item" type="button" onclick="showStudySheet('${p.id}')"><strong>${escapeHTML(p.name)}</strong><span>${escapeHTML(p.level)} · ${escapeHTML(p.family || 'Familia por revisar')}</span></button>`).join('')}</div></details>`).join('')}</section>`).join('');
+  };
+  showStudySheet = function(id){
+    const p = state.data.studies.find(x=>x.id===id);
+    if(!p) return;
+    document.getElementById('studySheetContent').innerHTML = programCard(p);
+    openModal('studySheetModal');
+  };
+  const previousLoadCoverage = typeof loadOfficialCoverageStatus === 'function' ? loadOfficialCoverageStatus : async function(){};
+  loadOfficialCoverageStatus = async function(){
+    await previousLoadCoverage();
+    await loadOfficialDocsCount();
+    injectCoveragePanel();
+  };
+  const previousInit = init;
+  init = async function(){
+    previousInit();
+    setTimeout(async()=>{ await loadOfficialCoverageStatus(); injectCoveragePanel(); }, 1400);
+  };
+})();
 document.addEventListener('DOMContentLoaded',init);
