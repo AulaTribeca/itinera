@@ -86,7 +86,7 @@ async function getFirstText(urls=[]){
 async function getBytes(url){
   const res = await fetch(url, {
     headers:{
-      'user-agent':'Mozilla/5.0 ITINERA/0.22.2 academic-orientation',
+      'user-agent':'Mozilla/5.0 ITINERA/0.22.4 academic-orientation',
       'accept':'text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/octet-stream,text/plain,*/*',
       'referer':'https://estadisticas.ciencia.gob.es/dynPx/inebase/index.htm'
     }

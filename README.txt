@@ -253,3 +253,11 @@ ITINERA v0.22.3
 - El workflow descarga UNIVBASE/CIUG con curl antes de ejecutar el importador.
 - El importador lee primero la cache y solo después intenta fetch directo.
 - Añade SQL `supabase/itinera_v0_22_3_cache_download_fix.sql`.
+
+
+ITINERA v0.22.4
+- Corrige el workflow ante errores TLS de portales oficiales.
+- Añade compatibilidad OpenSSL con UnsafeLegacyRenegotiation.
+- Usa curl -k, TLS 1.2 y CipherString DEFAULT:@SECLEVEL=0.
+- Mantiene lectura desde cache en el importador macrointegral.
+- Añade SQL `supabase/itinera_v0_22_4_legacy_tls_cache_fix.sql`.
