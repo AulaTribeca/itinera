@@ -1224,3 +1224,88 @@ main.shell{padding-bottom:120px}
   .route-connector{justify-self:center;width:70px!important;transform:rotate(90deg)}
   .route-connector.access-link span,.route-connector.critical-link span{transform:rotate(-90deg)}
 }
+
+/* ITINERA v0.17 · brújula de portada refinada */
+.compass-hero{
+  min-height:380px!important;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.98) 0 18%, transparent 19%),
+    radial-gradient(circle at 50% 50%, rgba(216,180,76,.20) 0 38%, transparent 39%),
+    linear-gradient(135deg,#fffaf0,#eef5ed 62%,#f7edd3)!important;
+}
+.compass-hero::before{
+  mask-image:none!important;
+  background:
+    linear-gradient(90deg,rgba(16,61,47,.028) 1px,transparent 1px),
+    linear-gradient(180deg,rgba(16,61,47,.025) 1px,transparent 1px)!important;
+  background-size:36px 36px!important;
+}
+.compass-core{
+  width:190px!important;
+  height:190px!important;
+  background:
+    radial-gradient(circle at 50% 50%, #fff 0 10%, #d8b44c 11% 13%, #fff 14% 27%, #f5ead0 28% 47%, #123d2f 48% 51%, #fff8e6 52% 100%)!important;
+  border:3px solid rgba(16,61,47,.78)!important;
+  box-shadow:0 30px 64px rgba(16,61,47,.22), inset 0 0 0 8px rgba(216,180,76,.18)!important;
+}
+.compass-ring{
+  inset:26px!important;
+  border:2px dashed rgba(16,61,47,.34)!important;
+  z-index:2!important;
+}
+.compass-core::before,
+.compass-core::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:142px;
+  height:2px;
+  background:rgba(16,61,47,.30);
+  transform:translate(-50%,-50%);
+  z-index:1;
+}
+.compass-core::after{transform:translate(-50%,-50%) rotate(90deg)}
+.compass-needle{
+  z-index:4!important;
+  width:20px!important;
+  height:134px!important;
+  animation:needleSettleV17 4.2s ease-in-out infinite alternate!important;
+}
+@keyframes needleSettleV17{from{transform:translate(-50%,-50%) rotate(31deg)}to{transform:translate(-50%,-50%) rotate(38deg)}}
+.compass-needle::before{border-left-width:10px!important;border-right-width:10px!important;border-bottom:70px solid #c8a03d!important}
+.compass-needle::after{border-left-width:10px!important;border-right-width:10px!important;border-top:62px solid #103d2f!important}
+.compass-center{
+  z-index:6!important;
+  width:26px!important;
+  height:26px!important;
+  border:6px solid #d8b44c!important;
+  box-shadow:0 8px 20px rgba(16,61,47,.22)!important;
+}
+.compass-n,.compass-e,.compass-s,.compass-w{
+  z-index:8!important;
+  width:28px;
+  height:28px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  color:#0f3d2f!important;
+  background:rgba(255,255,255,.86);
+  border:1px solid rgba(216,180,76,.42);
+  font-size:.92rem!important;
+  font-weight:900!important;
+  line-height:1!important;
+  text-shadow:none!important;
+  box-shadow:0 6px 14px rgba(16,61,47,.10);
+}
+.compass-n{left:50%!important;top:12px!important;transform:translateX(-50%)!important}
+.compass-s{left:50%!important;bottom:12px!important;transform:translateX(-50%)!important}
+.compass-e{right:12px!important;top:50%!important;transform:translateY(-50%)!important}
+.compass-w{left:12px!important;top:50%!important;transform:translateY(-50%)!important}
+.study-word{
+  backdrop-filter:blur(10px);
+  box-shadow:0 16px 34px rgba(16,61,47,.12)!important;
+}
+.bot-source-list{margin-top:12px;display:grid;gap:8px}
+.msg.bot p:first-child{margin-top:0}
+@media(max-width:980px){.compass-core{width:142px!important;height:142px!important}.compass-n,.compass-e,.compass-s,.compass-w{width:24px;height:24px;font-size:.78rem!important}.compass-needle{height:104px!important}}

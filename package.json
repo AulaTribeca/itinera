@@ -1,11 +1,14 @@
 {
-  "name": "itinera-v0-15",
-  "version": "0.15.0-phase2",
+  "name": "itinera-v0-17",
+  "version": "0.17.0-phase3",
   "private": true,
   "type": "module",
-  "description": "ITINERA: orientación académica con Supabase, ingesta oficial, buscador y RAG documental.",
+  "description": "ITINERA: GitHub Pages + Supabase official catalog + ItineraBot documental.",
   "dependencies": {
-    "@netlify/blobs": "^8.1.0",
     "@supabase/supabase-js": "^2.45.4"
+  },
+  "scripts": {
+    "import:official": "node tools/official-load/import-official-catalogs.mjs",
+    "import:seed": "node tools/official-load/import-official-catalogs.mjs --seed-only"
   }
 }

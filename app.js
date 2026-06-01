@@ -1526,4 +1526,58 @@ init = (function(previousInit){
   }
 })(init);
 
+
+/* ITINERA v0.17 · ItineraBot Edge + catalog status */
+function botSourcesHTML(sources=[]){
+  if(!Array.isArray(sources)||!sources.length) return '';
+  return `<div class="bot-source-list">${sources.slice(0,8).map(s=>`<a class="source-link" target="_blank" rel="noopener noreferrer" href="${escapeHTML(s.url||'#')}"><strong>${escapeHTML(s.title||s.id||'Fonte oficial')}</strong><span>${escapeHTML(s.usefulness||s.use||s.category||'Fonte oficial')}</span></a>`).join('')}</div>`;
+}
+function formatBotPlainText(text=''){
+  return String(text).split(/\n{2,}/).map(p=>`<p>${escapeHTML(p).replace(/\n/g,'<br>')}</p>`).join('');
+}
+askItineraBot = async function(text){
+  const endpoint = window.ITINERA_CONFIG?.ITINERABOT_ENDPOINT || '';
+  if(endpoint){
+    try{
+      const res = await fetch(endpoint, {
+        method:'POST',
+        headers:{
+          'content-type':'application/json',
+          'apikey': window.ITINERA_CONFIG?.SUPABASE_ANON_KEY || '',
+          'authorization': `Bearer ${window.ITINERA_CONFIG?.SUPABASE_ANON_KEY || ''}`
+        },
+        body:JSON.stringify({question:text, lang:state.lang})
+      });
+      if(res.ok){
+        const data = await res.json();
+        if(data?.answer) return formatBotPlainText(data.answer)+botSourcesHTML(data.sources||[]);
+      }
+    }catch(error){
+      console.warn('ItineraBot Edge fallback:', error);
+    }
+  }
+  return botAnswer(text);
+};
+
+async function loadOfficialCoverageStatus(){
+  if(!supabaseReady || !supabaseReady()) return;
+  try{
+    const rows = await sbFetch('/rest/v1/itinera_source_coverage?select=*&order=scope.asc&limit=100');
+    state.officialCoverage = rows || [];
+    const badge=document.getElementById('updateBadge');
+    if(badge && rows?.length){
+      const reviewed = rows.filter(r => String(r.current_status||'').includes('verified') || String(r.current_status||'').includes('in_progress')).length;
+      badge.title = `${badge.title || ''} · Cobertura oficial: ${reviewed}/${rows.length} bloques en progreso/verificados`;
+    }
+  }catch(e){}
+}
+
+init = (function(previousInit){
+  return async function(){
+    previousInit();
+    setTimeout(loadOfficialCoverageStatus, 1200);
+  };
+})(init);
+
+
 document.addEventListener('DOMContentLoaded',init);

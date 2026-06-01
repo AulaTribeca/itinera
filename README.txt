@@ -150,3 +150,16 @@ ITINERA v0.16.2
 - app-config.js queda preparado para GitHub Pages con la URL base de Supabase y la publishable key.
 - Se usa la URL base del proyecto, no la URL REST con /rest/v1/.
 - No contiene service_role ni OPENAI_API_KEY.
+
+ITINERA v0.17 · Fase 3
+- Mejora visual de la brújula central de portada: letras N, S, E y O visibles, brújula más equilibrada y sin logo central.
+- Añade SQL de fase 3: `supabase/itinera_v0_17_phase3_official_load.sql`.
+- Añade control de cobertura oficial: `itinera_source_coverage`.
+- Añade cola de importación oficial: `itinera_official_import_queue`.
+- Añade logs de ItineraBot: `itinera_bot_logs`.
+- Añade cargador oficial progresivo: `tools/official-load/import-official-catalogs.mjs`.
+- Añade workflow de GitHub Actions: `.github/workflows/itinera-official-refresh.yml`.
+- Añade Supabase Edge Function: `supabase/functions/itinerabot/index.ts`.
+- `app-config.js` incluye el endpoint público de ItineraBot en Supabase Functions.
+- `app.js` intenta consultar ItineraBot documental y, si no está desplegado o configurado, cae al modo prudente local.
+- Esta fase no permite anunciar todavía cobertura completa sin revisión, pero deja preparada la infraestructura real de carga y actualización progresiva.
