@@ -1910,4 +1910,104 @@ askItineraBot = async function(text){
     setTimeout(async()=>{ await loadOfficialCoverageStatus(); injectCoveragePanel(); }, 1400);
   };
 })();
+
+
+/* ITINERA v0.21 · Universidad, RUCT/QEDU, másteres habilitantes y CIUG */
+(function(){
+  const UNIVERSITY_GUIDE = [
+    {
+      title:'1. Verificar oficialidad',
+      body:'Comprueba el título en RUCT. Es la fuente que confirma si un grado, máster o doctorado consta como título oficial.',
+      sources:['ruct']
+    },
+    {
+      title:'2. Comparar dónde estudiar',
+      body:'Usa QEDU para localizar titulaciones universitarias y comparar información útil para la decisión. QEDU orienta; RUCT verifica oficialidad.',
+      sources:['qedu','ruct']
+    },
+    {
+      title:'3. Acceso en Galicia',
+      body:'Para el Sistema Universitario de Galicia, revisa CIUG: admisión, cupos, matrícula, notas de corte y adjudicaciones cambian por convocatoria.',
+      sources:['ciug-admision']
+    },
+    {
+      title:'4. Ponderaciones',
+      body:'Las materias que ponderan deben comprobarse en la tabla oficial de CIUG del curso correspondiente. No se deben inferir por parecido entre grados.',
+      sources:['ciug-ponderaciones-2026','dog-ponderaciones-2026-2027']
+    }
+  ];
+  const HABILITATING_GUIDE = [
+    {
+      area:'Abogacía y Procura',
+      access:'Grado en Derecho u otro requisito legal aplicable → máster/curso oficial de acceso y prueba/evaluación según normativa vigente.',
+      warning:'No basta con cursar Derecho para ejercer como abogado/a o procurador/a. Hay que comprobar la vía profesional vigente.',
+      sources:['boe-ley-34-2006-abogacia-procura','ruct']
+    },
+    {
+      area:'Profesorado de ESO, Bachillerato, FP y enseñanzas de idiomas',
+      access:'Grado universitario correspondiente → Máster Universitario en Formación del Profesorado, salvo excepciones o requisitos específicos.',
+      warning:'Las especialidades, equivalencias y requisitos pueden depender de convocatoria y administración educativa.',
+      sources:['boe-profesorado-secundaria','ruct']
+    },
+    {
+      area:'Psicología General Sanitaria',
+      access:'Grado/Licenciatura en Psicología con requisitos correspondientes → Máster Universitario en Psicología General Sanitaria.',
+      warning:'No debe confundirse con Psicología clínica vía PIR ni con otras salidas profesionales de Psicología.',
+      sources:['boe-psicologia-general-sanitaria','ruct']
+    },
+    {
+      area:'Arquitectura e Ingenierías reguladas',
+      access:'Grado habilitante o grado + máster habilitante según profesión regulada concreta.',
+      warning:'Cada profesión regulada tiene requisitos propios. Debe verificarse en RUCT, BOE y universidad.',
+      sources:['ruct','boe-rd-822-2021']
+    }
+  ];
+  function guideCard(x){
+    return `<article class="content-card university-guide-card"><h2>${escapeHTML(x.title)}</h2><p>${escapeHTML(x.body)}</p>${sourceLinks(x.sources||[])}</article>`;
+  }
+  function habilitatingCard(x){
+    return `<article class="content-card habilitating-card">
+      <h2>${escapeHTML(x.area)}</h2>
+      <p><strong>Ruta:</strong> ${escapeHTML(x.access)}</p>
+      <p class="warning-box small">${escapeHTML(x.warning)}</p>
+      ${sourceLinks(x.sources||[])}
+    </article>`;
+  }
+  function universityGuideHTML(){
+    return `<section class="university-guide extra-top" id="universityGuidePanel">
+      <div class="section-heading compact">
+        <p class="eyebrow">Universidade</p>
+        <h2>Como usar as fontes oficiais universitarias</h2>
+        <p>A información universitaria require distinguir orientación, oficialidade, acceso e habilitación profesional.</p>
+      </div>
+      <div class="grid two">${UNIVERSITY_GUIDE.map(guideCard).join('')}</div>
+      <div class="section-heading compact extra-top">
+        <p class="eyebrow">Profesións reguladas</p>
+        <h2>Másteres habilitantes e vías profesionais</h2>
+        <p>Estas orientacións non substitúen RUCT, BOE nin a normativa da convocatoria. Serven para evitar confusións habituais.</p>
+      </div>
+      <div class="grid two">${HABILITATING_GUIDE.map(habilitatingCard).join('')}</div>
+    </section>`;
+  }
+  function injectUniversityGuide(){
+    const section=document.getElementById('universidad');
+    if(!section) return;
+    document.getElementById('universityGuidePanel')?.remove();
+    section.insertAdjacentHTML('beforeend', universityGuideHTML());
+  }
+  const previousRenderStaticSections = renderStaticSections;
+  renderStaticSections = function(){
+    previousRenderStaticSections();
+    injectUniversityGuide();
+    const ponderLinks=document.getElementById('ponderationLinks');
+    if(ponderLinks){
+      ponderLinks.innerHTML = sourceLinks(['ciug-admision','ciug-ponderaciones-2026','dog-ponderaciones-2026-2027','qedu','ruct']);
+    }
+  };
+  const previousInit = init;
+  init = function(){
+    previousInit();
+    setTimeout(injectUniversityGuide, 900);
+  };
+})();
 document.addEventListener('DOMContentLoaded',init);

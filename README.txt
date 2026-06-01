@@ -202,3 +202,13 @@ ITINERA v0.20
 - Añade panel visible de cobertura oficial en portada.
 - Mejora las fichas de estudio con estado del dato: importado, pendiente, verificado, etc.
 - No debe afirmarse aún que ITINERA contiene todos los estudios oficiales. La cobertura universitaria sigue pendiente.
+
+
+ITINERA v0.21
+- Añade SQL universitario: `supabase/itinera_v0_21_universidad_ciug.sql`.
+- Añade fuentes oficiales universitarias: RUCT, QEDU, CIUG, DOG y BOE/RD 822/2021.
+- Añade documentos oficiales resumidos para ItineraBot.
+- Cambia la cobertura de Universidad y CIUG a `in_progress`.
+- Añade panel universitario visual en la sección Universidad.
+- Añade guía de másteres habilitantes y profesiones reguladas.
+- Todavía no carga todos los grados universitarios como registros individuales: esa extracción estructurada queda para la siguiente fase.
