@@ -6,6 +6,11 @@
  Cuando una fuente no ofrece datos estructurados directamente, se actualiza el estado y se conserva el enlace oficial.
 */
 
+import fs from 'node:fs/promises';
+import path from 'node:path';
+
+const CACHE_DIR = process.env.ITINERA_OFFICIAL_CACHE || path.join(process.cwd(), 'tools/official-load/cache');
+
 const SUPABASE_URL = process.env.SUPABASE_URL?.replace(/\/+$/,'');
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -146,6 +151,54 @@ async function getFirstRecords(urls=[]){
     }
   }
   throw new Error(errors.join(' | '));
+}
+
+async function readCacheBuffer(fileName){
+  const full = path.join(CACHE_DIR, fileName);
+  try{
+    const buffer = await fs.readFile(full);
+    if(buffer.length > 20) return {fileName, full, buffer};
+  }catch(e){}
+  return null;
+}
+
+async function recordsFromBuffer(buffer, origin=''){
+  if(/\.xlsx$/i.test(origin)) return await parseXlsx(buffer);
+  const text = decodeText(buffer);
+  if(/\.px$/i.test(origin)) return parsePcAxis(text);
+  return parseStatCsv(text);
+}
+
+async function getFirstRecordsCached(cacheFiles=[], urls=[]){
+  const errors = [];
+  for(const fileName of cacheFiles){
+    try{
+      const cached = await readCacheBuffer(fileName);
+      if(!cached) { errors.push(`${fileName}: not found in cache`); continue; }
+      const records = await recordsFromBuffer(cached.buffer, fileName);
+      if(records && records.length) return {url:`cache:${fileName}`, records};
+      errors.push(`${fileName}: without parseable rows`);
+    }catch(e){
+      errors.push(`${fileName}: ${e.message}`);
+    }
+  }
+  try{
+    return await getFirstRecords(urls);
+  }catch(e){
+    errors.push(e.message);
+  }
+  throw new Error(errors.join(' | '));
+}
+
+async function getPdfTextCached(cacheFile, url){
+  const cached = await readCacheBuffer(cacheFile);
+  if(cached){
+    const mod = await import('pdf-parse');
+    const pdfParse = mod.default || mod;
+    const data = await pdfParse(cached.buffer);
+    return {url:`cache:${cacheFile}`, text:data.text || ''};
+  }
+  return await pdfText(url);
 }
 
 async function upsert(table, rows, conflict='id'){
@@ -302,7 +355,7 @@ async function importUniversityAggregates(){
   const errors=[];
 
   try{
-    const {url, records} = await getFirstRecords(SOURCES.gradoCandidates);
+    const {url, records} = await getFirstRecordsCached(['univbase_grados_2024.csv_bd','univbase_grados_2024.csv_bdsc','univbase_grados_2024.csv','univbase_grados_2024.xlsx','univbase_grados_2024.px'], SOURCES.gradoCandidates);
     const rows = universityAggregateRows(records, 'Grado', 'educabase-grados-univ-2024', url);
     await upsert('itinera_university_offers', rows);
     gradoCount = rows.length;
@@ -315,7 +368,7 @@ async function importUniversityAggregates(){
   }
 
   try{
-    const {url, records} = await getFirstRecords(SOURCES.masterCandidates);
+    const {url, records} = await getFirstRecordsCached(['univbase_masteres_2024.csv_bd','univbase_masteres_2024.csv_bdsc','univbase_masteres_2024.csv','univbase_masteres_2024.xlsx','univbase_masteres_2024.px'], SOURCES.masterCandidates);
     const rows = universityAggregateRows(records, 'Máster', 'educabase-masteres-univ-2024', url);
     await upsert('itinera_university_offers', rows);
     masterCount = rows.length;
@@ -483,7 +536,7 @@ async function importCiugTables(){
   let cut=0, pon=0;
   const errors=[];
   try{
-    const {url,text} = await pdfText(SOURCES.ciugCutoffs2025);
+    const {url,text} = await getPdfTextCached('ciug_notas_corte_2025.pdf', SOURCES.ciugCutoffs2025);
     const rows = parseCiugCutoffText(text, url);
     await upsert('itinera_ciug_cutoffs', rows);
     cut = rows.length;
@@ -491,7 +544,7 @@ async function importCiugTables(){
     errors.push(`notas: ${e.message}`);
   }
   try{
-    const {url,text} = await pdfText(SOURCES.ciugPonderations2026);
+    const {url,text} = await getPdfTextCached('ciug_ponderaciones_2026.pdf', SOURCES.ciugPonderations2026);
     const rows = parseCiugPonderationText(text, url);
     await upsert('itinera_ciug_ponderations', rows);
     pon = rows.length;

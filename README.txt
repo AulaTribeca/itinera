@@ -246,3 +246,10 @@ ITINERA v0.22.2
 - Añade extractor textual CIUG desde PDF con dependencia `pdf-parse`.
 - Marca CIUG como `pdf_text_imported_needs_review` si consigue filas, nunca como definitivo.
 - Añade SQL `supabase/itinera_v0_22_2_univbase_ciug_fix.sql`.
+
+
+ITINERA v0.22.3
+- Añade cache local `tools/official-load/cache` para ficheros difíciles.
+- El workflow descarga UNIVBASE/CIUG con curl antes de ejecutar el importador.
+- El importador lee primero la cache y solo después intenta fetch directo.
+- Añade SQL `supabase/itinera_v0_22_3_cache_download_fix.sql`.

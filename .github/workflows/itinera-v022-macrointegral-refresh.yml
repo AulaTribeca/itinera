@@ -8,25 +8,34 @@ on:
 jobs:
   refresh-v022:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
-
       - name: Install dependencies
         run: npm install
-
+      - name: Download difficult official files with curl cache
+        continue-on-error: true
+        run: |
+          mkdir -p tools/official-load/cache
+          UA="Mozilla/5.0 (X11; Linux x86_64) ITINERA/0.22.3"
+          curl -L --http1.1 --retry 3 --retry-delay 2 --compressed -A "$UA" --referer "https://estadisticas.ciencia.gob.es/jaxiPx/dlgExport.htm" "https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_bd/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Grado_Rama_Univ.csv_bd" -o tools/official-load/cache/univbase_grados_2024.csv_bd || true
+          curl -L --http1.1 --retry 3 --retry-delay 2 --compressed -A "$UA" --referer "https://estadisticas.ciencia.gob.es/jaxiPx/dlgExport.htm" "https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_bdsc/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Grado_Rama_Univ.csv_bdsc" -o tools/official-load/cache/univbase_grados_2024.csv_bdsc || true
+          curl -L --http1.1 --retry 3 --retry-delay 2 --compressed -A "$UA" --referer "https://estadisticas.ciencia.gob.es/jaxiPx/dlgExport.htm" "https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/xlsx/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Grado_Rama_Univ.xlsx" -o tools/official-load/cache/univbase_grados_2024.xlsx || true
+          curl -L --http1.1 --retry 3 --retry-delay 2 --compressed -A "$UA" --referer "https://estadisticas.ciencia.gob.es/jaxiPx/dlgExport.htm" "https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_bd/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Master_Rama_Univ.csv_bd" -o tools/official-load/cache/univbase_masteres_2024.csv_bd || true
+          curl -L --http1.1 --retry 3 --retry-delay 2 --compressed -A "$UA" --referer "https://estadisticas.ciencia.gob.es/jaxiPx/dlgExport.htm" "https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_bdsc/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Master_Rama_Univ.csv_bdsc" -o tools/official-load/cache/univbase_masteres_2024.csv_bdsc || true
+          curl -L --http1.1 --retry 3 --retry-delay 2 --compressed -A "$UA" --referer "https://estadisticas.ciencia.gob.es/jaxiPx/dlgExport.htm" "https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/xlsx/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Master_Rama_Univ.xlsx" -o tools/official-load/cache/univbase_masteres_2024.xlsx || true
+          curl -L --http1.1 --retry 3 --retry-delay 2 --compressed -A "$UA" "https://ciug.gal/PDF/2025/ACCESO/notas_de_corte_2025.pdf" -o tools/official-load/cache/ciug_notas_corte_2025.pdf || true
+          curl -L --http1.1 --retry 3 --retry-delay 2 --compressed -A "$UA" "https://ciug.gal/PDF/2026/Acceso/ponderacions_2026.pdf" -o tools/official-load/cache/ciug_ponderaciones_2026.pdf || true
+          ls -lh tools/official-load/cache || true
       - name: Run base official importer
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: node tools/official-load/import-official-catalogs.mjs
-
       - name: Run v0.22 macrointegral importer
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
