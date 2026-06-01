@@ -1,0 +1,167 @@
+{
+  "last_updated": "2026-06-01",
+  "sources": [
+    "TodoFP",
+    "Xunta de Galicia FP",
+    "CIUG",
+    "QEDU",
+    "RUCT",
+    "InfoArtísticas",
+    "SEPE"
+  ],
+  "studies": [
+    {
+      "name": "Técnico en Carpintería y Mueble",
+      "type": "fpgm",
+      "family": "Madera, Mueble y Corcho",
+      "keywords": [
+        "carpintería",
+        "carpinteria",
+        "crapinteria",
+        "madera",
+        "mueble"
+      ],
+      "route": "ESO con título o vía oficial equivalente → FP de grado medio → Técnico en Carpintería y Mueble.",
+      "subjects": [
+        "Base tecnológica",
+        "dibujo",
+        "matemáticas aplicadas",
+        "perfil técnico-manual"
+      ],
+      "habilitante": "No requiere máster habilitante.",
+      "labour": "Consultar SEPE y oferta oficial de la Xunta por titulación/ocupación.",
+      "sources": [
+        "todofp",
+        "xunta-fp-oferta",
+        "xunta-fp-ciclos",
+        "sepe-titulaciones"
+      ]
+    },
+    {
+      "name": "Técnico en Cuidados Auxiliares de Enfermería",
+      "type": "fpgm",
+      "family": "Sanidad",
+      "keywords": [
+        "auxiliar enfermería",
+        "tcae",
+        "cae",
+        "cuidados auxiliares"
+      ],
+      "route": "ESO con título o vía equivalente → FP de grado medio de Sanidad.",
+      "subjects": [
+        "Biología básica",
+        "hábitos de estudio",
+        "perfil asistencial"
+      ],
+      "habilitante": "No requiere máster habilitante.",
+      "labour": "Consultar SEPE y oferta oficial de la Xunta por titulación/ocupación.",
+      "sources": [
+        "todofp",
+        "xunta-fp-oferta",
+        "sepe-titulaciones"
+      ]
+    },
+    {
+      "name": "Técnico Superior en Educación Infantil",
+      "type": "fpgs",
+      "family": "Servicios Socioculturales y a la Comunidad",
+      "keywords": [
+        "educación infantil fp",
+        "tsei",
+        "técnico superior educación infantil"
+      ],
+      "route": "Bachillerato, FP de grado medio u otra vía oficial de acceso → FP de grado superior.",
+      "subjects": [
+        "Perfil educativo",
+        "habilidades comunicativas",
+        "si se quiere universidad: revisar admisión desde FP superior."
+      ],
+      "habilitante": "No requiere máster habilitante; no equivale al Grado en Educación Infantil.",
+      "labour": "Consultar SEPE y oferta oficial de la Xunta.",
+      "sources": [
+        "todofp",
+        "xunta-fp-ciclos",
+        "ciug-admision",
+        "sepe-titulaciones"
+      ]
+    },
+    {
+      "name": "Grado en Medicina",
+      "type": "grado",
+      "family": "Ciencias de la Salud",
+      "keywords": [
+        "medicina",
+        "médico",
+        "medico"
+      ],
+      "route": "Bachillerato de Ciencias y Tecnología → PAU/ABAU → Grado en Medicina.",
+      "subjects": [
+        "Biología",
+        "Química",
+        "Matemáticas II",
+        "Física según ponderación vigente"
+      ],
+      "habilitante": "Profesión sanitaria regulada vinculada al título oficial correspondiente; la formación sanitaria especializada depende de la vía profesional posterior.",
+      "labour": "Acceso muy competitivo; comprobar CIUG/QEDU/SEPE.",
+      "sources": [
+        "ciug-ponderaciones-2026",
+        "ciug-admision",
+        "qedu",
+        "ruct",
+        "sepe-titulaciones"
+      ]
+    },
+    {
+      "name": "Grado en Derecho",
+      "type": "grado",
+      "family": "Ciencias Sociales y Jurídicas",
+      "keywords": [
+        "derecho",
+        "dereito",
+        "abogacía",
+        "abogado"
+      ],
+      "route": "Bachillerato de Humanidades y Ciencias Sociales → PAU/ABAU → Grado en Derecho.",
+      "subjects": [
+        "Matemáticas Aplicadas o Latín II según ponderaciones",
+        "Empresa",
+        "Geografía u otras según CIUG"
+      ],
+      "habilitante": "Para abogacía y procura se exige máster habilitante y requisitos oficiales posteriores.",
+      "labour": "Campo amplio; comprobar QEDU/SEPE y especialización.",
+      "sources": [
+        "ciug-ponderaciones-2026",
+        "qedu",
+        "ruct",
+        "ruct-faq",
+        "rd-822-2021",
+        "sepe-titulaciones"
+      ]
+    },
+    {
+      "name": "Grado en Fundamentos de la Arquitectura / Arquitectura",
+      "type": "grado",
+      "family": "Ingeniería y Arquitectura",
+      "keywords": [
+        "arquitectura",
+        "arquitecto",
+        "arquitecta"
+      ],
+      "route": "Bachillerato de Ciencias y Tecnología → PAU/ABAU → Grado vinculado a Arquitectura → Máster Universitario en Arquitectura.",
+      "subjects": [
+        "Matemáticas II",
+        "Física",
+        "Dibujo Técnico II"
+      ],
+      "habilitante": "Vía típica con máster habilitante. Verificar denominaciones exactas en RUCT/QEDU.",
+      "labour": "Campo técnico-creativo; comprobar QEDU/SEPE.",
+      "sources": [
+        "ciug-ponderaciones-2026",
+        "qedu",
+        "ruct",
+        "ruct-faq",
+        "rd-822-2021"
+      ]
+    }
+  ]
+}
