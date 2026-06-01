@@ -185,3 +185,10 @@ ITINERA v0.18.1
 - Refuerza ItineraBot para que nunca muestre respuestas técnicas internas sobre OpenAI/implementación.
 - Elimina fuentes técnicas de OpenAI de la base local visible.
 - Corrige de forma dura el fallback local de ItineraBot aunque la Edge Function no esté desplegada.
+
+
+ITINERA v0.19
+- El workflow de carga oficial ya no falla por incidencias parciales de fuentes externas.
+- Si TodoFP u otra fuente oficial carga datos útiles, el workflow termina en verde aunque QEDU/CIUG/InfoArtísticas fallen temporalmente.
+- Los fallos se registran como avisos en el reporte y en `itinera_official_import_queue`.
+- No requiere SQL nuevo.
