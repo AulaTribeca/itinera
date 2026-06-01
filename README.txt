@@ -272,3 +272,13 @@ ITINERA v0.23 · versión definitiva operativa
 - FP Galicia muestra aviso si la oferta por centro sigue siendo mínima.
 - Añadidos controles de calidad en `itinera_quality_checks`.
 - SQL obligatorio: `supabase/itinera_v0_23_definitiva.sql`.
+
+
+ITINERA v0.24 · Fuentes oficiales y UX premium
+- Rediseña el apartado Fuentes oficiales.
+- Añade buscador interno de fuentes y filtros lógicos.
+- Mueve el estado actual del catálogo a una sección pequeña dentro de Fuentes oficiales.
+- Reduce redundancias visuales en Inicio.
+- Añade traducciones completas de las nuevas secciones en galego, español, inglés, francés, polaco y alemán.
+- Mejora estética general con tarjetas más limpias, microinteracciones y movimiento sutil.
+- No requiere SQL nuevo.

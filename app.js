@@ -2794,3 +2794,274 @@ document.addEventListener('DOMContentLoaded',init);
     };
   })(init);
 })();
+
+
+
+/* ITINERA v0.24 · fuentes oficiales premium, traducciones completas y UX simplificada */
+(function(){
+  const V024 = '0.24';
+
+  const V24 = {
+    gl: {
+      navInicio:'Inicio', navBuscar:'Buscar', navSimular:'Simular', navBot:'ItineraBot', navFP:'FP', navUniversidad:'Universidade', navCIUG:'CIUG', navBecas:'Becas', navFuentes:'Fontes',
+      homeTitle:'Que necesitas facer?', homeLead:'Busca un estudo, simula unha ruta ou comproba a fonte oficial adecuada. ITINERA separa orientación, datos importados e datos que dependen de convocatoria.',
+      officialEyebrow:'Verificación oficial', officialTitle:'Fontes oficiais e estado dos datos', officialDescription:'Consulta aquí de onde sae cada dato. O estado do catálogo é orientativo: axuda a saber que está importado, que está en revisión e que debe comprobarse na fonte vixente.',
+      officialSearch:'Buscar fonte, organismo ou tema…', officialAll:'Todas', officialCore:'Verificación básica', officialEducation:'Sistema educativo', officialUniversity:'Universidade', officialFP:'FP', officialCIUG:'CIUG', officialAid:'Becas e cupos', officialLaw:'Normativa',
+      officialOpen:'Abrir fonte', officialUse:'Para que serve', officialJurisdiction:'Ámbito', officialStatusTitle:'Estado actual do catálogo', officialStatusNote:'Resumo pequeno de cobertura. Non substitúe a revisión da convocatoria oficial.',
+      officialHowTitle:'Como usar as fontes', officialHow1:'Verifica a oficialidade dun título en RUCT ou QEDU.', officialHow2:'Comproba notas, ponderacións e prazas en CIUG.', officialHow3:'Confirma oferta de FP por centro e curso na Xunta FP.', officialHow4:'Usa ITINERA para ordenar a decisión, non para substituír a administración.',
+      dataReady:'Depurado', dataReview:'En revisión', dataPending:'Pendente', dataLinked:'Enlazado', noSources:'Non hai fontes con ese filtro.',
+      compactTrust:'Fontes oficiais + estado de revisión'
+    },
+    es: {
+      navInicio:'Inicio', navBuscar:'Buscar', navSimular:'Simular', navBot:'ItineraBot', navFP:'FP', navUniversidad:'Universidad', navCIUG:'CIUG', navBecas:'Becas', navFuentes:'Fuentes',
+      homeTitle:'¿Qué necesitas hacer?', homeLead:'Busca un estudio, simula una ruta o comprueba la fuente oficial adecuada. ITINERA separa orientación, datos importados y datos que dependen de convocatoria.',
+      officialEyebrow:'Verificación oficial', officialTitle:'Fuentes oficiales y estado de los datos', officialDescription:'Consulta aquí de dónde sale cada dato. El estado del catálogo es orientativo: ayuda a saber qué está importado, qué está en revisión y qué debe comprobarse en la fuente vigente.',
+      officialSearch:'Buscar fuente, organismo o tema…', officialAll:'Todas', officialCore:'Verificación básica', officialEducation:'Sistema educativo', officialUniversity:'Universidad', officialFP:'FP', officialCIUG:'CIUG', officialAid:'Becas y cupos', officialLaw:'Normativa',
+      officialOpen:'Abrir fuente', officialUse:'Para qué sirve', officialJurisdiction:'Ámbito', officialStatusTitle:'Estado actual del catálogo', officialStatusNote:'Resumen pequeño de cobertura. No sustituye la revisión de la convocatoria oficial.',
+      officialHowTitle:'Cómo usar las fuentes', officialHow1:'Verifica la oficialidad de un título en RUCT o QEDU.', officialHow2:'Comprueba notas, ponderaciones y plazas en CIUG.', officialHow3:'Confirma oferta de FP por centro y curso en Xunta FP.', officialHow4:'Usa ITINERA para ordenar la decisión, no para sustituir a la administración.',
+      dataReady:'Depurado', dataReview:'En revisión', dataPending:'Pendiente', dataLinked:'Enlazado', noSources:'No hay fuentes con ese filtro.',
+      compactTrust:'Fuentes oficiales + estado de revisión'
+    },
+    en: {
+      navInicio:'Home', navBuscar:'Search', navSimular:'Simulate', navBot:'ItineraBot', navFP:'VET', navUniversidad:'University', navCIUG:'CIUG', navBecas:'Grants', navFuentes:'Sources',
+      homeTitle:'What do you need?', homeLead:'Search for a programme, simulate a pathway or check the right official source. ITINERA separates guidance, imported data and data that depends on each call.',
+      officialEyebrow:'Official verification', officialTitle:'Official sources and data status', officialDescription:'See where each item comes from. The catalogue status is a small guide: it shows what is imported, what is under review and what must be checked in the current official source.',
+      officialSearch:'Search source, body or topic…', officialAll:'All', officialCore:'Core verification', officialEducation:'Education system', officialUniversity:'University', officialFP:'VET', officialCIUG:'CIUG', officialAid:'Grants and reserved places', officialLaw:'Regulations',
+      officialOpen:'Open source', officialUse:'Purpose', officialJurisdiction:'Scope', officialStatusTitle:'Current catalogue status', officialStatusNote:'Small coverage summary. It does not replace the official call or regulation.',
+      officialHowTitle:'How to use the sources', officialHow1:'Verify whether a degree is official in RUCT or QEDU.', officialHow2:'Check cut-off marks, weighting parameters and places in CIUG.', officialHow3:'Confirm VET offer by centre and year in Xunta FP.', officialHow4:'Use ITINERA to organise decisions, not to replace public authorities.',
+      dataReady:'Clean', dataReview:'Under review', dataPending:'Pending', dataLinked:'Linked', noSources:'No sources match this filter.',
+      compactTrust:'Official sources + review status'
+    },
+    fr: {
+      navInicio:'Accueil', navBuscar:'Rechercher', navSimular:'Simuler', navBot:'ItineraBot', navFP:'FP', navUniversidad:'Université', navCIUG:'CIUG', navBecas:'Bourses', navFuentes:'Sources',
+      homeTitle:'Que souhaitez-vous faire ?', homeLead:'Recherchez une formation, simulez un parcours ou vérifiez la source officielle pertinente. ITINERA distingue orientation, données importées et données dépendantes des appels officiels.',
+      officialEyebrow:'Vérification officielle', officialTitle:'Sources officielles et état des données', officialDescription:'Consultez l’origine de chaque information. L’état du catalogue est un repère bref : il indique ce qui est importé, en révision ou à vérifier dans la source en vigueur.',
+      officialSearch:'Rechercher une source, un organisme ou un thème…', officialAll:'Toutes', officialCore:'Vérification de base', officialEducation:'Système éducatif', officialUniversity:'Université', officialFP:'FP', officialCIUG:'CIUG', officialAid:'Bourses et quotas', officialLaw:'Réglementation',
+      officialOpen:'Ouvrir la source', officialUse:'Utilité', officialJurisdiction:'Portée', officialStatusTitle:'État actuel du catalogue', officialStatusNote:'Bref résumé de couverture. Il ne remplace pas l’appel officiel en vigueur.',
+      officialHowTitle:'Comment utiliser les sources', officialHow1:'Vérifiez l’officialité d’un diplôme dans RUCT ou QEDU.', officialHow2:'Vérifiez notes seuils, pondérations et places dans CIUG.', officialHow3:'Confirmez l’offre de FP par centre et année dans Xunta FP.', officialHow4:'Utilisez ITINERA pour structurer la décision, non pour remplacer l’administration.',
+      dataReady:'Nettoyé', dataReview:'En révision', dataPending:'En attente', dataLinked:'Lié', noSources:'Aucune source ne correspond à ce filtre.',
+      compactTrust:'Sources officielles + état de révision'
+    },
+    pl: {
+      navInicio:'Start', navBuscar:'Szukaj', navSimular:'Symuluj', navBot:'ItineraBot', navFP:'FP', navUniversidad:'Uniwersytet', navCIUG:'CIUG', navBecas:'Stypendia', navFuentes:'Źródła',
+      homeTitle:'Czego potrzebujesz?', homeLead:'Wyszukaj kierunek, zasymuluj ścieżkę lub sprawdź właściwe źródło urzędowe. ITINERA oddziela orientację, dane zaimportowane i dane zależne od aktualnych naborów.',
+      officialEyebrow:'Weryfikacja urzędowa', officialTitle:'Źródła urzędowe i stan danych', officialDescription:'Tu sprawdzisz pochodzenie danych. Stan katalogu jest krótką wskazówką: pokazuje, co zaimportowano, co wymaga przeglądu i co należy sprawdzić w aktualnym źródle urzędowym.',
+      officialSearch:'Szukaj źródła, instytucji lub tematu…', officialAll:'Wszystkie', officialCore:'Weryfikacja podstawowa', officialEducation:'System edukacji', officialUniversity:'Uniwersytet', officialFP:'FP', officialCIUG:'CIUG', officialAid:'Stypendia i limity miejsc', officialLaw:'Przepisy',
+      officialOpen:'Otwórz źródło', officialUse:'Zastosowanie', officialJurisdiction:'Zakres', officialStatusTitle:'Aktualny stan katalogu', officialStatusNote:'Krótki obraz pokrycia. Nie zastępuje aktualnego naboru ani przepisów.',
+      officialHowTitle:'Jak korzystać ze źródeł', officialHow1:'Sprawdź oficjalny status dyplomu w RUCT lub QEDU.', officialHow2:'Sprawdź progi, wagi przedmiotów i miejsca w CIUG.', officialHow3:'Potwierdź ofertę FP według ośrodka i roku w Xunta FP.', officialHow4:'Używaj ITINERA do porządkowania decyzji, a nie jako zamiennika administracji.',
+      dataReady:'Oczyszczone', dataReview:'W przeglądzie', dataPending:'Oczekujące', dataLinked:'Powiązane', noSources:'Brak źródeł dla tego filtra.',
+      compactTrust:'Źródła urzędowe + status przeglądu'
+    },
+    de: {
+      navInicio:'Start', navBuscar:'Suchen', navSimular:'Simulieren', navBot:'ItineraBot', navFP:'FP', navUniversidad:'Universität', navCIUG:'CIUG', navBecas:'Stipendien', navFuentes:'Quellen',
+      homeTitle:'Was möchten Sie tun?', homeLead:'Suchen Sie einen Bildungsgang, simulieren Sie einen Weg oder prüfen Sie die passende amtliche Quelle. ITINERA trennt Orientierung, importierte Daten und daten, die von aktuellen Ausschreibungen abhängen.',
+      officialEyebrow:'Amtliche Überprüfung', officialTitle:'Amtliche Quellen und Datenstatus', officialDescription:'Hier sehen Sie, woher die Daten stammen. Der Katalogstatus ist eine kurze Orientierung: importiert, in Prüfung oder in der aktuellen Quelle zu überprüfen.',
+      officialSearch:'Quelle, Stelle oder Thema suchen…', officialAll:'Alle', officialCore:'Grundprüfung', officialEducation:'Bildungssystem', officialUniversity:'Universität', officialFP:'FP', officialCIUG:'CIUG', officialAid:'Stipendien und Quoten', officialLaw:'Rechtsgrundlagen',
+      officialOpen:'Quelle öffnen', officialUse:'Zweck', officialJurisdiction:'Geltungsbereich', officialStatusTitle:'Aktueller Katalogstatus', officialStatusNote:'Kurze Abdeckung. Sie ersetzt keine aktuelle amtliche Ausschreibung.',
+      officialHowTitle:'So nutzen Sie die Quellen', officialHow1:'Prüfen Sie den offiziellen Status eines Abschlusses in RUCT oder QEDU.', officialHow2:'Prüfen Sie Notengrenzen, Gewichtungen und Plätze in CIUG.', officialHow3:'Bestätigen Sie das FP-Angebot nach Zentrum und Jahr bei Xunta FP.', officialHow4:'Nutzen Sie ITINERA zur Strukturierung der Entscheidung, nicht als Ersatz der Verwaltung.',
+      dataReady:'Bereinigt', dataReview:'In Prüfung', dataPending:'Ausstehend', dataLinked:'Verlinkt', noSources:'Keine Quellen für diesen Filter.',
+      compactTrust:'Amtliche Quellen + Prüfstatus'
+    }
+  };
+
+  Object.keys(V24).forEach(lang => { I18N[lang] = Object.assign(I18N[lang] || {}, V24[lang]); });
+  function TT(key){ return (I18N[state.lang] && I18N[state.lang][key]) || I18N.es[key] || key; }
+
+  const SOURCE_GROUPS = [
+    {id:'all', key:'officialAll', match:()=>true},
+    {id:'core', key:'officialCore', match:s=>/ruct|qedu|boe|ministerio|educabase|siiu|univbase/i.test([s.id,s.category,s.title].join(' '))},
+    {id:'university', key:'officialUniversity', match:s=>/univers|ruct|qedu|ciug|sug|educabase|siiu|univbase|master|máster/i.test([s.id,s.category,s.title].join(' '))},
+    {id:'ciug', key:'officialCIUG', match:s=>/ciug|ponder|nota|admis/i.test([s.id,s.category,s.title,s.use].join(' '))},
+    {id:'fp', key:'officialFP', match:s=>/fp|todofp|xunta|ciclo|grado básico|grado medio|grado superior|especializ/i.test([s.id,s.category,s.title,s.use].join(' '))},
+    {id:'aid', key:'officialAid', match:s=>/beca|neae|cupo|reserva|discapacidad|deport/i.test([s.id,s.category,s.title,s.use].join(' '))},
+    {id:'law', key:'officialLaw', match:s=>/boe|dog|real decreto|decreto|ley|normativa|regul/i.test([s.id,s.category,s.title,s.use].join(' '))}
+  ];
+
+  function sourceGroupFor(s){
+    return SOURCE_GROUPS.find(g=>g.id!=='all' && g.match(s))?.id || 'core';
+  }
+  function sourceGroupLabel(id){
+    return TT(SOURCE_GROUPS.find(g=>g.id===id)?.key || 'officialCore');
+  }
+  function sourceIcon(id){
+    return id==='university'?'⌁':id==='ciug'?'◆':id==='fp'?'▣':id==='aid'?'✦':id==='law'?'§':'✓';
+  }
+  function sourcePriority(s){
+    const id = String(s.id || '').toLowerCase();
+    if(/ruct|qedu|ciug|todofp|xunta-fp|educabase|univbase/.test(id)) return 0;
+    if(/boe|dog/.test(id)) return 1;
+    return 2;
+  }
+  function sourceCardV24(s){
+    const group = sourceGroupFor(s);
+    const title = s.title || s.url || 'Fuente oficial';
+    const use = s.use || s.usefulness || '';
+    return `<article class="v24-source-card" data-source-card data-group="${group}">
+      <div class="v24-source-icon">${sourceIcon(group)}</div>
+      <div class="v24-source-body">
+        <div class="v24-source-top">
+          <span>${escapeHTML(sourceGroupLabel(group))}</span>
+          <small>${escapeHTML(s.jurisdiction || s.category || '')}</small>
+        </div>
+        <h3>${escapeHTML(title)}</h3>
+        ${use ? `<p><strong>${escapeHTML(TT('officialUse'))}:</strong> ${escapeHTML(use)}</p>` : ''}
+        <a class="button primary v24-source-open" href="${escapeHTML(s.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(TT('officialOpen'))}</a>
+      </div>
+    </article>`;
+  }
+
+  function v24Counts(){
+    const v23 = state.v23 || {};
+    const integral = state.integral || {};
+    return {
+      studies: state.data?.studies?.length || 0,
+      university: (v23.cleanUniversity || integral.university_offers || []).length || 0,
+      cutoffs: (integral.ciug_cutoffs || []).length || 0,
+      ponders: (integral.ciug_ponderations || []).length || 0,
+      fpOffer: (integral.fp_galicia_offer || []).length || 0,
+      specs: (integral.fp_specializations || []).length || 0,
+      quality: (v23.quality || []).length || 0
+    };
+  }
+  function v24StatusPill(status){
+    const s=String(status||'').toLowerCase();
+    const key = s.includes('clean')||s.includes('ready')||s.includes('verified') ? 'dataReady' : s.includes('review')||s.includes('imported')||s.includes('progress') ? 'dataReview' : s.includes('pending')||s.includes('minimum') ? 'dataPending' : 'dataLinked';
+    return `<span class="v24-status ${key}">${escapeHTML(TT(key))}</span>`;
+  }
+  function v24CatalogMini(){
+    const c=v24Counts();
+    const cards = [
+      {label:'Universidad', value:c.university, status:c.university?'clean_catalog_ready':'pending'},
+      {label:'CIUG notas', value:c.cutoffs, status:c.cutoffs?'imported_needs_review':'pending'},
+      {label:'CIUG ponderaciones', value:c.ponders, status:c.ponders?'imported_needs_review':'linked'},
+      {label:'FP especialización', value:c.specs, status:c.specs?'imported_needs_review':'pending'},
+      {label:'FP Galicia', value:c.fpOffer, status:c.fpOffer>20?'imported_needs_review':'minimum_pending'}
+    ];
+    return `<aside class="v24-catalog-mini">
+      <div class="v24-mini-head">
+        <p class="eyebrow">${escapeHTML(TT('officialStatusTitle'))}</p>
+        <p>${escapeHTML(TT('officialStatusNote'))}</p>
+      </div>
+      <div class="v24-mini-grid">
+        ${cards.map(x=>`<article><strong>${numberFmt ? numberFmt(x.value) : Number(x.value||0).toLocaleString('es-ES')}</strong><span>${escapeHTML(x.label)}</span>${v24StatusPill(x.status)}</article>`).join('')}
+      </div>
+    </aside>`;
+  }
+  function v24HowToUse(){
+    return `<section class="v24-how">
+      <h2>${escapeHTML(TT('officialHowTitle'))}</h2>
+      <ol>
+        <li>${escapeHTML(TT('officialHow1'))}</li>
+        <li>${escapeHTML(TT('officialHow2'))}</li>
+        <li>${escapeHTML(TT('officialHow3'))}</li>
+        <li>${escapeHTML(TT('officialHow4'))}</li>
+      </ol>
+    </section>`;
+  }
+
+  function renderSources(){
+    const sourceFilters = document.getElementById('sourceFilters');
+    const sourceCards = document.getElementById('sourceCards');
+    const section = document.getElementById('fuentes');
+    if(!sourceFilters || !sourceCards) return;
+
+    const rawSources = (state.data?.official_sources || []).slice().sort((a,b)=>
+      sourcePriority(a)-sourcePriority(b) || String(a.title||'').localeCompare(String(b.title||''),'es')
+    );
+
+    if(section && !section.dataset.v24Sources){
+      section.dataset.v24Sources='1';
+      section.classList.add('v24-sources-view');
+      const heading = section.querySelector('.section-heading');
+      if(heading){
+        heading.innerHTML = `<p class="eyebrow">${escapeHTML(TT('officialEyebrow'))}</p><h1>${escapeHTML(TT('officialTitle'))}</h1><p>${escapeHTML(TT('officialDescription'))}</p>`;
+        heading.insertAdjacentHTML('afterend', `<div class="v24-source-toolbox">
+          ${v24HowToUse()}
+          ${v24CatalogMini()}
+        </div>
+        <div class="v24-source-search">
+          <input id="v24SourceSearch" type="search" placeholder="${escapeHTML(TT('officialSearch'))}">
+        </div>`);
+      }
+    } else if(section){
+      // Repaint translated static blocks when language changes.
+      const heading = section.querySelector('.section-heading');
+      if(heading) heading.innerHTML = `<p class="eyebrow">${escapeHTML(TT('officialEyebrow'))}</p><h1>${escapeHTML(TT('officialTitle'))}</h1><p>${escapeHTML(TT('officialDescription'))}</p>`;
+      const toolbox = section.querySelector('.v24-source-toolbox');
+      if(toolbox) toolbox.innerHTML = v24HowToUse() + v24CatalogMini();
+      const input = document.getElementById('v24SourceSearch');
+      if(input) input.placeholder = TT('officialSearch');
+    }
+
+    const active = state.sourceFilter || 'all';
+    sourceFilters.classList.add('v24-source-filters');
+    sourceFilters.innerHTML = SOURCE_GROUPS.map(g => `<button class="chip ${active===g.id?'active':''}" data-cat="${g.id}">${escapeHTML(TT(g.key))}</button>`).join('');
+    sourceFilters.querySelectorAll('button').forEach(b => b.onclick = () => { state.sourceFilter=b.dataset.cat; renderSources(); });
+
+    const searchInput = document.getElementById('v24SourceSearch');
+    if(searchInput && !searchInput.dataset.bound){
+      searchInput.dataset.bound='1';
+      searchInput.addEventListener('input', renderSources);
+    }
+    const q = normalise(searchInput?.value || '');
+
+    const group = SOURCE_GROUPS.find(g=>g.id===active) || SOURCE_GROUPS[0];
+    const list = rawSources.filter(s => (group.id==='all' || group.match(s)) && (!q || normalise([s.title,s.use,s.usefulness,s.url,s.category,s.jurisdiction,s.id].join(' ')).includes(q)));
+
+    sourceCards.className = 'v24-source-list';
+    sourceCards.innerHTML = list.length ? list.map(sourceCardV24).join('') : `<p class="v24-empty">${escapeHTML(TT('noSources'))}</p>`;
+  }
+
+  function v24Home(){
+    const home = document.getElementById('inicio');
+    if(!home) return;
+    document.getElementById('v23Dashboard')?.remove();
+    document.getElementById('coveragePanel')?.remove();
+    document.getElementById('v022StatusPanel')?.remove();
+    const heroTitle = document.getElementById('heroTitle');
+    const heroLead = document.getElementById('heroLead');
+    if(heroTitle) heroTitle.textContent = TT('homeTitle');
+    if(heroLead) heroLead.textContent = TT('homeLead');
+    const badge=document.getElementById('updateBadge');
+    if(badge){
+      badge.textContent = `ITINERA v0.24`;
+      badge.title = TT('compactTrust');
+    }
+  }
+
+  function v24Nav(){
+    const nav = document.getElementById('mainNav');
+    if(!nav) return;
+    nav.classList.add('v24-nav');
+    nav.innerHTML = `
+      <a href="#inicio" data-route="inicio" class="active">${escapeHTML(TT('navInicio'))}</a>
+      <a href="#estudios" data-route="estudios">${escapeHTML(TT('navBuscar'))}</a>
+      <a href="#aventura" data-route="aventura">${escapeHTML(TT('navSimular'))}</a>
+      <a href="#asistente" data-route="asistente">${escapeHTML(TT('navBot'))}</a>
+      <a href="#fp" data-route="fp">${escapeHTML(TT('navFP'))}</a>
+      <a href="#universidad" data-route="universidad">${escapeHTML(TT('navUniversidad'))}</a>
+      <a href="#ponderaciones" data-route="ponderaciones">${escapeHTML(TT('navCIUG'))}</a>
+      <a href="#becas" data-route="becas">${escapeHTML(TT('navBecas'))}</a>
+      <a href="#fuentes" data-route="fuentes">${escapeHTML(TT('navFuentes'))}</a>
+    `;
+    bindRoutes();
+  }
+
+  function v24Motion(){
+    document.body.classList.add('v24-premium');
+    const cards = document.querySelectorAll('.content-card,.v23-card,.v24-source-card,.program-card,.scholarship-card');
+    cards.forEach((el,i)=>{ el.style.setProperty('--reveal-delay', `${Math.min(i*28,360)}ms`); el.classList.add('v24-reveal'); });
+  }
+
+  init = (function(previousInit){
+    return function(){
+      previousInit();
+      setTimeout(()=>{
+        v24Nav();
+        v24Home();
+        renderSources();
+        v24Motion();
+      }, 1700);
+    };
+  })(init);
+})();
