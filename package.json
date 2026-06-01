@@ -1,6 +1,6 @@
 {
   "name": "itinera-v0-22",
-  "version": "0.22.0-macrointegral",
+  "version": "0.22.1-macrointegral-fix",
   "private": true,
   "type": "module",
   "description": "ITINERA: GitHub Pages + Supabase official catalog + ItineraBot documental.",

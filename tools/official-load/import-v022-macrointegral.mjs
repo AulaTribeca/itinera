@@ -25,8 +25,24 @@ const SOURCES = {
   qedu: 'https://www.ciencia.gob.es/qedu',
   qeduHelp: 'https://www.ciencia.gob.es/qedu/AyudaQEDU.html',
   ruct: 'https://universidades.sede.gob.es/pagina/index/directorio/Proc_Ruct',
-  gradoCsv: 'https://estadisticas.universidades.gob.es/jaxiPx/files/_px/es/csv_c/Universitaria/EUCT/2023/Titulaciones/l0/Titulaciones_Grado_Rama_Univ.px',
-  masterCsv: 'https://estadisticas.universidades.gob.es/jaxiPx/files/_px/es/csv_c/Universitaria/EUCT/2023/Titulaciones/l0/Titulaciones_Master_Rama_Univ.px',
+
+  // EDUCAbase/UNIVBASE 2024. En v0.22 fallaba el dominio antiguo estadisticas.universidades.gob.es.
+  // Se prueban varias distribuciones oficiales, empezando por el dominio vigente estadisticas.ciencia.gob.es.
+  gradoCsvCandidates: [
+    'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_c/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Grado_Rama_Univ.px',
+    'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_sc/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Grado_Rama_Univ.px',
+    'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Grado_Rama_Univ.px',
+    'https://estadisticas.universidades.gob.es/jaxiPx/files/_px/es/csv_c/Universitaria/EUCT/2023/Titulaciones/l0/Titulaciones_Grado_Rama_Univ.px'
+  ],
+  masterCsvCandidates: [
+    'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_c/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Master_Rama_Univ.px',
+    'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_sc/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Master_Rama_Univ.px',
+    'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Master_Rama_Univ.px',
+    'https://estadisticas.universidades.gob.es/jaxiPx/files/_px/es/csv_c/Universitaria/EUCT/2023/Titulaciones/l0/Titulaciones_Master_Rama_Univ.px'
+  ],
+  gradoCsv: 'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_c/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Grado_Rama_Univ.px',
+  masterCsv: 'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_c/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Master_Rama_Univ.px',
+
   ciugAdmission: 'https://www.ciug.gal/admision-sug',
   ciugPonderations2026: 'https://ciug.gal/PDF/2026/Acceso/ponderacions_2026.pdf',
   ciugCutoffs2025: 'https://ciug.gal/PDF/2025/ACCESO/notas_de_corte_2025.pdf',
@@ -48,6 +64,20 @@ async function getText(url){
   const res = await fetch(url, {headers:{'user-agent':'ITINERA/0.22 academic-orientation'}});
   if(!res.ok) throw new Error(`Fetch ${res.status} ${url}`);
   return await res.text();
+}
+
+async function getFirstText(urls=[]){
+  const errors = [];
+  for(const url of urls){
+    try{
+      const text = await getText(url);
+      if(text && text.trim().length > 20) return {url, text};
+      errors.push(`${url}: empty`);
+    }catch(e){
+      errors.push(`${url}: ${e.message}`);
+    }
+  }
+  throw new Error(errors.join(' | '));
 }
 
 async function upsert(table, rows, conflict='id'){
@@ -199,29 +229,50 @@ function extractSpecializationRows(html){
 
 async function importUniversityAggregates(){
   let total=0;
+  let gradoCount=0;
+  let masterCount=0;
+  const errors=[];
+
   try{
-    const text = await getText(SOURCES.gradoCsv);
+    const {url, text} = await getFirstText(SOURCES.gradoCsvCandidates);
     const records = parseStatCsv(text);
-    const rows = universityAggregateRows(records, 'Grado', 'educabase-grados-univ-2023', SOURCES.gradoCsv);
+    const rows = universityAggregateRows(records, 'Grado', 'educabase-grados-univ-2024', url);
     await upsert('itinera_university_offers', rows);
+    gradoCount = rows.length;
     total += rows.length;
-    await updateStatus('v022-university-grados-educabase', 'Universidad · Grados EDUCAbase/SIIU', rows.length ? 'imported_aggregate' : 'no_rows', rows.length, 'educabase-grados-univ-2023', 'Carga agregada por universidad/rama/créditos. Para título concreto se mantiene verificación QEDU/RUCT.', {sample: rows.slice(0,3)});
+    await updateStatus('v022-university-grados-educabase', 'Universidad · Grados EDUCAbase/SIIU', rows.length ? 'imported_aggregate' : 'no_rows', rows.length, 'educabase-grados-univ-2024', `Carga agregada por universidad/rama/créditos desde ${url}. Para título concreto se mantiene verificación QEDU/RUCT.`, {sample: rows.slice(0,3), url});
   }catch(e){
+    errors.push(`Grados: ${e.message}`);
     console.warn(e.message);
-    await updateStatus('v022-university-grados-educabase', 'Universidad · Grados EDUCAbase/SIIU', 'fetch_failed', 0, 'educabase-grados-univ-2023', e.message);
+    await updateStatus('v022-university-grados-educabase', 'Universidad · Grados EDUCAbase/SIIU', 'fetch_failed', 0, 'educabase-grados-univ-2024', e.message);
   }
 
   try{
-    const text = await getText(SOURCES.masterCsv);
+    const {url, text} = await getFirstText(SOURCES.masterCsvCandidates);
     const records = parseStatCsv(text);
-    const rows = universityAggregateRows(records, 'Máster', 'educabase-masteres-univ-2023', SOURCES.masterCsv);
+    const rows = universityAggregateRows(records, 'Máster', 'educabase-masteres-univ-2024', url);
     await upsert('itinera_university_offers', rows);
+    masterCount = rows.length;
     total += rows.length;
-    await updateStatus('v022-university-masteres-educabase', 'Universidad · Másteres EDUCAbase/SIIU', rows.length ? 'imported_aggregate' : 'no_rows', rows.length, 'educabase-masteres-univ-2023', 'Carga agregada por universidad/rama/créditos. Para título concreto se mantiene verificación QEDU/RUCT.', {sample: rows.slice(0,3)});
+    await updateStatus('v022-university-masteres-educabase', 'Universidad · Másteres EDUCAbase/SIIU', rows.length ? 'imported_aggregate' : 'no_rows', rows.length, 'educabase-masteres-univ-2024', `Carga agregada por universidad/rama/créditos desde ${url}. Para título concreto se mantiene verificación QEDU/RUCT.`, {sample: rows.slice(0,3), url});
   }catch(e){
+    errors.push(`Másteres: ${e.message}`);
     console.warn(e.message);
-    await updateStatus('v022-university-masteres-educabase', 'Universidad · Másteres EDUCAbase/SIIU', 'fetch_failed', 0, 'educabase-masteres-univ-2023', e.message);
+    await updateStatus('v022-university-masteres-educabase', 'Universidad · Másteres EDUCAbase/SIIU', 'fetch_failed', 0, 'educabase-masteres-univ-2024', e.message);
   }
+
+  await updateStatus(
+    'v022-university-offers',
+    'Universidad estructurada',
+    total ? 'imported_aggregate' : 'fetch_failed',
+    total,
+    'qedu-ayuda',
+    total
+      ? `Carga universitaria agregada realizada: ${gradoCount} registros de grado y ${masterCount} registros de máster. QEDU/RUCT siguen siendo verificación título a título.`
+      : `No se cargaron registros universitarios. ${errors.join(' || ')}`,
+    {gradoCount, masterCount, errors}
+  );
+
   return total;
 }
 
@@ -231,6 +282,7 @@ async function importFpSpecializations(){
     const rows = extractSpecializationRows(html);
     await upsert('itinera_fp_specializations', rows);
     await updateStatus('v022-grados-e', 'FP cursos de especialización', rows.length ? 'imported_needs_review' : 'no_rows', rows.length, 'todofp-cursos-especializacion', 'Extracción automática desde índice TodoFP. Revisar familias, duración y requisitos título a título.', {sample: rows.slice(0,5)});
+    await updateStatus('v022-grados-e-parent', 'FP cursos de especialización · resumen', rows.length ? 'imported_needs_review' : 'no_rows', rows.length, 'todofp-cursos-especializacion', 'Resumen v0.22.1 de cursos de especialización cargados.', {sample: rows.slice(0,3)});
     return rows.length;
   }catch(e){
     console.warn(e.message);
@@ -278,6 +330,7 @@ async function importGaliciaCenters(){
       });
     await upsert('itinera_fp_galicia_offer', offers);
     await updateStatus('v022-fp-galicia-centros', 'FP Galicia centros', offers.length ? 'centers_imported_needs_offer_crosscheck' : 'no_rows', offers.length, 'xunta-centros-educativos-csv', 'Centros con mención FP importados desde CSV de Datos Abertos. La oferta ciclo/centro debe cruzarse con Xunta FP.', {sample: offers.slice(0,3)});
+    await updateStatus('v022-fp-galicia', 'Oferta FP Galicia', offers.length ? 'centers_imported_needs_offer_crosscheck' : 'no_rows', offers.length, 'xunta-centros-educativos-csv', 'Centros con mención FP importados desde CSV de Datos Abertos. La oferta ciclo/centro sigue pendiente de cruce fino con Xunta FP.', {sample: offers.slice(0,3)});
     return offers.length;
   }catch(e){
     console.warn(e.message);
@@ -291,6 +344,8 @@ async function main(){
   const university = await importUniversityAggregates();
   const specializations = await importFpSpecializations();
   const centers = await importGaliciaCenters();
+
+  await updateStatus('v022-ciug', 'CIUG notas y ponderaciones', 'in_progress_structured', 0, 'ciug-admision', 'v0.22.1 mantiene CIUG como capa enlazada y pendiente de extracción tabular validada desde PDF/convocatoria vigente.', {sources:['ciug-admision','ciug-ponderaciones-2026','ciug-notas-corte-2025']});
 
   const coveragePatch = [
     {id:'universidad-grados', scope:'Universidad · Grados', expected_coverage:'Grados universitarios oficiales desde RUCT/QEDU/SIIU, con título, universidad, centro, créditos, rama, modalidad y notas cuando estén disponibles.', current_status: university ? 'in_progress_structured' : 'pending_review', notes: university ? 'v0.22 importó datos agregados EDUCAbase/SIIU. Para titulación concreta se mantiene verificación QEDU/RUCT.' : 'Pendiente de carga estructurada: revisar workflow v0.22.'},

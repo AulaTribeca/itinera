@@ -230,3 +230,11 @@ ITINERA v0.22 · macrointegral
 - Añade respuestas de ItineraBot para cursos de especialización, FP Galicia, QEDU/RUCT y alcance universitario.
 - La versión no inventa datos. Lo que no pueda extraerse con seguridad queda como `in_progress_structured` o `pending_review`.
 - Requiere ejecutar SQL en Supabase antes del workflow.
+
+
+ITINERA v0.22.1
+- Corrige importador macrointegral universitario.
+- Cambia URLs universitarias a UNIVBASE/EDUCAbase 2024 en `estadisticas.ciencia.gob.es`.
+- Añade fallback de varias distribuciones CSV.
+- Actualiza estados padre de universidad, FP Galicia y CIUG.
+- Añade SQL `supabase/itinera_v0_22_1_macrointegral_fix.sql`.
