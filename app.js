@@ -1314,4 +1314,216 @@ init = (function(previousInit){
   };
 })(init);
 
+
+
+/* ITINERA v0.16 · GitHub Pages + Supabase directo con anon key */
+const ITINERA_SUPABASE = window.ITINERA_CONFIG || {};
+
+function supabaseReady(){
+  return Boolean(ITINERA_SUPABASE.SUPABASE_URL && ITINERA_SUPABASE.SUPABASE_ANON_KEY);
+}
+function supabaseBase(){
+  return String(ITINERA_SUPABASE.SUPABASE_URL || '').replace(/\/+$/,'');
+}
+function supabaseHeaders(){
+  return {
+    apikey: ITINERA_SUPABASE.SUPABASE_ANON_KEY,
+    Authorization: `Bearer ${ITINERA_SUPABASE.SUPABASE_ANON_KEY}`,
+    'Content-Type': 'application/json'
+  };
+}
+async function sbFetch(path, options={}){
+  if(!supabaseReady()) throw new Error('Supabase public config missing');
+  const res = await fetch(`${supabaseBase()}${path}`, {
+    ...options,
+    headers: {...supabaseHeaders(), ...(options.headers||{})}
+  });
+  if(!res.ok) throw new Error(`Supabase ${res.status}: ${await res.text().catch(()=> '')}`);
+  return await res.json();
+}
+function mapSourceRow(row){
+  return {
+    id: row.id,
+    title: row.title,
+    url: row.url,
+    category: row.category || 'general',
+    use: row.usefulness || row.use || '',
+    jurisdiction: row.jurisdiction || ''
+  };
+}
+function mapStudyRow(row){
+  return {
+    id: row.id,
+    name: row.name,
+    type: row.type,
+    level: row.level,
+    family: row.family || 'Sin familia',
+    branch: row.branch || '',
+    keywords: row.keywords || [],
+    route: row.route || '',
+    regulated: row.regulated || '',
+    demand: row.demand || '',
+    labour: row.labour || '',
+    subjects: Array.isArray(row.subjects) ? row.subjects : [],
+    ponderation_subjects: Array.isArray(row.ponderation_subjects) ? row.ponderation_subjects : [],
+    route_options: Array.isArray(row.route_options) ? row.route_options : [],
+    availability_by_province: row.availability_by_province || {},
+    sources: Array.isArray(row.sources) ? row.sources : [],
+    source_url: row.source_url || '',
+    data_quality: row.data_quality || '',
+    score: row.score || 0.5,
+    data_source: 'supabase'
+  };
+}
+function mergeById(localRows=[], remoteRows=[]){
+  const map = new Map();
+  localRows.forEach(x => map.set(x.id, x));
+  remoteRows.forEach(x => map.set(x.id, {...(map.get(x.id)||{}), ...x}));
+  return [...map.values()];
+}
+
+async function supabaseSearchStudies(q='', type='all', family='all', limit=80){
+  if(!supabaseReady()) return [];
+  const payload = { q, study_type:type, study_family:family, max_results:limit };
+  const rows = await sbFetch('/rest/v1/rpc/itinera_search_studies', {
+    method:'POST',
+    body: JSON.stringify(payload)
+  });
+  return (rows || []).map(mapStudyRow);
+}
+
+async function loadSupabaseCatalog(){
+  if(!supabaseReady()){
+    state.sourceMode = 'seed-local';
+    return false;
+  }
+  try{
+    const [studies, sources, faq, access, scholarships, reservations, convalidations] = await Promise.all([
+      sbFetch('/rest/v1/itinera_studies?select=*&order=name.asc&limit=10000'),
+      sbFetch('/rest/v1/itinera_sources?select=*&order=category.asc,title.asc&limit=1000'),
+      sbFetch('/rest/v1/itinera_faq_items?select=*&order=priority.asc&limit=1000').catch(()=>[]),
+      sbFetch('/rest/v1/itinera_access_exams?select=*&order=title.asc&limit=100').catch(()=>[]),
+      sbFetch('/rest/v1/itinera_scholarships?select=*&order=title.asc&limit=100').catch(()=>[]),
+      sbFetch('/rest/v1/itinera_reservations?select=*&order=title.asc&limit=100').catch(()=>[]),
+      sbFetch('/rest/v1/itinera_convalidations?select=*&order=title.asc&limit=100').catch(()=>[])
+    ]);
+
+    const remoteStudies = (studies||[]).map(mapStudyRow);
+    if(remoteStudies.length) state.data.studies = mergeById(state.data.studies || [], remoteStudies);
+    if(sources?.length) state.data.official_sources = mergeById(state.data.official_sources || [], sources.map(mapSourceRow));
+
+    if(faq?.length){
+      const mapped = faq.map(x => ({q:x.question, a:x.answer, sources:x.sources || [], category:x.category || 'Orientación general'}));
+      state.data.faq = mergeById(
+        (state.data.faq || []).map((x,i)=>({id:`seed-faq-${i}`,...x})),
+        mapped.map((x,i)=>({id:`supabase-faq-${normalise(x.q).slice(0,80)||i}`,...x}))
+      );
+    }
+    if(access?.length) state.data.access_exams = access.map(x => ({id:x.id,title:x.title,short:x.short,when_needed:x.when_needed,age:x.age,structure:x.structure||[],notes:x.notes||[],sources:x.sources||[]}));
+    if(scholarships?.length) state.data.scholarships = scholarships.map(x => ({id:x.id,title:x.title,summary:x.summary,period:x.period,sources:x.sources||[]}));
+    if(reservations?.length) state.data.reservations = reservations.map(x => ({id:x.id,title:x.title,summary:x.summary,sources:x.sources||[]}));
+    if(convalidations?.length) state.data.convalidations = convalidations.map(x => ({id:x.id,title:x.title,summary:x.summary,details:x.details||[],sources:x.sources||[]}));
+
+    state.sourceMode = 'supabase';
+    state.supabaseLoadedAt = new Date().toISOString();
+    const badge = document.getElementById('updateBadge');
+    if(badge) {
+      badge.textContent = `${T('update')}: ${formatDateTime(state.data.last_updated_at||LAST_UPDATED_AT)} · Supabase: ${remoteStudies.length} estudos`;
+      badge.title = `Catálogo conectado a Supabase con clave pública anon.`;
+    }
+    return true;
+  }catch(error){
+    console.warn('ITINERA Supabase fallback:', error);
+    state.sourceMode = 'seed-fallback';
+    const badge = document.getElementById('updateBadge');
+    if(badge) badge.title = 'Supabase no respondió. ITINERA usa la base local de respaldo.';
+    return false;
+  }
+}
+
+programs = function(q='',type='all',family='all'){
+  return state.data.studies.map(p=>{
+    let score=scoreProgram(p,q);
+    if(type!=='all'&&p.type!==type)score-=.55;
+    if(family!=='all'&&normalise(p.family)!==normalise(family))score-=.35;
+    if(!q&&(type!=='all'||family!=='all'))score+=.4;
+    return{...p,score}
+  }).filter(p=> q ? p.score>.30 : p.score>.01).sort((a,b)=>b.score-a.score || a.name.localeCompare(b.name)).slice(0,120)
+};
+
+runSearch = async function(){
+  const q=document.getElementById('studySearch').value.trim();
+  const type=document.getElementById('studyTypeFilter').value;
+  const family=document.getElementById('familyFilter').value;
+  const out=document.getElementById('studyResults');
+  if(!q&&type==='all'&&family==='all'){
+    out.innerHTML=`<div class="warning-box">${T('finderDescription')}</div>`;
+    return;
+  }
+  out.innerHTML='<div class="result-card"><p>Buscando…</p></div>';
+  let list=[];
+  try{
+    list = await supabaseSearchStudies(q,type,family,80);
+  }catch(e){}
+  if(!list.length) list = programs(q,type,family);
+
+  if(!list.length){
+    out.innerHTML=`<article class="result-card"><h3>${escapeHTML(T('finderTitle'))}</h3><p>${escapeHTML(T('officialNote'))}</p>${sourceLinks(['todofp-familias','xunta-fp-oferta','xunta-fp-centros','qedu','ruct','ciug-admision'])}</article>`;
+    return;
+  }
+  const exact=q&&list.some(p=>normalise(p.name).includes(normalise(q))||(p.keywords||[]).some(k=>normalise(k)===normalise(q)));
+  out.innerHTML=(q&&!exact?`<p class="warning-box">${T('maybe')}</p>`:'')+list.map(p=>programCard(p,q&&!normalise(p.name).includes(normalise(q)))).join('');
+};
+
+function renderStudiesBrowserV16(){
+  const search=document.getElementById('allStudiesSearch');
+  const type=document.getElementById('allStudiesType');
+  const family=document.getElementById('allStudiesFamily');
+  const btn=document.getElementById('allStudiesSearchBtn');
+  if(!search||!type||!family) return;
+  const types=[['all',T('allTypes')],['fpgm','FP grado medio'],['fpgs','FP grado superior'],['grado','Grado universitario'],['master','Máster']];
+  type.innerHTML=types.map(([v,l])=>`<option value="${v}">${escapeHTML(l)}</option>`).join('');
+  const families=[...new Set(state.data.studies.map(p=>p.family).filter(Boolean))].sort();
+  family.innerHTML=`<option value="all">${T('allFamilies')}</option>`+families.map(f=>`<option value="${escapeHTML(f)}">${escapeHTML(f)}</option>`).join('');
+  if(btn) btn.textContent=T('searchMatches') || 'Buscar coincidencias';
+  const draw=async ()=>{
+    const q=search.value.trim();
+    let list=[];
+    try{ if(q || type.value!=='all' || family.value!=='all') list = await supabaseSearchStudies(q,type.value,family.value,120); }catch(e){}
+    if(!list.length){
+      list = q ? programs(q,type.value,family.value).slice(0,120) : state.data.studies.filter(p=>(type.value==='all'||p.type===type.value)&&(family.value==='all'||p.family===family.value)).sort((a,b)=>a.type.localeCompare(b.type)||String(a.family).localeCompare(String(b.family))||a.name.localeCompare(b.name));
+    }
+    document.getElementById('allStudiesList').innerHTML=groupedStudiesHTML(list);
+  };
+  if(btn) btn.onclick=draw;
+  search.onkeydown=e=>{if(e.key==='Enter') draw()};
+  search.oninput=()=>{ if(search.value.trim().length>=3) draw(); };
+  type.onchange=draw; family.onchange=draw; draw();
+}
+renderStudiesBrowser = renderStudiesBrowserV16;
+
+studySuggestionList = function(query){
+  const q=String(query||'').trim();
+  if(q.length<3) return [];
+  return programs(q,'all','all').slice(0,14);
+};
+
+async function refreshAfterSupabaseLoad(){
+  renderBasics();
+  renderSelects();
+  renderStaticSections();
+  renderTags();
+  renderAdventure();
+  renderQuestionChips();
+  renderStudiesBrowser();
+}
+
+init = (function(previousInit){
+  return async function(){
+    previousInit();
+    await loadSupabaseCatalog();
+    await refreshAfterSupabaseLoad();
+  }
+})(init);
+
 document.addEventListener('DOMContentLoaded',init);

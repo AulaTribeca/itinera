@@ -133,3 +133,20 @@ ITINERA v0.15 · Fase 2
 - Se añade guía: `INSTRUCCIONES_SUPABASE_FASE2.md`.
 - Esta fase requiere ejecutar SQL en Supabase y añadir variables de entorno en Netlify.
 - La ingesta completa de fuentes oficiales debe validarse progresivamente. ITINERA no debe anunciar “todos los estudios” hasta que `catalog-status` confirme cobertura suficiente y se revisen los datos críticos.
+
+
+ITINERA v0.16 · GitHub Pages + Supabase directo
+- Se añade `app-config.js` para configurar la conexión pública a Supabase desde GitHub Pages.
+- `index.html` carga `app-config.js` antes de `app.js`.
+- `app.js` intenta cargar datos desde Supabase usando `SUPABASE_URL` y `SUPABASE_ANON_KEY`.
+- Si Supabase no responde o no está configurado, la herramienta sigue funcionando con `data/studies.seed.json`.
+- El buscador principal y la sección “Todos los estudios” intentan consultar Supabase primero.
+- Se añade `supabase/itinera_v0_16_seed_data.sql` para cargar la base inicial local en Supabase.
+- No se debe subir nunca `SUPABASE_SERVICE_ROLE_KEY` ni `OPENAI_API_KEY` a GitHub.
+- En GitHub Pages solo puede usarse la clave pública `anon`.
+
+
+ITINERA v0.16.2
+- app-config.js queda preparado para GitHub Pages con la URL base de Supabase y la publishable key.
+- Se usa la URL base del proyecto, no la URL REST con /rest/v1/.
+- No contiene service_role ni OPENAI_API_KEY.
