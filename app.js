@@ -2011,3 +2011,94 @@ askItineraBot = async function(text){
   };
 })();
 document.addEventListener('DOMContentLoaded',init);
+
+
+
+/* ITINERA v0.21.1 · corrección de enrutamiento de ItineraBot para RUCT/QEDU/CIUG */
+(function(){
+  function hasAny(q, words){
+    return words.some(w => q.includes(w));
+  }
+  function universityIntentAnswer(text){
+    const q = normalise(text);
+
+    const qedu = q.includes('qedu') || q.includes('que estudiar y donde') || q.includes('qué estudiar y dónde');
+    const ruct = q.includes('ruct') || q.includes('registro de universidades') || q.includes('registro universidades');
+    const official = hasAny(q, ['oficialidad','titulo oficial','título oficial','grado oficial','master oficial','máster oficial','titulo propio','título propio','propio']);
+    const habilitating = hasAny(q, ['master habilitante','máster habilitante','habilitante','profesion regulada','profesión regulada','profesiones reguladas']);
+    const ects = q.includes('ects') || hasAny(q, ['credito','crédito','creditos','créditos','reconocimiento','convalidacion','convalidación']);
+    const ciug = q.includes('ciug') || hasAny(q, ['ponderacion','ponderación','ponderaciones','nota de corte','notas de corte','admision sug','admisión sug','sistema universitario de galicia']);
+    const qeduRuctQuestion = (qedu && ruct) || (ruct && hasAny(q, ['mismo','igual','diferencia','diferencias','sirven','funcion']));
+
+    if(qeduRuctQuestion){
+      return `<p>No. <strong>QEDU y RUCT no son lo mismo.</strong> QEDU sirve para orientarse sobre qué estudiar y dónde en la universidad; RUCT sirve para verificar la oficialidad administrativa de universidades, centros y títulos. Para decidir, QEDU es útil como explorador; para comprobar si un grado o máster es oficial, la referencia debe ser RUCT.</p>${sourceLinks(['qedu','ruct','boe-rd-822-2021'])}`;
+    }
+
+    if(qedu && !ruct){
+      return `<p><strong>QEDU</strong> es una herramienta oficial de consulta y orientación universitaria. Permite explorar titulaciones y dónde se imparten, pero no debe sustituir la verificación de oficialidad en RUCT ni la información de admisión de cada distrito universitario.</p>${sourceLinks(['qedu','ruct','ciug-admision'])}`;
+    }
+
+    if(ruct || official){
+      return `<p>Para saber si un grado, máster o doctorado es oficial, debes comprobarlo en <strong>RUCT</strong>, el Registro de Universidades, Centros y Títulos. La denominación comercial de una universidad o la existencia de una página web no bastan. Además, un título propio no equivale a un título oficial cuando una convocatoria, profesión regulada, oposición o máster exige oficialidad.</p>${sourceLinks(['ruct','qedu','boe-rd-822-2021'])}`;
+    }
+
+    if(habilitating){
+      return `<p>Un <strong>máster habilitante</strong> es un máster universitario oficial necesario para acceder a determinadas profesiones reguladas. No todo máster oficial es habilitante. Hay que comprobar tres cosas: que el título consta en RUCT, que la universidad lo presenta expresamente como habilitante y que encaja con la normativa de la profesión correspondiente.</p><p>Ejemplos habituales son Formación del Profesorado de Secundaria, Abogacía y Procura, Psicología General Sanitaria, Arquitectura y determinadas ingenierías reguladas.</p>${sourceLinks(['ruct','boe-rd-822-2021','boe-ley-34-2006-abogacia-procura','boe-profesorado-secundaria','boe-psicologia-general-sanitaria'])}`;
+    }
+
+    if(ects){
+      return `<p>Los <strong>créditos ECTS</strong> expresan la carga de trabajo del estudiante en las enseñanzas universitarias. Sirven para estructurar asignaturas, cursos, prácticas, TFG/TFM y reconocimiento o transferencia de créditos. Para una decisión concreta, debes revisar el plan oficial del título y la normativa de reconocimiento de la universidad, teniendo como marco general el RD 822/2021.</p>${sourceLinks(['boe-rd-822-2021','ruct','qedu'])}`;
+    }
+
+    if(ciug){
+      return `<p>En Galicia, las <strong>notas de corte, ponderaciones, admisión, cupos y matrícula</strong> deben comprobarse en la CIUG y en la convocatoria vigente. Las notas de corte son referencias de adjudicaciones anteriores, no garantías de entrada. Las ponderaciones deben consultarse por grado, universidad y curso de acceso; no deben inferirse por parecido entre estudios.</p>${sourceLinks(['ciug-admision','ciug-ponderaciones-2026','dog-ponderaciones-2026-2027','qedu'])}`;
+    }
+
+    return '';
+  }
+
+  const previousBotAnswer = botAnswer;
+  botAnswer = function(text){
+    const priority = universityIntentAnswer(text);
+    if(priority) return priority;
+    return previousBotAnswer(text);
+  };
+
+  const previousAskItineraBot = askItineraBot;
+  askItineraBot = async function(text){
+    const priority = universityIntentAnswer(text);
+    if(priority) return priority;
+    return previousAskItineraBot(text);
+  };
+
+  renderQuestionChips = function(){
+    const qs=[
+      'QEDU y RUCT son lo mismo',
+      '¿Cómo sé si un grado es oficial?',
+      '¿Qué es un máster habilitante?',
+      '¿Qué son los créditos ECTS?',
+      '¿Dónde veo notas de corte y plazas?',
+      'Quiero Psicología pero no se me dan bien las matemáticas',
+      'Tengo diabetes: ¿hay plazas reservadas en ciclos o universidad?',
+      'Electricidad: ¿qué opciones de FP hay?',
+      '¿Qué becas oficiales puedo solicitar?',
+      '¿Puedo ir de FP superior a la universidad?'
+    ];
+    const target=document.getElementById('questionChips');
+    if(!target) return;
+    target.innerHTML=qs.map(q=>`<button class="question-chip" type="button">${escapeHTML(q)}</button>`).join('');
+    document.querySelectorAll('.question-chip').forEach(b=>b.onclick=()=>{
+      document.getElementById('chatInput').value=b.textContent;
+      document.getElementById('chatForm').dispatchEvent(new Event('submit'));
+    });
+  };
+
+  init = (function(previousInit){
+    return function(){
+      previousInit();
+      renderQuestionChips();
+      const badge=document.getElementById('updateBadge');
+      if(badge) badge.title=(badge.title||'')+' · ITINERA v0.21.1';
+    };
+  })(init);
+})();

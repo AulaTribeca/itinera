@@ -212,3 +212,10 @@ ITINERA v0.21
 - Añade panel universitario visual en la sección Universidad.
 - Añade guía de másteres habilitantes y profesiones reguladas.
 - Todavía no carga todos los grados universitarios como registros individuales: esa extracción estructurada queda para la siguiente fase.
+
+
+ITINERA v0.21.1
+- Corrige el enrutamiento de ItineraBot.
+- Las preguntas sobre QEDU, RUCT, oficialidad, títulos propios, créditos ECTS, másteres habilitantes y CIUG se responden antes de buscar estudios.
+- Evita que una pregunta conceptual universitaria devuelva una ficha aleatoria de FP.
+- No requiere SQL.
