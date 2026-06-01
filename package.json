@@ -5,7 +5,8 @@
   "type": "module",
   "description": "ITINERA: GitHub Pages + Supabase official catalog + ItineraBot documental.",
   "dependencies": {
-    "@supabase/supabase-js": "^2.45.4"
+    "@supabase/supabase-js": "^2.45.4",
+    "ws": "^8.18.0"
   },
   "scripts": {
     "import:official": "node tools/official-load/import-official-catalogs.mjs",

@@ -163,3 +163,10 @@ ITINERA v0.17 · Fase 3
 - `app-config.js` incluye el endpoint público de ItineraBot en Supabase Functions.
 - `app.js` intenta consultar ItineraBot documental y, si no está desplegado o configurado, cae al modo prudente local.
 - Esta fase no permite anunciar todavía cobertura completa sin revisión, pero deja preparada la infraestructura real de carga y actualización progresiva.
+
+
+ITINERA v0.17.1
+- Corrige el fallo de GitHub Actions: Node.js 20 detected without native WebSocket support.
+- Añade dependencia `ws` y la pasa explícitamente a Supabase JS como transporte Realtime.
+- Actualiza el workflow a Node 22 para evitar el problema y reducir advertencias de entorno.
+- No requiere SQL nuevo.
