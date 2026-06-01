@@ -1,6 +1,6 @@
 {
-  "name": "itinera-v0-24",
-  "version": "0.24.1-fuentes-ux-apply-fix",
+  "name": "itinera-v0-25",
+  "version": "0.25.0-simplificada-simulador",
   "private": true,
   "type": "module",
   "description": "ITINERA: GitHub Pages + Supabase official catalog + ItineraBot documental.",

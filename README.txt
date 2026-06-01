@@ -289,3 +289,11 @@ ITINERA v0.24.1
 - Añade ejecución autónoma `window.ITINERA_V24_APPLY`.
 - Fuerza cache-busting de `app.js?v=0.24.1`.
 - No requiere SQL.
+
+
+ITINERA v0.25
+- Simplificación radical de la herramienta.
+- Menú desplegable con herramientas y enlaces oficiales.
+- Simulador rediseñado y mejorado en contenido.
+- Solo dos ajustes de ruta: ruta más corta o todas las rutas.
+- No requiere SQL.
