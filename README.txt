@@ -282,3 +282,10 @@ ITINERA v0.24 · Fuentes oficiales y UX premium
 - Añade traducciones completas de las nuevas secciones en galego, español, inglés, francés, polaco y alemán.
 - Mejora estética general con tarjetas más limpias, microinteracciones y movimiento sutil.
 - No requiere SQL nuevo.
+
+
+ITINERA v0.24.1
+- Corrige la ejecución visual de v0.24.
+- Añade ejecución autónoma `window.ITINERA_V24_APPLY`.
+- Fuerza cache-busting de `app.js?v=0.24.1`.
+- No requiere SQL.

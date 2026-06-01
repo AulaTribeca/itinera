@@ -2943,7 +2943,7 @@ document.addEventListener('DOMContentLoaded',init);
         <p>${escapeHTML(TT('officialStatusNote'))}</p>
       </div>
       <div class="v24-mini-grid">
-        ${cards.map(x=>`<article><strong>${numberFmt ? numberFmt(x.value) : Number(x.value||0).toLocaleString('es-ES')}</strong><span>${escapeHTML(x.label)}</span>${v24StatusPill(x.status)}</article>`).join('')}
+        ${cards.map(x=>`<article><strong>${(typeof numberFmt==='function' ? numberFmt(x.value) : Number(x.value||0).toLocaleString('es-ES'))}</strong><span>${escapeHTML(x.label)}</span>${v24StatusPill(x.status)}</article>`).join('')}
       </div>
     </aside>`;
   }
@@ -3053,15 +3053,30 @@ document.addEventListener('DOMContentLoaded',init);
     cards.forEach((el,i)=>{ el.style.setProperty('--reveal-delay', `${Math.min(i*28,360)}ms`); el.classList.add('v24-reveal'); });
   }
 
+  async function v24Apply(){
+    // v0.24.1: se ejecuta de forma autónoma porque el listener DOMContentLoaded original
+    // se registró antes de las extensiones v0.24 y no recogía los wrappers posteriores de init.
+    try{
+      if(typeof v23LoadData === 'function') await v23LoadData();
+    }catch(e){}
+    v24Nav();
+    v24Home();
+    renderSources();
+    v24Motion();
+  }
+
+  window.ITINERA_V24_APPLY = v24Apply;
+
   init = (function(previousInit){
     return function(){
       previousInit();
-      setTimeout(()=>{
-        v24Nav();
-        v24Home();
-        renderSources();
-        v24Motion();
-      }, 1700);
+      setTimeout(v24Apply, 900);
     };
   })(init);
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', () => setTimeout(v24Apply, 1200), {once:true});
+  }else{
+    setTimeout(v24Apply, 500);
+  }
 })();
