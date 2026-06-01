@@ -238,3 +238,11 @@ ITINERA v0.22.1
 - Añade fallback de varias distribuciones CSV.
 - Actualiza estados padre de universidad, FP Galicia y CIUG.
 - Añade SQL `supabase/itinera_v0_22_1_macrointegral_fix.sql`.
+
+
+ITINERA v0.22.2
+- Corrige las rutas reales de descarga UNIVBASE/EDUCAbase: csv_bd, csv_bdsc, xlsx y px.
+- Añade lectura XLSX con dependencia `xlsx`.
+- Añade extractor textual CIUG desde PDF con dependencia `pdf-parse`.
+- Marca CIUG como `pdf_text_imported_needs_review` si consigue filas, nunca como definitivo.
+- Añade SQL `supabase/itinera_v0_22_2_univbase_ciug_fix.sql`.

@@ -26,22 +26,20 @@ const SOURCES = {
   qeduHelp: 'https://www.ciencia.gob.es/qedu/AyudaQEDU.html',
   ruct: 'https://universidades.sede.gob.es/pagina/index/directorio/Proc_Ruct',
 
-  // EDUCAbase/UNIVBASE 2024. En v0.22 fallaba el dominio antiguo estadisticas.universidades.gob.es.
-  // Se prueban varias distribuciones oficiales, empezando por el dominio vigente estadisticas.ciencia.gob.es.
-  gradoCsvCandidates: [
-    'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_c/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Grado_Rama_Univ.px',
-    'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_sc/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Grado_Rama_Univ.px',
-    'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Grado_Rama_Univ.px',
-    'https://estadisticas.universidades.gob.es/jaxiPx/files/_px/es/csv_c/Universitaria/EUCT/2023/Titulaciones/l0/Titulaciones_Grado_Rama_Univ.px'
+  // UNIVBASE/EDUCAbase 2024. Los enlaces exportables correctos del portal jaxiPx
+  // no terminan en .px dentro de /csv_c/, sino en extensiones como .csv_bd, .csv_bdsc o .xlsx.
+  gradoCandidates: [
+    'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_bd/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Grado_Rama_Univ.csv_bd',
+    'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_bdsc/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Grado_Rama_Univ.csv_bdsc',
+    'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/xlsx/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Grado_Rama_Univ.xlsx',
+    'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/px/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Grado_Rama_Univ.px'
   ],
-  masterCsvCandidates: [
-    'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_c/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Master_Rama_Univ.px',
-    'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_sc/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Master_Rama_Univ.px',
-    'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Master_Rama_Univ.px',
-    'https://estadisticas.universidades.gob.es/jaxiPx/files/_px/es/csv_c/Universitaria/EUCT/2023/Titulaciones/l0/Titulaciones_Master_Rama_Univ.px'
+  masterCandidates: [
+    'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_bd/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Master_Rama_Univ.csv_bd',
+    'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_bdsc/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Master_Rama_Univ.csv_bdsc',
+    'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/xlsx/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Master_Rama_Univ.xlsx',
+    'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/px/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Master_Rama_Univ.px'
   ],
-  gradoCsv: 'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_c/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Grado_Rama_Univ.px',
-  masterCsv: 'https://estadisticas.ciencia.gob.es/jaxiPx/files/_px/es/csv_c/Universitaria/EUCT/2024/Titulaciones/l0/Titulaciones_Master_Rama_Univ.px',
 
   ciugAdmission: 'https://www.ciug.gal/admision-sug',
   ciugPonderations2026: 'https://ciug.gal/PDF/2026/Acceso/ponderacions_2026.pdf',
@@ -73,6 +71,76 @@ async function getFirstText(urls=[]){
       const text = await getText(url);
       if(text && text.trim().length > 20) return {url, text};
       errors.push(`${url}: empty`);
+    }catch(e){
+      errors.push(`${url}: ${e.message}`);
+    }
+  }
+  throw new Error(errors.join(' | '));
+}
+
+async function getBytes(url){
+  const res = await fetch(url, {
+    headers:{
+      'user-agent':'Mozilla/5.0 ITINERA/0.22.2 academic-orientation',
+      'accept':'text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/octet-stream,text/plain,*/*',
+      'referer':'https://estadisticas.ciencia.gob.es/dynPx/inebase/index.htm'
+    }
+  });
+  const ab = await res.arrayBuffer();
+  const buf = Buffer.from(ab);
+  if(!res.ok && buf.length < 50){
+    throw new Error(`Fetch ${res.status} ${url}: ${buf.toString('utf8').slice(0,120)}`);
+  }
+  return {url, status:res.status, contentType:res.headers.get('content-type') || '', buffer:buf};
+}
+
+function decodeText(buffer){
+  let text = buffer.toString('utf8');
+  const bad = (text.match(/\uFFFD/g)||[]).length;
+  if(bad > 10){
+    try{ text = new TextDecoder('windows-1252').decode(buffer); }catch(e){}
+  }
+  return text.replace(/^\uFEFF/, '');
+}
+
+async function parseXlsx(buffer){
+  const mod = await import('xlsx');
+  const XLSX = mod.default || mod;
+  const wb = XLSX.read(buffer, {type:'buffer'});
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  return XLSX.utils.sheet_to_json(ws, {defval:'', raw:false});
+}
+
+function parsePcAxis(text){
+  // Fallback mínimo: extrae etiquetas de valores para que el estado no sea opaco.
+  // Si no hay DATA tabular interpretable, devuelve [] y se usará otra distribución.
+  if(!/DATA\s*=/i.test(text)) return [];
+  const dims = {};
+  const valuesRe = /VALUES\("([^"]+)"\)\s*=\s*([^;]+);/gi;
+  let m;
+  while((m=valuesRe.exec(text))){
+    dims[m[1]] = (m[2].match(/"([^"]*)"/g)||[]).map(x=>x.slice(1,-1));
+  }
+  return Object.entries(dims).flatMap(([k,vals]) => vals.map(v => ({dimension:k, value:v})));
+}
+
+async function getFirstRecords(urls=[]){
+  const errors = [];
+  for(const url of urls){
+    try{
+      const r = await getBytes(url);
+      let records = [];
+      if(/\.xlsx($|\?)/i.test(url) || /spreadsheet/i.test(r.contentType)){
+        records = await parseXlsx(r.buffer);
+      }else{
+        const text = decodeText(r.buffer);
+        if(/\.px($|\?)/i.test(url)) records = parsePcAxis(text);
+        else records = parseStatCsv(text);
+      }
+      if(records && records.length){
+        return {url, records};
+      }
+      errors.push(`${url}: without parseable rows`);
     }catch(e){
       errors.push(`${url}: ${e.message}`);
     }
@@ -234,8 +302,7 @@ async function importUniversityAggregates(){
   const errors=[];
 
   try{
-    const {url, text} = await getFirstText(SOURCES.gradoCsvCandidates);
-    const records = parseStatCsv(text);
+    const {url, records} = await getFirstRecords(SOURCES.gradoCandidates);
     const rows = universityAggregateRows(records, 'Grado', 'educabase-grados-univ-2024', url);
     await upsert('itinera_university_offers', rows);
     gradoCount = rows.length;
@@ -248,8 +315,7 @@ async function importUniversityAggregates(){
   }
 
   try{
-    const {url, text} = await getFirstText(SOURCES.masterCsvCandidates);
-    const records = parseStatCsv(text);
+    const {url, records} = await getFirstRecords(SOURCES.masterCandidates);
     const rows = universityAggregateRows(records, 'Máster', 'educabase-masteres-univ-2024', url);
     await upsert('itinera_university_offers', rows);
     masterCount = rows.length;
@@ -339,13 +405,119 @@ async function importGaliciaCenters(){
   }
 }
 
+
+async function pdfText(url){
+  const r = await getBytes(url);
+  const mod = await import('pdf-parse');
+  const pdfParse = mod.default || mod;
+  const data = await pdfParse(r.buffer);
+  return {url, text:data.text || ''};
+}
+
+function parseCiugCutoffText(text, sourceUrl){
+  const lines = text.split(/\n+/).map(clean).filter(Boolean);
+  const rows = [];
+  for(const line of lines){
+    const m = line.match(/(\d{5})\s*-\s*(Grao[^0-9]+?)(?:\s+(Ext\.|Ord\.|N|\d|,|[0-9]).*)?$/i);
+    if(!m) continue;
+    const code = m[1];
+    const degree = clean(m[2]);
+    if(degree.length < 8) continue;
+    const nums = [...line.matchAll(/(?:Ext\.|Ord\.)?\s*(?:N|[0-9]{1,2},[0-9]{3})/g)].map(x=>clean(x[0]));
+    rows.push({
+      id:`ciug-cutoff-2025-${slug(code)}-${slug(degree)}`,
+      academic_year:'2025-2026',
+      degree_code:code,
+      degree_name:degree,
+      university:'',
+      campus:'',
+      general_cutoff:nums[0] || '',
+      graduates_cutoff:nums[1] || '',
+      m25_cutoff:nums[2] || '',
+      m45_cutoff:nums[3] || '',
+      athletes_cutoff:nums[4] || '',
+      disability_cutoff:nums[5] || '',
+      source_id:'ciug-notas-corte-2025',
+      source_url:sourceUrl,
+      data_status:'pdf_text_imported_needs_review',
+      metadata:{raw_line:line, values:nums, v:'0.22.2'}
+    });
+  }
+  return [...new Map(rows.map(x=>[x.id,x])).values()].slice(0,1000);
+}
+
+function parseCiugPonderationText(text, sourceUrl){
+  const lines = text.split(/\n+/).map(clean).filter(Boolean);
+  const subjects = ['Bioloxía','Biología','Matemáticas II','Matemáticas aplicadas','Química','Física','Debuxo Técnico','Dibujo Técnico','Empresa','Xeografía','Geografía','Historia da Arte','Historia del Arte','Latín','Grego','Griego','Tecnoloxía','Tecnología','Deseño','Diseño'];
+  const rows = [];
+  for(const line of lines){
+    const code = (line.match(/\b\d{5}\b/)||[])[0] || '';
+    if(!code && !/Grao|Grado/i.test(line)) continue;
+    const degree = clean(line.replace(/\b\d{5}\b/g,'').split(/\s{2,}/)[0]).slice(0,140);
+    if(!degree || degree.length < 8) continue;
+    for(const subj of subjects){
+      const idx = normalise(line).indexOf(normalise(subj));
+      if(idx < 0) continue;
+      const tail = line.slice(idx, idx+80);
+      const coeff = (tail.match(/\b0[,.][12]\b/)||[])[0];
+      if(!coeff) continue;
+      rows.push({
+        id:`ciug-pond-2026-${slug(code || degree)}-${slug(subj)}`,
+        access_year:'2026-2027',
+        degree_name:degree,
+        university:'',
+        branch:'',
+        subject:subj,
+        coefficient:Number(coeff.replace(',','.')),
+        source_id:'ciug-ponderaciones-2026',
+        source_url:sourceUrl,
+        data_status:'pdf_text_imported_needs_review',
+        metadata:{raw_line:line, v:'0.22.2'}
+      });
+    }
+  }
+  return [...new Map(rows.map(x=>[x.id,x])).values()].slice(0,3000);
+}
+
+async function importCiugTables(){
+  let cut=0, pon=0;
+  const errors=[];
+  try{
+    const {url,text} = await pdfText(SOURCES.ciugCutoffs2025);
+    const rows = parseCiugCutoffText(text, url);
+    await upsert('itinera_ciug_cutoffs', rows);
+    cut = rows.length;
+  }catch(e){
+    errors.push(`notas: ${e.message}`);
+  }
+  try{
+    const {url,text} = await pdfText(SOURCES.ciugPonderations2026);
+    const rows = parseCiugPonderationText(text, url);
+    await upsert('itinera_ciug_ponderations', rows);
+    pon = rows.length;
+  }catch(e){
+    errors.push(`ponderaciones: ${e.message}`);
+  }
+  await updateStatus(
+    'v022-ciug',
+    'CIUG notas y ponderaciones',
+    (cut || pon) ? 'pdf_text_imported_needs_review' : 'in_progress_structured',
+    cut + pon,
+    'ciug-admision',
+    (cut || pon)
+      ? `v0.22.2 importó texto tabular desde PDF CIUG: ${cut} filas de notas y ${pon} filas de ponderaciones. Revisión visual obligatoria antes de usar como dato definitivo.`
+      : `CIUG queda enlazada y pendiente de extracción tabular validada. ${errors.join(' || ')}`,
+    {cutoffs:cut, ponderations:pon, errors}
+  );
+  return {cut, pon, errors};
+}
+
 async function main(){
   console.log('ITINERA v0.22 macrointegral loader started');
   const university = await importUniversityAggregates();
   const specializations = await importFpSpecializations();
   const centers = await importGaliciaCenters();
-
-  await updateStatus('v022-ciug', 'CIUG notas y ponderaciones', 'in_progress_structured', 0, 'ciug-admision', 'v0.22.1 mantiene CIUG como capa enlazada y pendiente de extracción tabular validada desde PDF/convocatoria vigente.', {sources:['ciug-admision','ciug-ponderaciones-2026','ciug-notas-corte-2025']});
+  const ciug = await importCiugTables();
 
   const coveragePatch = [
     {id:'universidad-grados', scope:'Universidad · Grados', expected_coverage:'Grados universitarios oficiales desde RUCT/QEDU/SIIU, con título, universidad, centro, créditos, rama, modalidad y notas cuando estén disponibles.', current_status: university ? 'in_progress_structured' : 'pending_review', notes: university ? 'v0.22 importó datos agregados EDUCAbase/SIIU. Para titulación concreta se mantiene verificación QEDU/RUCT.' : 'Pendiente de carga estructurada: revisar workflow v0.22.'},
@@ -355,7 +527,7 @@ async function main(){
     {id:'galicia-ciug-ponderaciones-notas', scope:'Galicia · Ponderaciones y notas CIUG', expected_coverage:'Ponderaciones, notas de corte, admisión, cupos y matrícula SUG por curso y convocatoria.', current_status:'in_progress_structured', notes:'v0.22 enlaza CIUG notas/ponderaciones/admisión. La extracción tabular por grado queda sujeta a validación de PDF vigente.'}
   ];
   await upsert('itinera_source_coverage', coveragePatch);
-  console.log(JSON.stringify({university, specializations, centers}, null, 2));
+  console.log(JSON.stringify({university, specializations, centers, ciug}, null, 2));
 }
 
 main().catch(err => {
