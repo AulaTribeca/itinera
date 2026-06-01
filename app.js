@@ -1528,7 +1528,7 @@ init = (function(previousInit){
 
 
 /* ITINERA v0.17 · ItineraBot Edge + catalog status */
-function botSourcesHTML(sources=[]){
+botSourcesHTML = function(sources=[]){
   if(!Array.isArray(sources)||!sources.length) return '';
   return `<div class="bot-source-list">${sources.slice(0,8).map(s=>`<a class="source-link" target="_blank" rel="noopener noreferrer" href="${escapeHTML(s.url||'#')}"><strong>${escapeHTML(s.title||s.id||'Fonte oficial')}</strong><span>${escapeHTML(s.usefulness||s.use||s.category||'Fonte oficial')}</span></a>`).join('')}</div>`;
 }
@@ -1579,5 +1579,99 @@ init = (function(previousInit){
   };
 })(init);
 
+
+
+
+/* ITINERA v0.18 · ItineraBot corrected for GitHub Pages + Supabase Edge Function */
+itineraBotEndpoint = function(){
+  const cfg = window.ITINERA_CONFIG || {};
+  if(cfg.ITINERABOT_ENDPOINT) return cfg.ITINERABOT_ENDPOINT;
+  if(cfg.SUPABASE_URL) return String(cfg.SUPABASE_URL).replace(/\/+$/,'') + '/functions/v1/itinerabot';
+  return '';
+}
+publicBotSources = function(sources=[]){
+  return (sources || []).filter(s => {
+    const id = String(s.id || '').toLowerCase();
+    const cat = String(s.category || '').toLowerCase();
+    return !id.startsWith('openai-') && cat !== 'tecnica' && cat !== 'técnica';
+  });
+}
+botSourcesHTML = function(sources=[]){
+  return publicBotSources(sources).map(s=>`<a class="source-link" target="_blank" rel="noopener noreferrer" href="${s.url}"><strong>${escapeHTML(s.title||s.url)}</strong><span>${escapeHTML(s.usefulness||s.use||'Fonte oficial')}</span></a>`).join('');
+}
+friendlyStudyAnswer = function(program){
+  if(!program) return '';
+  const subjects = (program.subjects || []).filter(Boolean);
+  const ponders = (program.ponderation_subjects || []).map(x => typeof x === 'string' ? x : (x.subject || x.name || '')).filter(Boolean);
+  return `<article class="bot-study-answer">
+    <h3>${escapeHTML(program.name)}</h3>
+    <p><strong>${escapeHTML(program.level || '')}</strong>${program.family ? ` · ${escapeHTML(program.family)}` : ''}</p>
+    ${program.route ? `<p><strong>Ruta orientativa:</strong> ${escapeHTML(program.route)}</p>` : ''}
+    ${subjects.length ? `<p><strong>Materias/base recomendable:</strong> ${subjects.map(escapeHTML).join(', ')}</p>` : ''}
+    ${ponders.length ? `<p><strong>Materias que pueden ponderar o deben revisarse:</strong> ${ponders.map(escapeHTML).join(', ')}</p>` : ''}
+    ${program.regulated ? `<p><strong>Información importante:</strong> ${escapeHTML(program.regulated)}</p>` : ''}
+    <p class="warning-box small">Para plazas, centros, notas de corte, ponderaciones exactas o convocatoria vigente, comprueba siempre la fuente oficial enlazada.</p>
+    ${sourceLinks(program.sources || [])}
+  </article>`;
+}
+smartLocalBotAnswer = async function(text){
+  const q = normalise(text);
+  let list = [];
+  try { list = await supabaseSearchStudies(text,'all','all',8); } catch(e) {}
+  if(!list.length) list = programs(text,'all','all').slice(0,8);
+  const p = list[0];
+
+  if(q.includes('matematic') && q.includes('psicolog')){
+    return `<p>Si quieres Psicología pero las matemáticas no se te dan bien, conviene comparar tres elementos: ponderación oficial, nota realista que puedes obtener y base académica que te aporta cada materia. En Galicia debes comprobar la tabla CIUG vigente. Una materia que pondera 0,2 no siempre es la mejor opción si previsiblemente vas a obtener una calificación muy baja. Revisa también Biología, Matemáticas Aplicadas a las Ciencias Sociales II u otras materias que aparezcan vinculadas al grado y campus concreto.</p>${sourceLinks(['ciug-ponderaciones-2026','ciug-admision','qedu','ruct'])}`;
+  }
+
+  if((q.includes('medicina') || q.includes('biologia') || q.includes('psicologia') || q.includes('derecho') || q.includes('arquitectura') || q.includes('criminologia') || q.includes('electricidad') || q.includes('soldadura') || q.includes('carpinteria')) && p && p.score > .25){
+    return friendlyStudyAnswer(p);
+  }
+
+  if(q.includes('nota') || q.includes('corte') || q.includes('ponder')){
+    return `<p>Las notas de corte y las ponderaciones cambian por curso, grado, campus y convocatoria. En Galicia deben comprobarse en CIUG. Si indicas el grado exacto, ITINERA puede ayudarte a localizar la ruta de consulta y las materias que conviene revisar.</p>${sourceLinks(['ciug-admision','ciug-ponderaciones-2026','qedu'])}`;
+  }
+
+  if(q.includes('beca') || q.includes('neae')){
+    return document.getElementById('scholarshipCards')?.innerHTML || `<p>Las becas oficiales dependen de convocatoria, nivel educativo, requisitos económicos, académicos y situación personal. Debe revisarse el portal oficial de becas del Ministerio y, cuando proceda, la información autonómica vigente.</p>${sourceLinks(['becas-portada','beca-general','beca-neae'])}`;
+  }
+
+  if(q.includes('discapacidad') || q.includes('deportista') || q.includes('cupo')){
+    return document.getElementById('reservedCards')?.innerHTML || `<p>Existen cupos o reservas específicas en ciertos procesos de admisión, pero dependen del tipo de enseñanza y convocatoria. Hay que comprobar porcentaje, documentación y procedimiento en la fuente oficial vigente.</p>${sourceLinks(['ciug-admision'])}`;
+  }
+
+  if(p && p.score > .32) return friendlyStudyAnswer(p);
+
+  return `<p>No he encontrado una ficha suficientemente precisa en la base oficial incorporada. No voy a inventar la respuesta. Prueba con el nombre exacto del estudio, familia profesional o etapa, o revisa las fuentes oficiales siguientes.</p>${sourceLinks(['todofp-familias','xunta-fp-oferta','qedu','ruct','ciug-admision'])}`;
+}
+
+askItineraBot = async function(text){
+  const endpoint = itineraBotEndpoint();
+  if(endpoint){
+    try{
+      const res = await fetch(endpoint, {
+        method:'POST',
+        headers:{
+          'content-type':'application/json',
+          'apikey': window.ITINERA_CONFIG?.SUPABASE_ANON_KEY || '',
+          'authorization': `Bearer ${window.ITINERA_CONFIG?.SUPABASE_ANON_KEY || ''}`
+        },
+        body: JSON.stringify({question:text, lang:state.lang})
+      });
+      if(res.ok){
+        const data = await res.json();
+        if(data?.answer){
+          return formatBotPlainText(data.answer) + botSourcesHTML(data.sources || []);
+        }
+      } else {
+        console.warn('ItineraBot Edge HTTP', res.status, await res.text().catch(()=>''));
+      }
+    }catch(error){
+      console.warn('ItineraBot Edge unavailable, using local fallback:', error);
+    }
+  }
+  return await smartLocalBotAnswer(text);
+};
 
 document.addEventListener('DOMContentLoaded',init);

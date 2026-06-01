@@ -4,5 +4,5 @@
 window.ITINERA_CONFIG = {
   SUPABASE_URL: "https://bvdnirkqrzrlwwxraeig.supabase.co",
   SUPABASE_ANON_KEY: "sb_publishable_HAaBmibgk0Awpot16GiOgQ_qLwUxzZ9",
-  ITINERABOT_ENDPOINT: "https://bvdnirkqrzrlwwxraeig.functions.supabase.co/itinerabot"
+  ITINERABOT_ENDPOINT: "https://bvdnirkqrzrlwwxraeig.supabase.co/functions/v1/itinerabot"
 };

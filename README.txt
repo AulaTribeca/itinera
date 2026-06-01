@@ -170,3 +170,11 @@ ITINERA v0.17.1
 - Añade dependencia `ws` y la pasa explícitamente a Supabase JS como transporte Realtime.
 - Actualiza el workflow a Node 22 para evitar el problema y reducir advertencias de entorno.
 - No requiere SQL nuevo.
+
+
+ITINERA v0.18 · ItineraBot
+- Se corrige el endpoint público de Supabase Edge Function para ItineraBot.
+- Se mejora el fallback del bot para que no muestre mensajes técnicos internos.
+- Se filtran fuentes técnicas de OpenAI en la interfaz del alumnado.
+- Se añade workflow `deploy-itinerabot.yml` para desplegar la Edge Function desde GitHub Actions.
+- La IA completa requiere desplegar la función en Supabase y configurar `OPENAI_API_KEY`.

@@ -86,13 +86,38 @@ serve(async (req) => {
   };
 
   if (!OPENAI_API_KEY) {
-    const fallback = [
-      "ItineraBot documental aún no tiene activada la clave de IA en Supabase.",
-      studies?.length ? `Coincidencias oficiales recuperadas: ${(studies || []).slice(0, 5).map((s: any) => s.name).join(", ")}.` : "No se ha recuperado una coincidencia cerrada.",
-      sources?.length ? `Fuentes oficiales: ${sources.map(sourceTitle).join("; ")}.` : "Consulta TodoFP, Xunta FP, QEDU, RUCT o CIUG según el caso.",
-    ].join("\n\n");
-    await supabase.from("itinera_bot_logs").insert({ question: q, lang, answer_preview: safePreview(fallback), mode: "no_openai_key", sources });
-    return new Response(JSON.stringify({ ok: true, answer: fallback, sources, mode: "no_openai_key" }), { headers: { ...corsHeaders, "content-type": "application/json" } });
+    const mainStudy = (studies || [])[0];
+    let fallback = "";
+    const lower = normalise(q);
+
+    if (mainStudy && Number(mainStudy.score || 0) > 0.28) {
+      const subjects = Array.isArray(mainStudy.subjects) && mainStudy.subjects.length
+        ? `\n\nMaterias/base recomendable: ${mainStudy.subjects.join(", ")}.`
+        : "";
+      const ponders = Array.isArray(mainStudy.ponderation_subjects) && mainStudy.ponderation_subjects.length
+        ? `\n\nMaterias que pueden ponderar o deben revisarse: ${mainStudy.ponderation_subjects.map((x: any) => typeof x === "string" ? x : (x.subject || x.name || "")).filter(Boolean).join(", ")}.`
+        : "";
+      fallback = [
+        `${mainStudy.name}: ${mainStudy.level}${mainStudy.family ? `, ${mainStudy.family}` : ""}.`,
+        mainStudy.route ? `Ruta orientativa: ${mainStudy.route}` : "Ruta orientativa: consulta la ficha del estudio y las fuentes oficiales asociadas.",
+        mainStudy.regulated ? `Información importante: ${mainStudy.regulated}` : "",
+        subjects,
+        ponders,
+        "Para plazas, centros, notas de corte, ponderaciones exactas o convocatoria vigente, comprueba siempre la fuente oficial enlazada."
+      ].filter(Boolean).join("\n\n");
+    } else if (lower.includes("nota") || lower.includes("corte") || lower.includes("ponder")) {
+      fallback = "Las notas de corte y ponderaciones cambian por curso, grado, campus y convocatoria. En Galicia deben comprobarse en CIUG. Si me indicas el grado concreto, puedo ayudarte a localizar la ruta de consulta y las materias que conviene revisar.";
+    } else if (lower.includes("beca") || lower.includes("neae")) {
+      fallback = "Las becas oficiales dependen de convocatoria, nivel educativo, requisitos económicos, académicos y situación personal. Debe revisarse el portal oficial de becas del Ministerio y, cuando proceda, la información autonómica vigente.";
+    } else if (lower.includes("discapacidad") || lower.includes("deportista") || lower.includes("cupo")) {
+      fallback = "Existen cupos o reservas específicas en ciertos procesos de admisión, pero dependen del tipo de enseñanza y convocatoria. No debe asumirse una plaza automática: hay que comprobar porcentaje, documentación y procedimiento en la fuente oficial vigente.";
+    } else {
+      fallback = "No he encontrado una ficha suficientemente precisa en la base oficial incorporada. No voy a inventar la respuesta. Revisa las fuentes oficiales enlazadas o formula la pregunta con el nombre exacto del estudio, familia o etapa.";
+    }
+
+    const filteredSources = (sources || []).filter((s: any) => !String(s.category || "").includes("tecnica") && !String(s.id || "").startsWith("openai-"));
+    await supabase.from("itinera_bot_logs").insert({ question: q, lang, answer_preview: safePreview(fallback), mode: "deterministic_without_openai", sources: filteredSources });
+    return new Response(JSON.stringify({ ok: true, answer: fallback, sources: filteredSources, studies: studies || [], mode: "deterministic_without_openai" }), { headers: { ...corsHeaders, "content-type": "application/json" } });
   }
 
   const openAiBody = {
@@ -127,9 +152,10 @@ serve(async (req) => {
   const aiJson = await aiRes.json();
   const answer = aiJson.output_text || (aiJson.output || []).flatMap((item: any) => item.content || []).map((c: any) => c.text || "").join("\n").trim();
 
-  await supabase.from("itinera_bot_logs").insert({ question: q, lang, answer_preview: safePreview(answer), mode: "supabase_edge_openai_responses", sources });
+  const publicSources = (sources || []).filter((s: any) => !String(s.category || "").includes("tecnica") && !String(s.id || "").startsWith("openai-"));
+  await supabase.from("itinera_bot_logs").insert({ question: q, lang, answer_preview: safePreview(answer), mode: "supabase_edge_openai_responses", sources: publicSources });
 
-  return new Response(JSON.stringify({ ok: true, answer, sources, studies: studies || [], mode: "supabase_edge_openai_responses" }), {
+  return new Response(JSON.stringify({ ok: true, answer, sources: publicSources, studies: studies || [], mode: "supabase_edge_openai_responses" }), {
     headers: { ...corsHeaders, "content-type": "application/json" },
   });
 });
