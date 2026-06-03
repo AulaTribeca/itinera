@@ -326,3 +326,10 @@ ITINERA v0.27
 - Botones superiores convertidos en enlaces de texto con línea dinámica inferior al pasar el cursor.
 - Se elimina visualmente la portada anterior con la brújula saturada.
 - Pie de página: "Ecosistema educativo Tribeca".
+
+
+ITINERA v0.28
+- Reduce la escala visual general para evitar sensación de zoom excesivo.
+- Refuerza gallego como idioma por defecto.
+- Traduce la interfaz simplificada completa al idioma seleccionado.
+- Traduce portada, menú, buscador, botones superiores y pie.

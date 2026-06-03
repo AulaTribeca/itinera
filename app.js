@@ -3613,3 +3613,398 @@ document.addEventListener('DOMContentLoaded',init);
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(v27Footer,900),{once:true});
   else setTimeout(v27Footer,500);
 })();
+
+
+/* ITINERA v0.28 · escala corregida y traducción completa de la interfaz simplificada */
+(function(){
+  const V28 = {
+    gl:{
+      docTitle:'ITINERA | Orientación académica oficial',
+      brandSubtitle:'Información e orientación académica',
+      update:'ITINERA',
+      language:'Idioma',
+      font:'Letra',
+      sim:'Simula o teu itinerario',
+      bot:'ItineraBot',
+      menu:'Menú',
+      menuTools:'Ferramentas',
+      menuOfficial:'Ligazóns oficiais',
+      menuSearch:'Buscador de estudos',
+      menuSimulator:'Simulador de itinerarios',
+      menuBot:'ItineraBot',
+      menuSources:'Fontes oficiais',
+      heroEyebrow:'Tribeca Academia',
+      heroTitle:'ITINERA',
+      heroLead:'Busca estudos, simula rutas académicas e consulta fontes oficiais sen ruído. Unha ferramenta breve, práctica e verificable.',
+      heroSearch:'Buscador guiado',
+      heroSim:'Simula o teu itinerario',
+      heroBot:'Pregunta a ItineraBot',
+      coverKicker:'Ferramentas propias',
+      coverTitle:'Orientación clara, rutas verificables.',
+      coverLead:'ITINERA organiza a decisión académica en tres xestos: buscar, simular e comprobar fontes oficiais.',
+      toolSearch:'Buscador de estudos',
+      toolSearchDesc:'Busca por nome, familia ou profesión.',
+      toolSim:'Simulador de itinerarios',
+      toolSimDesc:'Compara rutas curtas e alternativas.',
+      toolBot:'ItineraBot',
+      toolBotDesc:'Pregunta con apoio das fontes oficiais.',
+      finderEyebrow:'Buscador guiado',
+      finderTitle:'Buscar estudos',
+      finderDescription:'Escribe un estudo, unha profesión ou unha familia. ITINERA devolverá coincidencias útiles e fontes oficiais.',
+      finderLabel:'Que queres buscar?',
+      finderPlaceholder:'Ex.: psicoloxía, electricidade, enfermaría, soldadura…',
+      search:'Buscar',
+      type:'Tipo',
+      family:'Familia',
+      residence:'Localidade, opcional',
+      all:'Todos',
+      allFamilies:'Todas',
+      footerSub:'Ecosistema educativo Tribeca',
+      sourcesFooter:'Fontes oficiais'
+    },
+    es:{
+      docTitle:'ITINERA | Orientación académica oficial',
+      brandSubtitle:'Información y orientación académica',
+      update:'ITINERA',
+      language:'Idioma',
+      font:'Letra',
+      sim:'Simula tu itinerario',
+      bot:'ItineraBot',
+      menu:'Menú',
+      menuTools:'Herramientas',
+      menuOfficial:'Enlaces oficiales',
+      menuSearch:'Buscador de estudios',
+      menuSimulator:'Simulador de itinerarios',
+      menuBot:'ItineraBot',
+      menuSources:'Fuentes oficiales',
+      heroEyebrow:'Tribeca Academia',
+      heroTitle:'ITINERA',
+      heroLead:'Busca estudios, simula rutas académicas y consulta fuentes oficiales sin ruido. Una herramienta breve, práctica y verificable.',
+      heroSearch:'Buscador guiado',
+      heroSim:'Simula tu itinerario',
+      heroBot:'Pregunta a ItineraBot',
+      coverKicker:'Herramientas propias',
+      coverTitle:'Orientación clara, rutas verificables.',
+      coverLead:'ITINERA organiza la decisión académica en tres gestos: buscar, simular y comprobar fuentes oficiales.',
+      toolSearch:'Buscador de estudios',
+      toolSearchDesc:'Busca por nombre, familia o profesión.',
+      toolSim:'Simulador de itinerarios',
+      toolSimDesc:'Compara rutas cortas y alternativas.',
+      toolBot:'ItineraBot',
+      toolBotDesc:'Pregunta con apoyo de fuentes oficiales.',
+      finderEyebrow:'Buscador guiado',
+      finderTitle:'Buscar estudios',
+      finderDescription:'Escribe un estudio, una profesión o una familia. ITINERA devolverá coincidencias útiles y fuentes oficiales.',
+      finderLabel:'¿Qué quieres buscar?',
+      finderPlaceholder:'Ej.: psicología, electricidad, enfermería, soldadura…',
+      search:'Buscar',
+      type:'Tipo',
+      family:'Familia',
+      residence:'Localidad, opcional',
+      all:'Todos',
+      allFamilies:'Todas',
+      footerSub:'Ecosistema educativo Tribeca',
+      sourcesFooter:'Fuentes oficiales'
+    },
+    en:{
+      docTitle:'ITINERA | Official academic guidance',
+      brandSubtitle:'Academic information and guidance',
+      update:'ITINERA',
+      language:'Language',
+      font:'Font',
+      sim:'Simulate your pathway',
+      bot:'ItineraBot',
+      menu:'Menu',
+      menuTools:'Tools',
+      menuOfficial:'Official links',
+      menuSearch:'Study search',
+      menuSimulator:'Pathway simulator',
+      menuBot:'ItineraBot',
+      menuSources:'Official sources',
+      heroEyebrow:'Tribeca Academia',
+      heroTitle:'ITINERA',
+      heroLead:'Search studies, simulate academic pathways and check official sources without noise. A short, practical and verifiable tool.',
+      heroSearch:'Guided search',
+      heroSim:'Simulate your pathway',
+      heroBot:'Ask ItineraBot',
+      coverKicker:'In-house tools',
+      coverTitle:'Clear guidance, verifiable routes.',
+      coverLead:'ITINERA organises academic decisions in three gestures: search, simulate and check official sources.',
+      toolSearch:'Study search',
+      toolSearchDesc:'Search by name, family or profession.',
+      toolSim:'Pathway simulator',
+      toolSimDesc:'Compare short routes and alternatives.',
+      toolBot:'ItineraBot',
+      toolBotDesc:'Ask with support from official sources.',
+      finderEyebrow:'Guided search',
+      finderTitle:'Search studies',
+      finderDescription:'Type a study, profession or family. ITINERA will return useful matches and official sources.',
+      finderLabel:'What do you want to search?',
+      finderPlaceholder:'E.g. psychology, electricity, nursing, welding…',
+      search:'Search',
+      type:'Type',
+      family:'Family',
+      residence:'Town, optional',
+      all:'All',
+      allFamilies:'All',
+      footerSub:'Tribeca educational ecosystem',
+      sourcesFooter:'Official sources'
+    },
+    fr:{
+      docTitle:'ITINERA | Orientation académique officielle',
+      brandSubtitle:'Information et orientation académique',
+      update:'ITINERA',
+      language:'Langue',
+      font:'Police',
+      sim:'Simuler votre parcours',
+      bot:'ItineraBot',
+      menu:'Menu',
+      menuTools:'Outils',
+      menuOfficial:'Liens officiels',
+      menuSearch:'Recherche de formations',
+      menuSimulator:'Simulateur de parcours',
+      menuBot:'ItineraBot',
+      menuSources:'Sources officielles',
+      heroEyebrow:'Tribeca Academia',
+      heroTitle:'ITINERA',
+      heroLead:'Recherchez des formations, simulez des parcours académiques et consultez les sources officielles sans surcharge. Un outil bref, pratique et vérifiable.',
+      heroSearch:'Recherche guidée',
+      heroSim:'Simuler votre parcours',
+      heroBot:'Demander à ItineraBot',
+      coverKicker:'Outils propres',
+      coverTitle:'Orientation claire, parcours vérifiables.',
+      coverLead:'ITINERA organise la décision académique en trois gestes : rechercher, simuler et vérifier les sources officielles.',
+      toolSearch:'Recherche de formations',
+      toolSearchDesc:'Recherche par nom, famille ou profession.',
+      toolSim:'Simulateur de parcours',
+      toolSimDesc:'Comparer les parcours courts et alternatifs.',
+      toolBot:'ItineraBot',
+      toolBotDesc:'Poser une question avec l’appui des sources officielles.',
+      finderEyebrow:'Recherche guidée',
+      finderTitle:'Rechercher des formations',
+      finderDescription:'Saisissez une formation, une profession ou une famille. ITINERA retournera des résultats utiles et des sources officielles.',
+      finderLabel:'Que souhaitez-vous rechercher ?',
+      finderPlaceholder:'Ex. psychologie, électricité, soins infirmiers, soudure…',
+      search:'Rechercher',
+      type:'Type',
+      family:'Famille',
+      residence:'Localité, facultatif',
+      all:'Tous',
+      allFamilies:'Toutes',
+      footerSub:'Écosystème éducatif Tribeca',
+      sourcesFooter:'Sources officielles'
+    },
+    pl:{
+      docTitle:'ITINERA | Oficjalne doradztwo akademickie',
+      brandSubtitle:'Informacja i orientacja akademicka',
+      update:'ITINERA',
+      language:'Język',
+      font:'Czcionka',
+      sim:'Symuluj ścieżkę',
+      bot:'ItineraBot',
+      menu:'Menu',
+      menuTools:'Narzędzia',
+      menuOfficial:'Linki urzędowe',
+      menuSearch:'Wyszukiwarka kierunków',
+      menuSimulator:'Symulator ścieżek',
+      menuBot:'ItineraBot',
+      menuSources:'Źródła urzędowe',
+      heroEyebrow:'Tribeca Academia',
+      heroTitle:'ITINERA',
+      heroLead:'Szukaj kierunków, symuluj ścieżki akademickie i sprawdzaj źródła urzędowe bez nadmiaru treści. Narzędzie krótkie, praktyczne i weryfikowalne.',
+      heroSearch:'Wyszukiwanie prowadzone',
+      heroSim:'Symuluj ścieżkę',
+      heroBot:'Zapytaj ItineraBot',
+      coverKicker:'Narzędzia własne',
+      coverTitle:'Jasna orientacja, weryfikowalne ścieżki.',
+      coverLead:'ITINERA porządkuje decyzję edukacyjną w trzech krokach: szukaj, symuluj i sprawdzaj źródła urzędowe.',
+      toolSearch:'Wyszukiwarka kierunków',
+      toolSearchDesc:'Szukaj według nazwy, rodziny lub zawodu.',
+      toolSim:'Symulator ścieżek',
+      toolSimDesc:'Porównuj ścieżki krótkie i alternatywne.',
+      toolBot:'ItineraBot',
+      toolBotDesc:'Pytaj z pomocą źródeł urzędowych.',
+      finderEyebrow:'Wyszukiwanie prowadzone',
+      finderTitle:'Szukaj kierunków',
+      finderDescription:'Wpisz kierunek, zawód lub rodzinę. ITINERA pokaże użyteczne wyniki i źródła urzędowe.',
+      finderLabel:'Czego chcesz szukać?',
+      finderPlaceholder:'Np. psychologia, elektryka, pielęgniarstwo, spawanie…',
+      search:'Szukaj',
+      type:'Typ',
+      family:'Rodzina',
+      residence:'Miejscowość, opcjonalnie',
+      all:'Wszystkie',
+      allFamilies:'Wszystkie',
+      footerSub:'Ekosystem edukacyjny Tribeca',
+      sourcesFooter:'Źródła urzędowe'
+    },
+    de:{
+      docTitle:'ITINERA | Amtliche akademische Orientierung',
+      brandSubtitle:'Akademische Information und Orientierung',
+      update:'ITINERA',
+      language:'Sprache',
+      font:'Schrift',
+      sim:'Weg simulieren',
+      bot:'ItineraBot',
+      menu:'Menü',
+      menuTools:'Werkzeuge',
+      menuOfficial:'Amtliche Links',
+      menuSearch:'Studiengangsuche',
+      menuSimulator:'Wege-Simulator',
+      menuBot:'ItineraBot',
+      menuSources:'Amtliche Quellen',
+      heroEyebrow:'Tribeca Academia',
+      heroTitle:'ITINERA',
+      heroLead:'Studiengänge suchen, akademische Wege simulieren und amtliche Quellen ohne Überfrachtung prüfen. Kurz, praktisch und überprüfbar.',
+      heroSearch:'Geführte Suche',
+      heroSim:'Weg simulieren',
+      heroBot:'ItineraBot fragen',
+      coverKicker:'Eigene Werkzeuge',
+      coverTitle:'Klare Orientierung, überprüfbare Wege.',
+      coverLead:'ITINERA ordnet akademische Entscheidungen in drei Schritten: suchen, simulieren und amtliche Quellen prüfen.',
+      toolSearch:'Studiengangsuche',
+      toolSearchDesc:'Nach Name, Familie oder Beruf suchen.',
+      toolSim:'Wege-Simulator',
+      toolSimDesc:'Kurze und alternative Wege vergleichen.',
+      toolBot:'ItineraBot',
+      toolBotDesc:'Mit Unterstützung amtlicher Quellen fragen.',
+      finderEyebrow:'Geführte Suche',
+      finderTitle:'Studiengänge suchen',
+      finderDescription:'Geben Sie einen Studiengang, Beruf oder eine Familie ein. ITINERA liefert nützliche Treffer und amtliche Quellen.',
+      finderLabel:'Wonach möchten Sie suchen?',
+      finderPlaceholder:'Z. B. Psychologie, Elektrizität, Pflege, Schweißen…',
+      search:'Suchen',
+      type:'Typ',
+      family:'Familie',
+      residence:'Ort, optional',
+      all:'Alle',
+      allFamilies:'Alle',
+      footerSub:'Bildungsökosystem Tribeca',
+      sourcesFooter:'Amtliche Quellen'
+    }
+  };
+
+  Object.keys(V28).forEach(lang => { I18N[lang] = Object.assign(I18N[lang] || {}, V28[lang]); });
+  function V28T(k){ return (V28[state.lang] && V28[state.lang][k]) || V28.gl[k] || k; }
+
+  function text(id, value){
+    const el=document.getElementById(id);
+    if(el) el.textContent=value;
+  }
+
+  function v28Menu(){
+    const nav=document.getElementById('mainNav');
+    if(!nav) return;
+    nav.className='main-nav shell v28-menu-nav';
+    nav.innerHTML = `<details class="v28-menu">
+      <summary>${escapeHTML(V28T('menu'))}</summary>
+      <div class="v28-menu-panel">
+        <section>
+          <h3>${escapeHTML(V28T('menuTools'))}</h3>
+          <a href="#inicio" data-route="inicio">${escapeHTML(V28T('menuSearch'))}</a>
+          <a href="#aventura" data-route="aventura">${escapeHTML(V28T('menuSimulator'))}</a>
+          <a href="#asistente" data-route="asistente">${escapeHTML(V28T('menuBot'))}</a>
+        </section>
+        <section>
+          <h3>${escapeHTML(V28T('menuOfficial'))}</h3>
+          <a href="#fuentes" data-route="fuentes">${escapeHTML(V28T('menuSources'))}</a>
+          <a href="https://universidades.sede.gob.es/pagina/index/directorio/Proc_Ruct" target="_blank" rel="noopener noreferrer">RUCT</a>
+          <a href="https://www.ciencia.gob.es/qedu" target="_blank" rel="noopener noreferrer">QEDU</a>
+          <a href="https://www.ciug.gal/admision-sug" target="_blank" rel="noopener noreferrer">CIUG</a>
+          <a href="https://www.edu.xunta.gal/fp/oferta-fp" target="_blank" rel="noopener noreferrer">Xunta FP</a>
+          <a href="https://www.todofp.es/que-estudiar.html" target="_blank" rel="noopener noreferrer">TodoFP</a>
+        </section>
+      </div>
+    </details>`;
+    bindRoutes();
+    nav.querySelectorAll('[data-route]').forEach(a=>a.addEventListener('click',()=>nav.querySelector('details')?.removeAttribute('open')));
+  }
+
+  function v28Hero(){
+    document.title = V28T('docTitle');
+    text('brandSubtitle', V28T('brandSubtitle'));
+    text('languageLabel', V28T('language'));
+    text('fontLabel', V28T('font'));
+    text('headerSimulatorBtn', V28T('sim'));
+    text('headerItinerabotBtn', V28T('bot'));
+    const badge=document.getElementById('updateBadge');
+    if(badge) badge.textContent='ITINERA v0.28';
+    text('heroEyebrow', V28T('heroEyebrow'));
+    text('heroTitle', V28T('heroTitle'));
+    text('heroLead', V28T('heroLead'));
+    const heroLinks=document.querySelectorAll('.v27-text-link');
+    if(heroLinks[0]) heroLinks[0].textContent=V28T('heroSearch');
+    if(heroLinks[1]) heroLinks[1].textContent=V28T('heroSim');
+    if(heroLinks[2]) heroLinks[2].textContent=V28T('heroBot');
+    const cover=document.querySelector('.v27-cover-card');
+    if(cover){
+      const kicker=cover.querySelector('.v27-cover-kicker');
+      const h2=cover.querySelector('h2');
+      const p=cover.querySelector(':scope > p:not(.v27-cover-kicker)');
+      if(kicker) kicker.textContent=V28T('coverKicker');
+      if(h2) h2.textContent=V28T('coverTitle');
+      if(p) p.textContent=V28T('coverLead');
+      const tools=cover.querySelectorAll('.v27-cover-tools a');
+      if(tools[0]) tools[0].innerHTML=`<span>01</span><strong>${escapeHTML(V28T('toolSearch'))}</strong><small>${escapeHTML(V28T('toolSearchDesc'))}</small>`;
+      if(tools[1]) tools[1].innerHTML=`<span>02</span><strong>${escapeHTML(V28T('toolSim'))}</strong><small>${escapeHTML(V28T('toolSimDesc'))}</small>`;
+      if(tools[2]) tools[2].innerHTML=`<span>03</span><strong>${escapeHTML(V28T('toolBot'))}</strong><small>${escapeHTML(V28T('toolBotDesc'))}</small>`;
+    }
+  }
+
+  function v28Search(){
+    text('finderEyebrow', V28T('finderEyebrow'));
+    text('finderTitle', V28T('finderTitle'));
+    text('finderDescription', V28T('finderDescription'));
+    text('finderLabel', V28T('finderLabel'));
+    text('studySearchBtn', V28T('search'));
+    text('typeFilterLabel', V28T('type'));
+    text('familyFilterLabel', V28T('family'));
+    text('residenceFilterLabel', V28T('residence'));
+    const search=document.getElementById('studySearch');
+    if(search) search.placeholder=V28T('finderPlaceholder');
+    const tags=document.getElementById('quickTags');
+    if(tags){ tags.innerHTML=''; tags.hidden=true; }
+  }
+
+  function v28Footer(){
+    text('footerBrandSub', V28T('footerSub'));
+  }
+
+  function v28SelectOptions(){
+    const type=document.getElementById('studyTypeFilter');
+    if(type && type.options.length){
+      const labels = {
+        all: V28T('all'),
+        fpgm: state.lang==='gl'?'FP grao medio':state.lang==='en'?'Intermediate VET':state.lang==='fr'?'FP degré moyen':state.lang==='pl'?'FP średniego stopnia':state.lang==='de'?'Mittlere FP':'FP grado medio',
+        fpgs: state.lang==='gl'?'FP grao superior':state.lang==='en'?'Higher VET':state.lang==='fr'?'FP degré supérieur':state.lang==='pl'?'FP wyższego stopnia':state.lang==='de'?'Höhere FP':'FP grado superior',
+        grado: state.lang==='gl'?'Grao universitario':state.lang==='en'?'Bachelor degree':state.lang==='fr'?'Licence / grade universitaire':state.lang==='pl'?'Studia pierwszego stopnia':state.lang==='de'?'Bachelor / Hochschulgrad':'Grado universitario',
+        master: state.lang==='gl'?'Máster':state.lang==='en'?'Master':state.lang==='fr'?'Master':state.lang==='pl'?'Magisterskie':state.lang==='de'?'Master':'Máster'
+      };
+      [...type.options].forEach(o=>{ if(labels[o.value]) o.textContent=labels[o.value]; });
+    }
+    const fam=document.getElementById('familyFilter');
+    if(fam && fam.options.length && fam.options[0].value==='all') fam.options[0].textContent=V28T('allFamilies');
+  }
+
+  function v28Apply(){
+    document.body.classList.add('v28-scaled');
+    v28Menu();
+    v28Hero();
+    v28Search();
+    v28Footer();
+    v28SelectOptions();
+  }
+
+  const previousInitV28 = init;
+  init = function(){
+    previousInitV28();
+    setTimeout(v28Apply, 900);
+  };
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(v28Apply,1300),{once:true});
+  else setTimeout(v28Apply,500);
+
+  document.addEventListener('change', (e)=>{
+    if(e.target && e.target.id==='languageSelect') setTimeout(v28Apply, 80);
+  });
+})();
