@@ -1,6 +1,6 @@
 {
   "name": "itinera-v0-25",
-  "version": "0.32-pdf-modal-jobs-bot",
+  "version": "0.33-selector-fp-pdf-simulador",
   "private": true,
   "type": "module",
   "description": "ITINERA: GitHub Pages + Supabase official catalog + ItineraBot documental.",

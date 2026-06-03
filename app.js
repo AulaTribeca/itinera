@@ -4775,216 +4775,292 @@ document.addEventListener('DOMContentLoaded',init);
 })();
 
 
-/* ITINERA v0.32 · PDF descargable, ventá de pasos, saídas profesionais e ItineraBot reforzado */
+/* ITINERA v0.33 · selector por familias, FP ampliada, PDF fiable e simulador centrado na ruta */
 (function(){
-  const JOBS_GL = {"cm-instalaciones-electricas-automaticas": ["electricista instalador/a", "mantemento de instalacións eléctricas", "instalador/a de baixa tensión", "montador/a de cadros eléctricos", "técnico/a de automatismos", "instalador/a domótico/a", "operario/a de instalacións solares básicas", "técnico/a auxiliar de mantemento industrial", "instalador/a de iluminación", "reparador/a de instalacións eléctricas"], "cs-sistemas-electrotecnicos-automatizados": ["técnico/a superior en sistemas electrotécnicos", "proxectista de instalacións eléctricas", "técnico/a en automatización de edificios", "responsable de mantemento eléctrico", "técnico/a de eficiencia enerxética", "instalador/a autorizado/a especializado/a", "coordinador/a de obras eléctricas", "técnico/a en domótica", "técnico/a de redes eléctricas interiores", "xefe/a de equipo de instalacións"], "cs-automatizacion-robotica-industrial": ["técnico/a en automatización industrial", "programador/a de PLC", "técnico/a de robótica industrial", "técnico/a de mantemento automatizado", "integrador/a de sistemas industriais", "técnico/a de control de procesos", "operador/a de sistemas SCADA", "técnico/a de instrumentación", "técnico/a de industria 4.0", "responsable de liña automatizada"], "cm-soldadura-caldeiraria": ["soldador/a", "caldeireiro/a", "montador/a de estruturas metálicas", "operario/a de fabricación metálica", "tubaxeiro/a industrial", "chapista industrial", "montador/a de carpintaría metálica", "soldador/a TIG/MIG/MAG", "reparador/a de estruturas metálicas", "operario/a de corte e conformado"], "cm-carpinteria-mueble": ["carpinteiro/a", "ebanista", "montador/a de mobles", "operario/a de fabricación de moble", "instalador/a de carpintaría", "técnico/a de taller de madeira", "restaurador/a auxiliar de mobles", "operario/a CNC madeira básico", "montador/a de portas e armarios", "axudante de deseño e produción de moble"], "grado-medicina": ["médico/a de atención primaria", "médico/a especialista tras MIR", "médico/a hospitalario/a", "médico/a de urxencias", "investigador/a biomédico/a", "médico/a de saúde pública", "médico/a de medicina laboral", "médico/a en cooperación sanitaria", "docente universitario/a en ciencias da saúde", "xestor/a sanitario/a con formación médica"], "grado-psicologia": ["psicólogo/a educativo/a", "orientador/a con formación complementaria", "psicólogo/a de recursos humanos", "técnico/a de intervención psicosocial", "investigador/a en psicoloxía", "psicólogo/a sanitario/a tras máster habilitante", "psicólogo/a deportivo/a con especialización", "consultor/a de benestar laboral", "mediador/a familiar con formación específica", "técnico/a en programas de prevención"], "grado-derecho": ["avogado/a tras máster de acceso", "procurador/a tras formación habilitante", "asesor/a xurídico/a", "técnico/a de administración pública", "xestor/a de contratos", "consultor/a de cumprimento normativo", "mediador/a xurídico/a", "técnico/a en protección de datos", "opositor/a a corpos xurídicos", "consultor/a laboral ou mercantil"], "grado-arquitectura": ["arquitecto/a tras itinerario habilitante", "deseñador/a de proxectos arquitectónicos", "técnico/a de urbanismo", "consultor/a de eficiencia enerxética en edificación", "modelador/a BIM", "xestor/a de proxectos de construción", "deseñador/a de interiores con especialización", "técnico/a de rehabilitación", "perito/a técnico/a con habilitación correspondente", "docente ou investigador/a en arquitectura"], "grado-informatica": ["enxeñeiro/a de software", "desenvolvedor/a web", "desenvolvedor/a de aplicacións", "administrador/a de sistemas", "analista de datos", "especialista en ciberseguridade", "arquitecto/a cloud", "técnico/a DevOps", "consultor/a tecnolóxico/a", "investigador/a en intelixencia artificial"], "grado-enfermeria": ["enfermeiro/a hospitalario/a", "enfermeiro/a de atención primaria", "enfermeiro/a de urxencias", "enfermeiro/a comunitario/a", "enfermeiro/a de saúde laboral", "enfermeiro/a escolar segundo normativa", "enfermeiro/a de saúde mental con especialización", "xestor/a de coidados", "docente en ciencias da saúde", "investigador/a en coidados"], "fp-ca-enfermeria": ["técnico/a en coidados auxiliares de enfermaría", "auxiliar de clínica", "auxiliar de xeriatría", "auxiliar en consultas médicas", "auxiliar en unidades hospitalarias", "auxiliar en saúde bucodental con formación complementaria", "coidador/a en centros sociosanitarios", "auxiliar de enfermaría en atención primaria", "auxiliar en esterilización", "apoio en programas de coidados"], "fp-ts-educacion-infantil": ["educador/a infantil", "técnico/a en escola infantil", "educador/a en programas de conciliación", "monitor/a de actividades infantís", "educador/a en ludotecas", "apoio educativo en programas 0-6", "técnico/a en atención á infancia", "coordinador/a de actividades infantís", "educador/a en contextos sociais", "auxiliar técnico/a en proxectos educativos"], "master-profesorado": ["profesor/a de educación secundaria", "profesor/a de bacharelato", "profesor/a de formación profesional", "orientador/a educativo/a segundo especialidade", "docente en escolas oficiais de idiomas se procede", "preparador/a de materiais didácticos", "titor/a académico/a", "coordinador/a pedagóxico/a", "deseñador/a de programacións didácticas", "docente en programas de formación"], "cm-instalaciones-telecomunicaciones": ["instalador/a de telecomunicacións", "técnico/a de redes domésticas", "instalador/a de fibra óptica", "técnico/a de antenas", "instalador/a de sistemas de seguridade", "técnico/a de telefonía", "montador/a de infraestruturas TIC", "técnico/a de cableado estruturado", "instalador/a de redes locais", "mantemento de sistemas de comunicación"], "cs-mantenimiento-electronico": ["técnico/a superior en mantemento electrónico", "técnico/a de reparación electrónica", "técnico/a de equipos industriais", "técnico/a de instrumentación electrónica", "técnico/a de laboratorio electrónico", "responsable de mantemento de equipos", "técnico/a de sistemas audiovisuais", "técnico/a de control electrónico", "técnico/a de equipos médicos con especialización", "consultor/a técnico/a de soporte"], "cs-energias-renovables": ["técnico/a superior en enerxías renovables", "técnico/a de parques eólicos", "técnico/a de instalacións solares", "operador/a de planta enerxética", "técnico/a de eficiencia enerxética", "mantemento de instalacións renovables", "técnico/a de autoconsumo", "xestor/a de proxectos renovables", "técnico/a de biomasa", "comercial técnico/a de solucións enerxéticas"], "grado-ade": ["analista financeiro/a", "consultor/a de empresa", "xestor/a administrativo/a", "responsable de marketing", "técnico/a de recursos humanos", "emprendedor/a ou xestor/a de negocio", "controller de xestión", "asesor/a fiscal con especialización", "técnico/a de comercio internacional", "xestor/a de proxectos"], "grado-educacion-primaria": ["mestre/a de educación primaria", "titor/a de primaria", "especialista educativo/a segundo mención", "deseñador/a de materiais didácticos", "coordinador/a de proxectos educativos", "educador/a en programas de reforzo", "asesor/a pedagóxico/a con formación complementaria", "docente en centros privados/concertados", "preparador/a de recursos educativos", "investigador/a en educación"], "grado-educacion-infantil": ["mestre/a de educación infantil", "titor/a de infantil", "deseñador/a de materiais para 0-6", "coordinador/a de proxectos de infancia", "educador/a en programas temperáns", "docente en centros privados/concertados", "asesor/a pedagóxico/a infantil", "especialista en atención temperá con formación específica", "creador/a de recursos educativos infantís", "investigador/a en educación infantil"], "grado-biologia": ["biólogo/a", "técnico/a de laboratorio", "investigador/a biomédico/a", "técnico/a ambiental", "consultor/a de biodiversidade", "docente de ciencias con máster habilitante", "técnico/a de control de calidade", "divulgador/a científico/a", "xestor/a de conservación", "técnico/a en biotecnoloxía con especialización"], "grado-criminologia": ["criminólogo/a", "técnico/a de prevención delitiva", "analista de seguridade", "técnico/a en intervención con menores", "consultor/a en políticas de seguridade", "perito/a criminolóxico/a segundo requisitos", "técnico/a en mediación penal", "analista de datos criminolóxicos", "técnico/a de reinserción social", "investigador/a en criminoloxía"]};
-  const UI32 = {
-    gl:{jobs:'Saídas profesionais de exemplo', download:'Descargar PDF do itinerario', choose:'Escoller rutas para o PDF', all:'Todas', none:'Ningunha', close:'Pechar', popTitle:'Información do paso', pdfSubtitle:'Orientación académica e deseño de itinerarios personalizados', botWorking:'Estou consultando ItineraBot…', botFallback:'Resposta orientativa rápida'},
-    es:{jobs:'Puestos de trabajo de ejemplo', download:'Descargar PDF del itinerario', choose:'Escoger rutas para el PDF', all:'Todas', none:'Ninguna', close:'Cerrar', popTitle:'Información del paso', pdfSubtitle:'Orientación académica y diseño de itinerarios personalizados', botWorking:'Estoy consultando ItineraBot…', botFallback:'Respuesta orientativa rápida'},
-    en:{jobs:'Example career outcomes', download:'Download pathway PDF', choose:'Choose routes for the PDF', all:'All', none:'None', close:'Close', popTitle:'Step information', pdfSubtitle:'Academic guidance and personalised pathway design', botWorking:'Checking ItineraBot…', botFallback:'Fast guidance answer'},
-    fr:{jobs:'Métiers possibles', download:'Télécharger le PDF du parcours', choose:'Choisir les parcours pour le PDF', all:'Tous', none:'Aucun', close:'Fermer', popTitle:'Information de l’étape', pdfSubtitle:'Orientation académique et conception de parcours personnalisés', botWorking:'Consultation d’ItineraBot…', botFallback:'Réponse rapide d’orientation'},
-    pl:{jobs:'Przykładowe ścieżki zawodowe', download:'Pobierz PDF ścieżki', choose:'Wybierz trasy do PDF', all:'Wszystkie', none:'Żadna', close:'Zamknij', popTitle:'Informacja o kroku', pdfSubtitle:'Doradztwo akademickie i projektowanie spersonalizowanych ścieżek', botWorking:'Sprawdzam ItineraBot…', botFallback:'Szybka odpowiedź orientacyjna'},
-    de:{jobs:'Beispielberufe', download:'PDF des Bildungswegs herunterladen', choose:'Wege für PDF auswählen', all:'Alle', none:'Keine', close:'Schließen', popTitle:'Schrittinformation', pdfSubtitle:'Akademische Orientierung und Gestaltung personalisierter Bildungswege', botWorking:'ItineraBot wird abgefragt…', botFallback:'Schnelle Orientierung'}
+  const EXTRA_STUDIES_V33 = [{"id": "fpb-mantenimiento-vehiculos", "name": "FP Básica en Mantemento de Vehículos", "type": "fpb", "level": "FP básica", "family": "Transporte e Mantemento de Vehículos", "keywords": ["vehiculos", "automocion", "coche", "mecanica", "fp básica en mantemento de vehículos", "transporte e mantemento de vehículos"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cm-electromecanica-vehiculos", "name": "Técnico en Electromecánica de Vehículos Automóbiles", "type": "fpgm", "level": "Ciclo formativo de grao medio", "family": "Transporte e Mantemento de Vehículos", "keywords": ["electromecanica", "vehiculos", "automocion", "mecanica", "coches", "automovil", "técnico en electromecánica de vehículos automóbiles", "transporte e mantemento de vehículos"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cm-carroceria", "name": "Técnico en Carrozaría", "type": "fpgm", "level": "Ciclo formativo de grao medio", "family": "Transporte e Mantemento de Vehículos", "keywords": ["carroceria", "chapista", "vehiculos", "automocion", "técnico en carrozaría", "transporte e mantemento de vehículos"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cm-conduccion-vehiculos-transporte", "name": "Técnico en Condución de Vehículos de Transporte por Estrada", "type": "fpgm", "level": "Ciclo formativo de grao medio", "family": "Transporte e Mantemento de Vehículos", "keywords": ["transporte", "conduccion", "camion", "vehiculos", "técnico en condución de vehículos de transporte por estrada", "transporte e mantemento de vehículos"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-automocion", "name": "Técnico Superior en Automoción", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Transporte e Mantemento de Vehículos", "keywords": ["automocion", "electromecanica", "vehiculos", "taller", "coches", "técnico superior en automoción", "transporte e mantemento de vehículos"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-mantenimiento-aeromecanico-aviones", "name": "Técnico Superior en Mantemento Aeromecánico de Avións con Motor de Turbina", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Transporte e Mantemento de Vehículos", "keywords": ["aviones", "aeromecanico", "mantemento", "aviacion", "técnico superior en mantemento aeromecánico de avións con motor de turbina", "transporte e mantemento de vehículos"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-mantenimiento-sistemas-electronicos-avionica", "name": "Técnico Superior en Mantemento de Sistemas Electrónicos e Aviónicos en Aeronaves", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Transporte e Mantemento de Vehículos", "keywords": ["avionica", "aeronaves", "electronica", "aviacion", "técnico superior en mantemento de sistemas electrónicos e aviónicos en aeronaves", "transporte e mantemento de vehículos"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cm-gestion-administrativa", "name": "Técnico en Xestión Administrativa", "type": "fpgm", "level": "Ciclo formativo de grao medio", "family": "Administración e Xestión", "keywords": ["administracion", "oficina", "gestion", "técnico en xestión administrativa", "administración e xestión"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-administracion-finanzas", "name": "Técnico Superior en Administración e Finanzas", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Administración e Xestión", "keywords": ["administracion", "finanzas", "empresa", "técnico superior en administración e finanzas", "administración e xestión"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-asistencia-direccion", "name": "Técnico Superior en Asistencia á Dirección", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Administración e Xestión", "keywords": ["secretariado", "direccion", "administracion", "técnico superior en asistencia á dirección", "administración e xestión"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cm-sistemas-microinformaticos-redes", "name": "Técnico en Sistemas Microinformáticos e Redes", "type": "fpgm", "level": "Ciclo formativo de grao medio", "family": "Informática e Comunicacións", "keywords": ["informatica", "redes", "ordenadores", "microinformatica", "técnico en sistemas microinformáticos e redes", "informática e comunicacións"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-administracion-sistemas-informaticos-red", "name": "Técnico Superior en Administración de Sistemas Informáticos en Rede", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Informática e Comunicacións", "keywords": ["asir", "sistemas", "redes", "informatica", "técnico superior en administración de sistemas informáticos en rede", "informática e comunicacións"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-desarrollo-aplicaciones-multiplataforma", "name": "Técnico Superior en Desenvolvemento de Aplicacións Multiplataforma", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Informática e Comunicacións", "keywords": ["dam", "programacion", "apps", "informatica", "técnico superior en desenvolvemento de aplicacións multiplataforma", "informática e comunicacións"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-desarrollo-aplicaciones-web", "name": "Técnico Superior en Desenvolvemento de Aplicacións Web", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Informática e Comunicacións", "keywords": ["daw", "web", "programacion", "informatica", "técnico superior en desenvolvemento de aplicacións web", "informática e comunicacións"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cm-cuidados-auxiliares-enfermeria", "name": "Técnico en Coidados Auxiliares de Enfermaría", "type": "fpgm", "level": "Ciclo formativo de grao medio", "family": "Sanidade", "keywords": ["auxiliar enfermeria", "sanidad", "enfermeria", "técnico en coidados auxiliares de enfermaría", "sanidade"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cm-farmacia-parafarmacia", "name": "Técnico en Farmacia e Parafarmacia", "type": "fpgm", "level": "Ciclo formativo de grao medio", "family": "Sanidade", "keywords": ["farmacia", "parafarmacia", "sanidad", "técnico en farmacia e parafarmacia", "sanidade"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-higiene-bucodental", "name": "Técnico Superior en Hixiene Bucodental", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Sanidade", "keywords": ["higiene dental", "bucodental", "sanidad", "técnico superior en hixiene bucodental", "sanidade"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-imagen-diagnostico-medicina-nuclear", "name": "Técnico Superior en Imaxe para o Diagnóstico e Medicina Nuclear", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Sanidade", "keywords": ["radiologia", "imagen diagnostico", "sanidad", "técnico superior en imaxe para o diagnóstico e medicina nuclear", "sanidade"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-laboratorio-clinico-biomedico", "name": "Técnico Superior en Laboratorio Clínico e Biomédico", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Sanidade", "keywords": ["laboratorio", "biomedico", "sanidad", "técnico superior en laboratorio clínico e biomédico", "sanidade"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-anatomia-patologica-citodiagnostico", "name": "Técnico Superior en Anatomía Patolóxica e Citodiagnóstico", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Sanidade", "keywords": ["anatomia patologica", "citodiagnostico", "sanidad", "técnico superior en anatomía patolóxica e citodiagnóstico", "sanidade"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cm-atencion-personas-dependencia", "name": "Técnico en Atención a Persoas en Situación de Dependencia", "type": "fpgm", "level": "Ciclo formativo de grao medio", "family": "Servizos Socioculturais e á Comunidade", "keywords": ["dependencia", "coidados", "sociosanitario", "técnico en atención a persoas en situación de dependencia", "servizos socioculturais e á comunidade"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-integracion-social", "name": "Técnico Superior en Integración Social", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Servizos Socioculturais e á Comunidade", "keywords": ["integracion social", "intervencion social", "técnico superior en integración social", "servizos socioculturais e á comunidade"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-animacion-sociocultural-turistica", "name": "Técnico Superior en Animación Sociocultural e Turística", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Servizos Socioculturais e á Comunidade", "keywords": ["animacion sociocultural", "turismo", "técnico superior en animación sociocultural e turística", "servizos socioculturais e á comunidade"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cm-actividades-comerciales", "name": "Técnico en Actividades Comerciais", "type": "fpgm", "level": "Ciclo formativo de grao medio", "family": "Comercio e Márketing", "keywords": ["comercio", "ventas", "tienda", "técnico en actividades comerciais", "comercio e márketing"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-marketing-publicidad", "name": "Técnico Superior en Márketing e Publicidade", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Comercio e Márketing", "keywords": ["marketing", "publicidad", "comercio", "técnico superior en márketing e publicidade", "comercio e márketing"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-comercio-internacional", "name": "Técnico Superior en Comercio Internacional", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Comercio e Márketing", "keywords": ["comercio internacional", "exportacion", "técnico superior en comercio internacional", "comercio e márketing"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cm-cocina-gastronomia", "name": "Técnico en Cociña e Gastronomía", "type": "fpgm", "level": "Ciclo formativo de grao medio", "family": "Hostalaría e Turismo", "keywords": ["cocina", "gastronomia", "hosteleria", "técnico en cociña e gastronomía", "hostalaría e turismo"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cm-servicios-restauracion", "name": "Técnico en Servizos de Restauración", "type": "fpgm", "level": "Ciclo formativo de grao medio", "family": "Hostalaría e Turismo", "keywords": ["restauracion", "hosteleria", "técnico en servizos de restauración", "hostalaría e turismo"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-gestion-alojamientos-turisticos", "name": "Técnico Superior en Xestión de Aloxamentos Turísticos", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Hostalaría e Turismo", "keywords": ["turismo", "hotel", "alojamientos", "técnico superior en xestión de aloxamentos turísticos", "hostalaría e turismo"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-guia-informacion-asistencias-turisticas", "name": "Técnico Superior en Guía, Información e Asistencias Turísticas", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Hostalaría e Turismo", "keywords": ["guia turistico", "turismo", "técnico superior en guía, información e asistencias turísticas", "hostalaría e turismo"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cm-instalaciones-frigorificas-climatizacion", "name": "Técnico en Instalacións Frigoríficas e de Climatización", "type": "fpgm", "level": "Ciclo formativo de grao medio", "family": "Instalación e Mantemento", "keywords": ["frio", "climatizacion", "calefaccion", "técnico en instalacións frigoríficas e de climatización", "instalación e mantemento"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cm-mantenimiento-electromecanico", "name": "Técnico en Mantemento Electromecánico", "type": "fpgm", "level": "Ciclo formativo de grao medio", "family": "Instalación e Mantemento", "keywords": ["mantemento", "electromecanico", "industrial", "técnico en mantemento electromecánico", "instalación e mantemento"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-mecatronica-industrial", "name": "Técnico Superior en Mecatrónica Industrial", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Instalación e Mantemento", "keywords": ["mecatronica", "industrial", "mantemento", "técnico superior en mecatrónica industrial", "instalación e mantemento"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-prevencion-riesgos-profesionales", "name": "Técnico Superior en Prevención de Riscos Profesionais", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Instalación e Mantemento", "keywords": ["prevencion", "riesgos laborales", "técnico superior en prevención de riscos profesionais", "instalación e mantemento"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cm-peluqueria-cosmetica-capilar", "name": "Técnico en Perrucaría e Cosmética Capilar", "type": "fpgm", "level": "Ciclo formativo de grao medio", "family": "Imaxe Persoal", "keywords": ["peluqueria", "estetica", "técnico en perrucaría e cosmética capilar", "imaxe persoal"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cm-estetica-belleza", "name": "Técnico en Estética e Beleza", "type": "fpgm", "level": "Ciclo formativo de grao medio", "family": "Imaxe Persoal", "keywords": ["estetica", "belleza", "técnico en estética e beleza", "imaxe persoal"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-estetica-integral-bienestar", "name": "Técnico Superior en Estética Integral e Benestar", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Imaxe Persoal", "keywords": ["estetica integral", "bienestar", "técnico superior en estética integral e benestar", "imaxe persoal"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cm-video-disc-jockey-sonido", "name": "Técnico en Vídeo Disc-Jockey e Son", "type": "fpgm", "level": "Ciclo formativo de grao medio", "family": "Imaxe e Son", "keywords": ["sonido", "dj", "video", "técnico en vídeo disc-jockey e son", "imaxe e son"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-realizacion-proyectos-audiovisuales", "name": "Técnico Superior en Realización de Proxectos Audiovisuais e Espectáculos", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Imaxe e Son", "keywords": ["audiovisual", "realizacion", "espectaculos", "técnico superior en realización de proxectos audiovisuais e espectáculos", "imaxe e son"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-sonido-audiovisuales-espectaculos", "name": "Técnico Superior en Son para Audiovisuais e Espectáculos", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Imaxe e Son", "keywords": ["sonido", "audiovisuales", "técnico superior en son para audiovisuais e espectáculos", "imaxe e son"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cm-obras-interior-decoracion-rehabilitacion", "name": "Técnico en Obras de Interior, Decoración e Rehabilitación", "type": "fpgm", "level": "Ciclo formativo de grao medio", "family": "Edificación e Obra Civil", "keywords": ["construccion", "interior", "rehabilitacion", "técnico en obras de interior, decoración e rehabilitación", "edificación e obra civil"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-proyectos-edificacion", "name": "Técnico Superior en Proxectos de Edificación", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Edificación e Obra Civil", "keywords": ["edificacion", "arquitectura tecnica", "técnico superior en proxectos de edificación", "edificación e obra civil"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-proyectos-obra-civil", "name": "Técnico Superior en Proxectos de Obra Civil", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Edificación e Obra Civil", "keywords": ["obra civil", "construccion", "técnico superior en proxectos de obra civil", "edificación e obra civil"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cm-aprovechamiento-conservacion-medio-natural", "name": "Técnico en Aproveitamento e Conservación do Medio Natural", "type": "fpgm", "level": "Ciclo formativo de grao medio", "family": "Agraria", "keywords": ["medio natural", "forestal", "agraria", "técnico en aproveitamento e conservación do medio natural", "agraria"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-gestion-forestal-medio-natural", "name": "Técnico Superior en Xestión Forestal e do Medio Natural", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Agraria", "keywords": ["forestal", "medio natural", "técnico superior en xestión forestal e do medio natural", "agraria"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cm-jardineria-floristeria", "name": "Técnico en Xardinaría e Floraría", "type": "fpgm", "level": "Ciclo formativo de grao medio", "family": "Agraria", "keywords": ["jardineria", "floristeria", "técnico en xardinaría e floraría", "agraria"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cm-panaderia-reposteria-confiteria", "name": "Técnico en Panadaría, Repostaría e Confeitaría", "type": "fpgm", "level": "Ciclo formativo de grao medio", "family": "Industrias Alimentarias", "keywords": ["panaderia", "reposteria", "técnico en panadaría, repostaría e confeitaría", "industrias alimentarias"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-procesos-calidad-industria-alimentaria", "name": "Técnico Superior en Procesos e Calidade na Industria Alimentaria", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Industrias Alimentarias", "keywords": ["alimentaria", "calidad", "técnico superior en procesos e calidade na industria alimentaria", "industrias alimentarias"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cm-confeccion-moda", "name": "Técnico en Confección e Moda", "type": "fpgm", "level": "Ciclo formativo de grao medio", "family": "Téxtil, Confección e Pel", "keywords": ["moda", "confeccion", "técnico en confección e moda", "téxtil, confección e pel"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-patronaje-moda", "name": "Técnico Superior en Patronaxe e Moda", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Téxtil, Confección e Pel", "keywords": ["patronaje", "moda", "técnico superior en patronaxe e moda", "téxtil, confección e pel"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cm-impresion-grafica", "name": "Técnico en Impresión Gráfica", "type": "fpgm", "level": "Ciclo formativo de grao medio", "family": "Artes Gráficas", "keywords": ["impresion", "grafica", "técnico en impresión gráfica", "artes gráficas"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}, {"id": "cs-diseno-gestion-produccion-grafica", "name": "Técnico Superior en Deseño e Xestión da Produción Gráfica", "type": "fpgs", "level": "Ciclo formativo de grao superior", "family": "Artes Gráficas", "keywords": ["diseño grafico", "produccion grafica", "técnico superior en deseño e xestión da produción gráfica", "artes gráficas"], "subjects": ["Consultar requisitos de acceso e criterios de admisión"], "ponderation_subjects": [{"subject": "Non aplica ou consultar fonte oficial", "weight": "consultar fonte oficial"}], "availability_by_province": {"Galicia": ["Consultar oferta oficial vixente na Xunta FP por centro, modalidade e curso"]}, "sources": ["xunta-fp-oferta-2025-2026", "xunta-fp-ciclos", "todofp-familias"]}];
+  const UI33 = {
+    gl:{selectGoal:'Escoller estudo ou meta', filter:'Filtrar estudos', filterPh:'Escribe para filtrar o despregable…', choose:'Escolle un estudo organizado por familia', route:'Simulación gráfica da ruta', details:'Información detallada', jobs:'Saídas profesionais', subjects:'Materias recomendables', ponder:'Ponderacións', availability:'Onde está dispoñible', sources:'Fontes oficiais', pdf:'Descargar itinerario en PDF', step:'Información do paso', close:'Pechar', none:'Non hai estudo seleccionado.', pdfNote:'Documento orientativo. Comproba sempre requisitos, prazas, centros, notas e ponderacións na fonte oficial vixente.'},
+    es:{selectGoal:'Escoger estudio o meta', filter:'Filtrar estudios', filterPh:'Escribe para filtrar el desplegable…', choose:'Escoge un estudio organizado por familia', route:'Simulación gráfica de la ruta', details:'Información detallada', jobs:'Puestos de trabajo', subjects:'Materias recomendables', ponder:'Ponderaciones', availability:'Dónde está disponible', sources:'Fuentes oficiales', pdf:'Descargar itinerario en PDF', step:'Información del paso', close:'Cerrar', none:'No hay estudio seleccionado.', pdfNote:'Documento orientativo. Comprueba siempre requisitos, plazas, centros, notas y ponderaciones en la fuente oficial vigente.'},
+    en:{selectGoal:'Choose study or goal', filter:'Filter studies', filterPh:'Type to filter the dropdown…', choose:'Choose a study organised by family', route:'Graphic route simulation', details:'Detailed information', jobs:'Career outcomes', subjects:'Recommended subjects', ponder:'Weightings', availability:'Where available', sources:'Official sources', pdf:'Download pathway PDF', step:'Step information', close:'Close', none:'No study selected.', pdfNote:'Guidance document. Always check requirements, places, centres, cut-off marks and weightings in the current official source.'},
+    fr:{selectGoal:'Choisir une formation ou un objectif', filter:'Filtrer les formations', filterPh:'Tapez pour filtrer la liste…', choose:'Choisissez une formation organisée par famille', route:'Simulation graphique du parcours', details:'Information détaillée', jobs:'Métiers possibles', subjects:'Matières recommandées', ponder:'Pondérations', availability:'Où c’est disponible', sources:'Sources officielles', pdf:'Télécharger le PDF du parcours', step:'Information de l’étape', close:'Fermer', none:'Aucune formation sélectionnée.', pdfNote:'Document d’orientation. Vérifiez toujours exigences, places, centres, notes et pondérations dans la source officielle.'},
+    pl:{selectGoal:'Wybierz kierunek lub cel', filter:'Filtruj kierunki', filterPh:'Wpisz, aby filtrować listę…', choose:'Wybierz kierunek uporządkowany według rodziny', route:'Graficzna symulacja ścieżki', details:'Informacje szczegółowe', jobs:'Ścieżki zawodowe', subjects:'Zalecane przedmioty', ponder:'Wagi', availability:'Gdzie dostępne', sources:'Źródła urzędowe', pdf:'Pobierz PDF ścieżki', step:'Informacja o kroku', close:'Zamknij', none:'Nie wybrano kierunku.', pdfNote:'Dokument orientacyjny. Zawsze sprawdzaj wymagania, miejsca, ośrodki, progi i wagi w aktualnym źródle urzędowym.'},
+    de:{selectGoal:'Studium oder Ziel wählen', filter:'Studien filtern', filterPh:'Tippen, um die Liste zu filtern…', choose:'Studium nach Familie geordnet wählen', route:'Grafische Wegsimulation', details:'Detailinformationen', jobs:'Berufliche Möglichkeiten', subjects:'Empfohlene Fächer', ponder:'Gewichtungen', availability:'Wo verfügbar', sources:'Amtliche Quellen', pdf:'Bildungsweg als PDF herunterladen', step:'Schrittinformation', close:'Schließen', none:'Kein Studium ausgewählt.', pdfNote:'Orientierungsdokument. Prüfen Sie Anforderungen, Plätze, Zentren, Notengrenzen und Gewichtungen immer in der aktuellen amtlichen Quelle.'}
   };
-  function T32(k){ return (UI32[state.lang]&&UI32[state.lang][k]) || UI32.gl[k] || k; }
-  function e32(x){ return escapeHTML(String(x ?? '')); }
-  function n32(x){ return normalise(String(x||'')); }
-  function a32(x){ return Array.isArray(x)?x:[]; }
-  function currentStudy32(){ return state.data.studies.find(p=>p.id===state.adventure.selectedProgramId) || programs(state.adventure.goalText)[0]; }
-  function jobsFor(p){
-    const list = JOBS_GL[p?.id] || [];
-    if(list.length) return list.slice(0,10);
-    const q=n32([p?.name,p?.family,p?.level].join(' '));
-    if(q.includes('grado')||q.includes('grao')||q.includes('degree')) return ['consultor/a especializado/a','técnico/a de proxectos','analista sectorial','docente con formación habilitante se procede','investigador/a','xestor/a de programas','asesor/a técnico/a','coordinador/a de equipos','técnico/a de administración','emprendedor/a no sector'];
-    if(q.includes('fp')||q.includes('técnico')) return ['técnico/a cualificado/a','operario/a especializado/a','instalador/a','mantemento técnico','axudante técnico/a','responsable de equipo con experiencia','técnico/a de soporte','profesional autónomo/a','control de calidade','comercial técnico/a'];
-    return ['profesional do sector','técnico/a de apoio','xestor/a de proxectos','asesor/a especializado/a','docente con formación complementaria'];
+  function L33(k){ return (UI33[state.lang]&&UI33[state.lang][k]) || UI33.gl[k] || k; }
+  function esc33(x){ return escapeHTML(String(x ?? '')); }
+  function arr33(x){ return Array.isArray(x)?x:[]; }
+  function norm33(x){ return normalise(String(x||'')); }
+
+  function ensureExtraStudies33(){
+    const existing = new Set((state.data.studies||[]).map(s=>s.id));
+    EXTRA_STUDIES_V33.forEach(s=>{ if(!existing.has(s.id)) state.data.studies.push(s); });
   }
 
-  function getRoutes32(){
-    if(typeof currentRoutes === 'function'){
-      try{ return currentRoutes(); }catch(e){}
+  function currentStudy33(){
+    return state.data.studies.find(p=>p.id===state.adventure.selectedProgramId) || programs(state.adventure.goalText)[0];
+  }
+
+  function sortedStudies33(filter=''){
+    const q=norm33(filter);
+    return (state.data.studies||[])
+      .filter(s=>!q || norm33([s.name,s.family,s.level,arr33(s.keywords).join(' ')].join(' ')).includes(q))
+      .sort((a,b)=>String(a.family||'').localeCompare(String(b.family||''),'gl') || String(a.name||'').localeCompare(String(b.name||''),'gl'));
+  }
+
+  function selectHTML33(){
+    const filter = document.getElementById('v33StudyFilter')?.value || '';
+    const rows = sortedStudies33(filter);
+    const groups = {};
+    rows.forEach(s=>{ const fam=s.family||'Outros estudos'; (groups[fam]=groups[fam]||[]).push(s); });
+    return `<option value="">${esc33(L33('choose'))}</option>` + Object.keys(groups).sort((a,b)=>a.localeCompare(b,'gl')).map(fam=>`<optgroup label="${esc33(fam)}">${groups[fam].map(s=>`<option value="${esc33(s.id)}" ${state.adventure.selectedProgramId===s.id?'selected':''}>${esc33(s.name)}</option>`).join('')}</optgroup>`).join('');
+  }
+
+  function renderSelector33(){
+    const goalStep = document.querySelector('#aventura .wizard-step:nth-of-type(2)') || document.getElementById('adventureGoalOptions')?.closest('.wizard-step');
+    if(!goalStep) return;
+    goalStep.classList.add('v33-selector-step');
+    const oldInput=document.getElementById('adventureGoalSearch');
+    const oldExamples=document.getElementById('adventureGoalOptions');
+    const dis=document.getElementById('adventureDisambiguation');
+    if(oldInput) oldInput.style.display='none';
+    if(oldExamples) oldExamples.style.display='none';
+    if(dis) dis.style.display='none';
+    let box=document.getElementById('v33StudyChooser');
+    if(!box){
+      box=document.createElement('section');
+      box.id='v33StudyChooser';
+      box.className='v33-study-chooser';
+      goalStep.appendChild(box);
     }
-    const p=currentStudy32(); if(!p) return {p:null,b:null,routes:[]};
-    return {p,b:{name:'Consultar modalidade recomendada',why:'Comprobar fonte oficial.'},routes:[{title:'Ruta orientativa',steps:['Etapa actual','Requisitos oficiais',p.name],note:'Verificar fontes oficiais.',sources:p.sources||[]}]};
-  }
-
-  function stepInfo32(step,p){
-    if(typeof stepInfo === 'function'){ try{ return stepInfo(step,p); }catch(e){} }
-    return {title:step,text:'Comproba requisitos, prazos e condicións na fonte oficial vixente.',sources:p?.sources||['qedu','ruct','xunta-fp-oferta-2025-2026']};
-  }
-
-  function routeVisual32(route,idx,p){
-    return `<article class="v32-route-card" style="--delay:${idx*75}ms">
-      <header><label><input type="checkbox" class="v32-route-check" value="${idx}" checked> <span>${idx+1}</span><strong>${e32(route.title)}</strong></label></header>
-      <div class="v32-path">${route.steps.map((s,i)=>`<button type="button" class="v32-step ${i===0?'start':''} ${i===route.steps.length-1?'end':''}" data-step="${e32(s)}" data-route="${idx}"><i>${i+1}</i><b>${e32(s)}</b></button>${i<route.steps.length-1?'<em></em>':''}`).join('')}</div>
-      ${route.note?`<p>${e32(route.note)}</p>`:''}
-      ${sourceLinks(route.sources||[])}
-    </article>`;
-  }
-
-  function jobsHTML32(p){
-    return `<section class="v32-jobs"><h3>${e32(T32('jobs'))}</h3><div>${jobsFor(p).map((j,i)=>`<button type="button" class="v32-job" data-job="${e32(j)}"><span>${i+1}</span>${e32(j)}</button>`).join('')}</div></section>`;
-  }
-
-  function pdfPanel32(routes){
-    return `<section class="v32-pdf-panel"><h3>${e32(T32('choose'))}</h3><p>${e32(state.lang==='gl'?'Marca unha, varias ou todas as rutas antes de descargar o PDF.':'Select one, several or all routes before downloading the PDF.')}</p><div><button type="button" id="v32AllRoutes">${e32(T32('all'))}</button><button type="button" id="v32NoRoutes">${e32(T32('none'))}</button><button type="button" id="v32DownloadPdf">${e32(T32('download'))}</button></div></section>`;
-  }
-
-  function availabilityText32(p){
-    const av=p?.availability_by_province||{};
-    const lines=[];
-    Object.keys(av).forEach(k=>{
-      lines.push(k+':');
-      a32(av[k]).forEach(x=>{
-        if(typeof x==='string') lines.push('  - '+x);
-        else lines.push('  - '+[x.city,x.center,x.note].filter(Boolean).join(' · '));
-      });
-    });
-    return lines.length?lines:['Consultar oferta oficial vixente.'];
-  }
-  function ponderText32(p){ const ps=a32(p?.ponderation_subjects); return ps.length?ps.map(x=>(x.subject||x)+' · '+(x.weight||'consultar fonte oficial')):['Consultar CIUG ou fonte oficial correspondente.']; }
-  function subjectsText32(p){ return a32(p?.subjects).length?a32(p.subjects):['Consultar materias recomendadas na fonte oficial ou no centro.']; }
-
-  async function downloadItineraryPDF32(p,b,routes){
-    const jsPDF = await loadJsPDF32();
-    if(!jsPDF){ exportPDF('adventureResult','ITINERA · Itinerario'); return; }
-    const doc = new jsPDF({unit:'mm',format:'a4'});
-    const margin=14, width=182;
-    let y=14;
-    const line=(txt,size=10,bold=false)=>{
-      doc.setFont('helvetica', bold?'bold':'normal'); doc.setFontSize(size);
-      const chunks=doc.splitTextToSize(String(txt||''), width);
-      chunks.forEach(c=>{ if(y>282){doc.addPage(); y=14;} doc.text(c, margin, y); y+=size*0.46+2; });
+    box.innerHTML=`<label for="v33StudySelect">${esc33(L33('selectGoal'))}</label><input id="v33StudyFilter" type="search" value="${esc33(document.getElementById('v33StudyFilter')?.value||'')}" placeholder="${esc33(L33('filterPh'))}"><select id="v33StudySelect">${selectHTML33()}</select>`;
+    const filter=document.getElementById('v33StudyFilter');
+    const select=document.getElementById('v33StudySelect');
+    filter.oninput=()=>{ select.innerHTML=selectHTML33(); };
+    select.onchange=()=>{
+      const p=state.data.studies.find(s=>s.id===select.value);
+      if(p){
+        state.adventure.selectedProgramId=p.id;
+        state.adventure.goalText=p.name;
+        state.adventure.step=3;
+        renderAdventure();
+      }
     };
-    doc.setDrawColor(16,61,47); doc.setFillColor(16,61,47); doc.rect(0,0,210,22,'F');
-    doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.text('ITINERA', margin, 14);
-    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.text(T32('pdfSubtitle'), margin+36, 14);
-    doc.setTextColor(18,39,31); y=32;
-    line(p.name,17,true);
-    line(T32('download'),9,false); y+=2;
-    line(state.lang==='gl'?'Resumo da meta':'Goal summary',12,true);
-    line([p.level,p.family].filter(Boolean).join(' · '),10,false);
-    y+=2;
-    line(state.lang==='gl'?'Bacharelato / vía recomendada':'Recommended route',12,true);
-    line((b?.name||'')+'. '+(b?.why||''),10,false);
-    y+=2;
-    line(state.lang==='gl'?'Materias recomendables':'Recommended subjects',12,true);
-    subjectsText32(p).forEach(x=>line('• '+x,9,false));
-    y+=1;
-    line(state.lang==='gl'?'Ponderacións':'Weightings',12,true);
-    ponderText32(p).forEach(x=>line('• '+x,9,false));
-    y+=1;
-    line(state.lang==='gl'?'Onde está dispoñible':'Availability',12,true);
-    availabilityText32(p).forEach(x=>line(x,9,false));
-    y+=1;
-    line(T32('jobs'),12,true);
-    jobsFor(p).forEach(x=>line('• '+x,9,false));
-    routes.forEach((r,i)=>{
-      y+=2; line((i+1)+'. '+r.title,12,true);
-      r.steps.forEach((s,j)=>line((j+1)+') '+s,9,false));
-      if(r.note) line(r.note,9,false);
-    });
-    y+=2; line(state.lang==='gl'?'Nota: documento orientativo. Verifica requisitos, prazas, notas, centros e ponderacións na fonte oficial vixente.':'Note: guidance document. Verify dynamic data in the current official source.',8,false);
-    doc.save('itinera-itinerario-'+slug(p.name)+'.pdf');
-  }
-  function loadJsPDF32(){
-    return new Promise(resolve=>{
-      if(window.jspdf?.jsPDF) return resolve(window.jspdf.jsPDF);
-      const s=document.createElement('script');
-      s.src='https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js';
-      s.onload=()=>resolve(window.jspdf?.jsPDF||null);
-      s.onerror=()=>resolve(null);
-      document.head.appendChild(s);
-    });
   }
 
-  function showStepPopover32(ev,info){
-    document.querySelector('.v32-popover')?.remove();
+  function kind33(p){
+    const t=norm33(p?.type), l=norm33(p?.level);
+    if(t==='grado'||l.includes('grao')||l.includes('grado universitario')) return 'grado';
+    if(t==='fpgs'||l.includes('superior')) return 'fpgs';
+    if(t==='fpgm'||l.includes('medio')) return 'fpgm';
+    if(t==='fpb'||l.includes('basica')||l.includes('básica')) return 'fpb';
+    if(t==='master'||l.includes('master')||l.includes('máster')) return 'master';
+    return t||'outro';
+  }
+
+  function bach33(p){
+    const q=norm33([p?.name,p?.family,arr33(p?.keywords).join(' ')].join(' '));
+    if(q.includes('vehiculo')||q.includes('automocion')||q.includes('electromecanica')) return {name:'FP como vía principal',why:'Para esta meta a vía natural é a Formación Profesional. Consulta oferta, prazas e centros na Xunta FP.'};
+    if(q.includes('informat')||q.includes('ingen')||q.includes('arquitect')||q.includes('tecnol')) return {name:'Bacharelato de Ciencias e Tecnoloxía',why:'Vía coherente para estudos técnicos, informática, arquitectura, enxeñaría e materias con peso científico-tecnolóxico.'};
+    if(q.includes('psicol')||q.includes('medicin')||q.includes('enfer')||q.includes('biol')||q.includes('sanidade')) return {name:'Bacharelato de Ciencias e Tecnoloxía',why:'Vía recomendable para Ciencias da Saúde. Revisa ponderacións oficiais antes de escoller materias.'};
+    if(q.includes('dereito')||q.includes('empresa')||q.includes('educ')||q.includes('social')) return {name:'Bacharelato de Humanidades e Ciencias Sociais',why:'Vía coherente para estudos sociais, xurídicos, educativos e económicos.'};
+    return {name:'Vía segundo requisitos oficiais',why:'Comproba requisitos de acceso, prazas, centros e ponderacións na fonte oficial.'};
+  }
+
+  function routes33(p){
+    const k=kind33(p), b=bach33(p), name=p.name;
+    let routes=[];
+    if(k==='fpgs') routes=[
+      {title:'Ruta desde Bacharelato',steps:['ESO con título','Bacharelato',name],note:'Ruta habitual se xa estás orientada/o cara a un ciclo superior.',sources:['xunta-fp-oferta-2025-2026','xunta-fp-ciclos']},
+      {title:'Ruta desde FP de grao medio',steps:['ESO con título','Ciclo formativo de grao medio relacionado',name],note:'Permite avanzar dentro da FP sen facer Bacharelato.',sources:['xunta-fp-ciclos','todofp-familias']},
+      {title:'Ruta mediante proba de acceso',steps:['Formación previa','Proba de acceso a ciclo superior se cumpres requisitos',name],note:'Permite acceder sen Bacharelato nin grao medio cando cumpres idade e requisitos.',sources:['xunta-fp-ciclos']}
+    ];
+    else if(k==='fpgm') routes=[
+      {title:'Ruta directa desde ESO',steps:['ESO con título',name],note:'Ruta ordinaria cara a FP de grao medio.',sources:['xunta-fp-oferta-2025-2026','xunta-fp-ciclos']},
+      {title:'Ruta mediante proba de acceso',steps:['Sen título de ESO ou vía alternativa','Proba de acceso a grao medio se cumpres requisitos',name],note:'Vía alternativa regulada por convocatoria.',sources:['xunta-fp-ciclos']},
+      {title:'Ruta desde FP básica',steps:['FP básica relacionada','Acceso a grao medio',name],note:'Itinerario gradual dentro da FP.',sources:['todofp-familias','xunta-fp-ciclos']}
+    ];
+    else if(k==='grado') routes=[
+      {title:'Ruta universitaria directa',steps:['ESO con título',b.name,'ABAU/EBAU e admisión universitaria',name],note:b.why,sources:['ciug-admision','ciug-ponderaciones-2026','qedu','ruct']},
+      {title:'Ruta desde FP superior',steps:['Ciclo formativo de grao superior relacionado','Admisión universitaria desde FP superior',name],note:'Pode requirir fase voluntaria se a nota de admisión é alta.',sources:['ciug-admision','qedu','ruct']}
+    ];
+    else routes=[{title:'Ruta orientativa',steps:['Etapa actual','Requisitos oficiais de acceso',name],note:'Verifica a fonte oficial antes de decidir.',sources:p.sources||['qedu','ruct','xunta-fp-oferta-2025-2026']}];
+    if((state.adventure.adjustment||'direct')!=='all') routes=routes.slice(0,1);
+    return routes;
+  }
+
+  function list33(items){ return `<div class="v33-simple-list">${items.map(x=>`<p>${esc33(x)}</p>`).join('')}</div>`; }
+  function availability33(p){
+    const av=p.availability_by_province||{};
+    const lines=[];
+    Object.keys(av).forEach(k=>{ lines.push(k+': '+arr33(av[k]).map(x=>typeof x==='string'?x:[x.city,x.center,x.note].filter(Boolean).join(' · ')).join('; ')); });
+    return lines.length?lines:['Consultar a oferta oficial vixente por centro, modalidade e curso.'];
+  }
+  function subjects33(p){ return arr33(p.subjects).length?arr33(p.subjects):['Consultar materias recomendables e criterios de admisión na fonte oficial ou no centro.']; }
+  function ponder33(p){ const ps=arr33(p.ponderation_subjects); return ps.length?ps.map(x=>(x.subject||x)+' · '+(x.weight||'consultar fonte oficial')):['Consultar CIUG ou fonte oficial correspondente.']; }
+  function jobs33(p){
+    if(typeof jobsFor === 'function'){ try{ return jobsFor(p); }catch(e){} }
+    return ['profesional do sector','técnico/a especializado/a','xestor/a de proxectos','asesor/a técnico/a','profesional autónomo/a'];
+  }
+
+  function routeGraphic33(r,idx){
+    return `<article class="v33-route-main" style="--delay:${idx*80}ms"><header><label><input type="checkbox" class="v33-route-check" value="${idx}" checked><span>${idx+1}</span><strong>${esc33(r.title)}</strong></label></header><div class="v33-path">${r.steps.map((s,i)=>`<button type="button" class="v33-step ${i===0?'start':''} ${i===r.steps.length-1?'end':''}" data-step="${esc33(s)}"><i>${i+1}</i><b>${esc33(s)}</b></button>${i<r.steps.length-1?'<em></em>':''}`).join('')}</div></article>`;
+  }
+
+  function showPopover33(ev,title,text,sources=[]){
+    document.querySelector('.v33-pop')?.remove();
     const pop=document.createElement('aside');
-    pop.className='v32-popover';
-    pop.innerHTML=`<button type="button" class="v32-close" aria-label="${e32(T32('close'))}">×</button><h3>${e32(info.title||T32('popTitle'))}</h3><p>${e32(info.text||'')}</p>${sourceLinks(info.sources||[])}`;
+    pop.className='v33-pop';
+    pop.innerHTML=`<button type="button" aria-label="Pechar">×</button><h3>${esc33(title)}</h3><p>${esc33(text)}</p>${sourceLinks(sources||[])}`;
     document.body.appendChild(pop);
-    const x=ev.clientX, y=ev.clientY;
     const rect=pop.getBoundingClientRect();
-    pop.style.left=Math.min(Math.max(12,x-rect.width/2), window.innerWidth-rect.width-12)+'px';
-    pop.style.top=Math.max(12,y-rect.height-18)+'px';
-    pop.querySelector('.v32-close').onclick=()=>pop.remove();
-    setTimeout(()=>document.addEventListener('click',function closeOutside(e){ if(!pop.contains(e.target) && !e.target.classList.contains('v32-step')){pop.remove();document.removeEventListener('click',closeOutside);} }),80);
+    pop.style.left=Math.min(Math.max(12,ev.clientX-rect.width/2),window.innerWidth-rect.width-12)+'px';
+    pop.style.top=Math.max(12,ev.clientY-rect.height-16)+'px';
+    pop.querySelector('button').onclick=()=>pop.remove();
   }
 
-  const prevRender32 = renderAdventureResult;
+  function stepInfo33(step,p){
+    const q=norm33(step);
+    if(q.includes('bacharelato')) return ['Bacharelato','Escolle modalidade e materias pensando na base académica e nas ponderacións oficiais.', ['ciug-ponderaciones-2026','ciug-admision']];
+    if(q.includes('abau')||q.includes('admis')) return ['Admisión','Consulta notas, prazas, ponderacións e prazos oficiais.', ['ciug-admision','ciug-notas-corte-2025','ciug-ponderaciones-2026']];
+    if(q.includes('fp')||q.includes('ciclo')||q.includes('grao')) return ['Formación Profesional','Consulta oferta por centro, modalidade, prazas e requisitos de acceso.', ['xunta-fp-oferta-2025-2026','xunta-fp-ciclos','todofp-familias']];
+    return [step,'Paso do itinerario. Verifica sempre requisitos, prazos e condicións na fonte oficial.', p.sources||['qedu','ruct','xunta-fp-oferta-2025-2026']];
+  }
+
+  function selectedRoutes33(routes){
+    const checked=[...document.querySelectorAll('.v33-route-check')].filter(c=>c.checked).map(c=>routes[Number(c.value)]).filter(Boolean);
+    return checked.length?checked:routes;
+  }
+
+  function pdfEscape33(s){ return String(s||'').replace(/[\u0000-\u001f]/g,' ').trim(); }
+  function wrap33(text,max=92){
+    const words=pdfEscape33(text).split(/\s+/), lines=[]; let line='';
+    words.forEach(w=>{ if((line+' '+w).trim().length>max){ if(line) lines.push(line); line=w; } else line=(line+' '+w).trim(); });
+    if(line) lines.push(line);
+    return lines;
+  }
+  function hexUTF16BE33(str){
+    let hex='FEFF';
+    for(const ch of String(str||'')){ const cp=ch.codePointAt(0); if(cp>0xFFFF){ hex += '003F'; } else hex += cp.toString(16).padStart(4,'0').toUpperCase(); }
+    return '<'+hex+'>';
+  }
+  function makePDF33(filename, sections){
+    const pages=[]; let lines=[];
+    function add(text,size=10,bold=false){ wrap33(text,size>=14?58:88).forEach(t=>{ lines.push({t,size,bold}); if(lines.length>44){ pages.push(lines); lines=[]; } }); }
+    sections.forEach(sec=>{ if(sec.title) add(sec.title,14,true); arr33(sec.lines).forEach(l=>add(l,9,false)); add(' ',6,false); });
+    if(lines.length) pages.push(lines);
+    const objects=[]; const kids=[];
+    function obj(s){ objects.push(s); return objects.length; }
+    const font=obj('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>');
+    const fontB=obj('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>');
+    pages.forEach((page,i)=>{
+      let y=800, stream='BT\n';
+      page.forEach(l=>{ stream += `/${l.bold?'F2':'F1'} ${l.size} Tf 50 ${y} Td ${hexUTF16BE33(l.t)} Tj\n`; y-=Math.max(13,l.size+4); });
+      stream+='ET';
+      const content=obj(`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`);
+      const p=obj(`<< /Type /Page /Parent 0 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 ${font} 0 R /F2 ${fontB} 0 R >> >> /Contents ${content} 0 R >>`);
+      kids.push(p);
+    });
+    const pagesObjIndex=objects.length+1;
+    objects.forEach((s,i)=>{ objects[i]=s.replace('/Parent 0 0 R',`/Parent ${pagesObjIndex} 0 R`); });
+    const pagesObj=obj(`<< /Type /Pages /Kids [${kids.map(k=>k+' 0 R').join(' ')}] /Count ${kids.length} >>`);
+    const catalog=obj(`<< /Type /Catalog /Pages ${pagesObj} 0 R >>`);
+    let pdf='%PDF-1.4\n'; const offsets=[0];
+    objects.forEach((s,i)=>{ offsets.push(pdf.length); pdf += `${i+1} 0 obj\n${s}\nendobj\n`; });
+    const xref=pdf.length;
+    pdf += `xref\n0 ${objects.length+1}\n0000000000 65535 f \n`+offsets.slice(1).map(o=>String(o).padStart(10,'0')+' 00000 n \n').join('');
+    pdf += `trailer << /Size ${objects.length+1} /Root ${catalog} 0 R >>\nstartxref\n${xref}\n%%EOF`;
+    const blob=new Blob([pdf],{type:'application/pdf'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);
+  }
+
+  function downloadPDF33(p,b,routes){
+    const sections=[
+      {title:'ITINERA',lines:['Orientación académica e deseño de itinerarios personalizados', UI33?.gl?.pdfNote || 'Documento orientativo.']},
+      {title:p.name,lines:[[p.level,p.family].filter(Boolean).join(' · ')]},
+      {title:L33('route'),lines:routes.flatMap((r,i)=>[(i+1)+'. '+r.title,...r.steps.map((s,j)=>'   '+(j+1)+') '+s),r.note||''])},
+      {title:L33('subjects'),lines:subjects33(p)},
+      {title:L33('ponder'),lines:ponder33(p)},
+      {title:L33('availability'),lines:availability33(p)},
+      {title:L33('jobs'),lines:jobs33(p).slice(0,10)},
+      {title:L33('sources'),lines:['QEDU / RUCT / CIUG / Xunta FP / TodoFP segundo corresponda.']}
+    ];
+    makePDF33('itinera-itinerario-'+(p.id||'ruta')+'.pdf', sections);
+  }
+
+  renderAdventure = function(){
+    ensureExtraStudies33();
+    const st=document.getElementById('adventureStartTitle'); if(st) st.textContent='1. Punto de partida';
+    const sb=document.getElementById('adventureStartOptions');
+    const starts=[['eso_cursando','Estou cursando ESO'],['eso_titulo','Teño título de ESO'],['eso_sin','Non teño título de ESO'],['bach','Estou en Bacharelato'],['fpgm','Estou en FP de grao medio'],['fpgs','Estou en FP de grao superior'],['grado','Xa teño un grao universitario']];
+    if(sb){ sb.innerHTML=starts.map(([id,label])=>`<button type="button" class="${state.adventure.start===id?'active':''}" data-start="${id}">${esc33(label)}</button>`).join(''); sb.querySelectorAll('[data-start]').forEach(b=>b.onclick=()=>{state.adventure.start=b.dataset.start;state.adventure.step=2;renderAdventure();}); }
+    const gt=document.getElementById('adventureGoalTitle'); if(gt) gt.textContent='2. '+L33('selectGoal');
+    const input=document.getElementById('adventureGoalSearch'); if(input) input.style.display='none';
+    const opts=document.getElementById('adventureGoalOptions'); if(opts) opts.style.display='none';
+    const dis=document.getElementById('adventureDisambiguation'); if(dis) dis.style.display='none';
+    renderSelector33();
+    const qt=document.getElementById('adventureQuestionsTitle'); if(qt) qt.textContent='3. Tipo de ruta';
+    const q=document.getElementById('adventureQuestions');
+    if(q){ const mode=state.adventure.adjustment||'direct'; q.innerHTML=[['direct','Ruta máis curta'],['all','Mostrar todas as rutas']].map(([id,label])=>`<button type="button" class="${mode===id?'active':''}" data-adjust="${id}">${esc33(label)}</button>`).join(''); q.querySelectorAll('[data-adjust]').forEach(b=>b.onclick=()=>{state.adventure.adjustment=b.dataset.adjust;state.adventure.step=3;renderAdventure();}); }
+    document.querySelectorAll('.wizard-step').forEach((el,i)=>el.classList.toggle('active',i+1===Math.min(state.adventure.step||1,3)));
+    document.querySelectorAll('.wizard-progress span').forEach((el,i)=>{el.classList.toggle('active',i+1<=Math.min(state.adventure.step||1,3));el.onclick=()=>{state.adventure.step=i+1;renderAdventure();};});
+    renderAdventureResult();
+  };
+
   renderAdventureResult = function(){
-    const stage=document.getElementById('adventureResult'); if(!stage) return prevRender32();
-    const {p,b,routes}=getRoutes32();
-    if(!state.adventure.goalText || !p) return prevRender32();
-    stage.innerHTML=`<article class="v32-sim-result">
-      <header><h2>${e32(p.name)}</h2><p>${e32(state.lang==='gl'?'Itinerario visual con información ampliada, saídas profesionais e PDF descargable.':'Visual pathway with expanded information, career outcomes and downloadable PDF.')}</p></header>
-      <section class="v32-summary-grid">
-        <article><h3>${e32(state.lang==='gl'?'Bacharelato / vía':'Recommended route')}</h3><strong>${e32(b?.name||'')}</strong><p>${e32(b?.why||'')}</p></article>
-        <article><h3>${e32(state.lang==='gl'?'Materias':'Subjects')}</h3><div class="v30-chips">${subjectsText32(p).map(s=>`<span>${e32(s)}</span>`).join('')}</div></article>
-        <article><h3>${e32(state.lang==='gl'?'Ponderacións':'Weightings')}</h3><div class="v32-list">${ponderText32(p).map(s=>`<p>${e32(s)}</p>`).join('')}</div></article>
-        <article><h3>${e32(state.lang==='gl'?'Onde está dispoñible':'Availability')}</h3><div class="v32-list">${availabilityText32(p).map(s=>`<p>${e32(s)}</p>`).join('')}</div></article>
+    ensureExtraStudies33();
+    const stage=document.getElementById('adventureResult'); if(!stage) return;
+    const p=currentStudy33();
+    if(!p){ stage.innerHTML=`<div class="v33-empty"><h2>${esc33(L33('route'))}</h2><p>${esc33(L33('none'))}</p></div>`; return; }
+    const b=bach33(p), routes=routes33(p);
+    stage.innerHTML=`<article class="v33-sim">
+      <header class="v33-sim-head"><h2>${esc33(p.name)}</h2><p>${esc33('A ruta é o elemento principal. A información complementaria aparece abaixo en apartados despregables.')}</p></header>
+      <section class="v33-route-focus"><h3>${esc33(L33('route'))}</h3>${routes.map((r,i)=>routeGraphic33(r,i)).join('')}</section>
+      <section class="v33-accordions">
+        <details><summary>${esc33(L33('subjects'))}</summary>${list33(subjects33(p))}</details>
+        <details><summary>${esc33(L33('ponder'))}</summary>${list33(ponder33(p))}</details>
+        <details><summary>${esc33(L33('availability'))}</summary>${list33(availability33(p))}</details>
+        <details><summary>${esc33(L33('jobs'))}</summary>${list33(jobs33(p))}</details>
+        <details><summary>${esc33(L33('sources'))}</summary>${sourceLinks(p.sources||['qedu','ruct','ciug-admision','xunta-fp-oferta-2025-2026','todofp-familias'])}</details>
       </section>
-      ${jobsHTML32(p)}
-      <section class="v32-routes"><h3>${e32(state.lang==='gl'?'Rutas xeradas':'Generated routes')}</h3><p>${e32(state.lang==='gl'?'Fai clic en calquera paso para abrir unha ventá con información específica.':'Click any step to open a visible information window.')}</p>${routes.map((r,i)=>routeVisual32(r,i,p)).join('')}</section>
-      ${pdfPanel32(routes)}
+      <section class="v33-pdf"><h3>${esc33(L33('pdf'))}</h3><p>Marca as rutas que queres incluír no documento.</p><button type="button" id="v33PdfBtn">${esc33(L33('pdf'))}</button></section>
     </article>`;
-    document.querySelectorAll('.v32-step').forEach(btn=>btn.onclick=(ev)=>{
-      const info=stepInfo32(btn.dataset.step,p);
-      showStepPopover32(ev,info);
+    document.querySelectorAll('.v33-step').forEach(btn=>btn.onclick=ev=>{
+      const [title,text,sources]=stepInfo33(btn.dataset.step,p);
+      showPopover33(ev,title,text,sources);
     });
-    document.querySelectorAll('.v32-job').forEach(btn=>btn.onclick=(ev)=>showStepPopover32(ev,{title:btn.dataset.job,text:state.lang==='gl'?'Saída profesional de exemplo asociada ao título seleccionado. A dispoñibilidade real depende do mercado laboral, especialización, experiencia e normativa aplicable.':'Example career outcome associated with the selected qualification. Real access depends on labour market, specialisation, experience and regulations.',sources:p.sources||[]}));
-    document.getElementById('v32AllRoutes')?.addEventListener('click',()=>document.querySelectorAll('.v32-route-check').forEach(c=>c.checked=true));
-    document.getElementById('v32NoRoutes')?.addEventListener('click',()=>document.querySelectorAll('.v32-route-check').forEach(c=>c.checked=false));
-    document.getElementById('v32DownloadPdf')?.addEventListener('click',()=>{
-      const selected=[...document.querySelectorAll('.v32-route-check')].filter(c=>c.checked).map(c=>routes[Number(c.value)]).filter(Boolean);
-      downloadItineraryPDF32(p,b,selected.length?selected:routes);
-    });
+    document.getElementById('v33PdfBtn')?.addEventListener('click',()=>downloadPDF33(p,b,selectedRoutes33(routes)));
   };
 
-  const previousAsk32 = askItineraBot;
-  askItineraBot = async function(text){
-    const fast = new Promise(resolve=>setTimeout(()=>resolve(null),4500));
-    const remote = previousAsk32(text).catch(()=>null);
-    const first = await Promise.race([remote, fast]);
-    if(first) return first;
-    return improvedBotFallback32(text);
-  };
-  function improvedBotFallback32(text){
-    const p=programs(text)[0];
-    const q=n32(text);
-    if(p){
-      return `<p><strong>${e32(T32('botFallback'))}.</strong> ${e32(p.name)}: ${e32([p.level,p.family].filter(Boolean).join(' · '))}.</p><p>${e32(state.lang==='gl'?'Podo orientarte sobre rutas, materias, saídas profesionais e fontes oficiais. Para datos dinámicos, comproba sempre a fonte vixente.':'I can guide you on routes, subjects, career outcomes and official sources. Always check dynamic data in the current official source.')}</p>${sourceLinks(p.sources||['qedu','ruct','ciug-admision','xunta-fp-oferta-2025-2026'])}`;
-    }
-    if(q.includes('ponder')||q.includes('nota')||q.includes('ciug')) return `<p>${e32(state.lang==='gl'?'As notas e ponderacións cambian por curso, grao e universidade. Usa CIUG como fonte principal en Galicia e comproba sempre a táboa vixente.':'Cut-off marks and weightings change by year, degree and university. Check the current official table.')}</p>${sourceLinks(['ciug-admision','ciug-ponderaciones-2026','ciug-notas-corte-2025'])}`;
-    if(q.includes('fp')||q.includes('ciclo')) return `<p>${e32(state.lang==='gl'?'Para FP, comproba familia profesional, modalidade, centro, prazas e requisitos na Xunta FP e TodoFP.':'For VET, check family, modality, centre, places and requirements in official sources.')}</p>${sourceLinks(['xunta-fp-oferta-2025-2026','todofp-familias','xunta-fp-ciclos'])}`;
-    return `<p><strong>${e32(T32('botFallback'))}.</strong> ${e32(state.lang==='gl'?'Podo axudarche a ordenar unha decisión académica, comparar rutas, revisar estudos e localizar fontes oficiais. Escribe unha meta concreta, por exemplo “psicoloxía”, “enfermaría”, “electricidade” ou “ciclo superior sen bacharelato”.':'I can help you organise an academic decision, compare routes and locate official sources. Type a specific goal.')}</p>${sourceLinks(['qedu','ruct','ciug-admision','xunta-fp-oferta-2025-2026'])}`;
-  }
-
-  function bindChat32(){
+  function rebindBot33(){
     const form=document.getElementById('chatForm');
-    if(!form || form.dataset.v32Bound) return;
-    form.dataset.v32Bound='1';
+    if(!form) return;
     form.onsubmit=async e=>{
       e.preventDefault();
       const input=document.getElementById('chatInput');
       const txt=input.value.trim();
       if(!txt) return;
-      addMsg('user',`<p>${e32(txt)}</p>`);
+      addMsg('user',`<p>${esc33(txt)}</p>`);
       input.value='';
       const pending=document.createElement('div');
-      pending.className='msg bot v32-pending';
-      pending.innerHTML=`<p>${e32(T32('botWorking'))}</p>`;
+      pending.className='msg bot';
+      pending.innerHTML='<p>ItineraBot está respondendo…</p>';
       document.getElementById('chatLog').appendChild(pending);
-      document.getElementById('chatLog').scrollTop=document.getElementById('chatLog').scrollHeight;
-      const ans=await askItineraBot(txt);
-      pending.innerHTML=ans;
+      try{
+        const endpoint=window.ITINERA_CONFIG?.ITINERABOT_ENDPOINT;
+        if(endpoint){
+          const res=await Promise.race([
+            fetch(endpoint,{method:'POST',headers:{'content-type':'application/json','apikey':window.ITINERA_CONFIG?.SUPABASE_ANON_KEY||'','authorization':`Bearer ${window.ITINERA_CONFIG?.SUPABASE_ANON_KEY||''}`},body:JSON.stringify({question:txt,lang:state.lang,mode:'open_guidance'})}),
+            new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),9000))
+          ]);
+          if(res.ok){ const data=await res.json(); if(data?.answer){ pending.innerHTML=`<p>${esc33(data.answer)}</p>`+(data.sources||[]).map(s=>`<a class="source-link" target="_blank" rel="noopener noreferrer" href="${s.url}"><strong>${esc33(s.title||s.url)}</strong><span>${esc33(s.use||'Fonte oficial')}</span></a>`).join(''); return; } }
+        }
+      }catch(err){ console.warn('ItineraBot v33 fallback',err); }
+      pending.innerHTML=improvedBotFallback32?improvedBotFallback32(txt):botAnswer(txt);
     };
   }
 
-  const prevInit32 = init;
-  init=function(){ prevInit32(); setTimeout(()=>{bindChat32(); try{renderAdventureResult();}catch(e){}},1400); };
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{bindChat32(); try{renderAdventureResult();}catch(e){}},1700),{once:true});
-  else setTimeout(()=>{bindChat32(); try{renderAdventureResult();}catch(e){}},900);
-  document.addEventListener('change',e=>{ if(e.target && e.target.id==='languageSelect') setTimeout(()=>{bindChat32(); try{renderAdventureResult();}catch(err){}},200); });
+  const prevInit33=init;
+  init=function(){ prevInit33(); setTimeout(()=>{ensureExtraStudies33();renderAdventure();rebindBot33();},1600); };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{ensureExtraStudies33();renderAdventure();rebindBot33();},1900),{once:true});
+  else setTimeout(()=>{ensureExtraStudies33();renderAdventure();rebindBot33();},900);
 })();
