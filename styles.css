@@ -4278,3 +4278,36 @@ body.v28-scaled{
     animation:none!important;
   }
 }
+
+
+/* ITINERA v0.34 · palabra ITINERA na portada */
+.v34-portada-brand{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  margin:0 0 18px;
+}
+.v34-portada-brand .v29-hero-logo{
+  margin:0!important;
+  flex:0 0 auto;
+}
+.v34-portada-name{
+  display:block;
+  color:var(--green-950,#09241b);
+  font-weight:950;
+  letter-spacing:.10em;
+  font-size:clamp(2.6rem,5.2vw,5.25rem);
+  line-height:.88;
+}
+.v34-official-fp .v33-study-chooser select optgroup{
+  color:var(--green-900);
+  font-weight:900;
+}
+.v34-official-fp .v33-study-chooser select option{
+  color:#10251d;
+  font-weight:500;
+}
+@media(max-width:720px){
+  .v34-portada-brand{gap:12px;align-items:center;}
+  .v34-portada-name{font-size:clamp(2.1rem,12vw,3.4rem);}
+}

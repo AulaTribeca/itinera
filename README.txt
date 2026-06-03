@@ -372,3 +372,12 @@ ITINERA v0.33
 - La información complementaria aparece debajo en apartados desplegables.
 - Mejora la interfaz de los pasos y mantiene ventanas emergentes contextualizadas.
 - Refuerza el envío de ItineraBot al endpoint de Supabase y añade fallback.
+
+
+ITINERA v0.34
+- Añade la palabra ITINERA en la portada, junto al logo y antes del recuadro verde.
+- Integra una base oficial FP Galicia 2025-2026 extraída del ZIP aportado por la usuaria.
+- Añade 202 estudios oficiales de FP/cursos/programas detectados en los PDFs de Xunta FP.
+- Incluye Electromecánica de vehículos automóbiles y más familias/ciclos.
+- Añade archivo JSON de datos oficiales para trazabilidad.
+- Añade SQL para actualizar Supabase con la base oficial de FP.
