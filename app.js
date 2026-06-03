@@ -5291,3 +5291,153 @@ document.addEventListener('DOMContentLoaded',init);
   else setTimeout(applyV36,1000);
   document.addEventListener('change',e=>{ if(e.target && e.target.id==='languageSelect') setTimeout(applyV36,220); });
 })();
+
+
+/* ITINERA v0.37 · experiencia guiada, progresiva e non abrumadora */
+(function(){
+  const STAGES_V37 = [{"id": "no-sei", "title": "Non sei que quero estudar", "tag": "Empezar sen presión", "lead": "Non necesitas coñecer nomes de estudos. Comeza por intereses, forma de aprender, materias que toleras mellor e condicións de vida.", "meaning": "Este perfil é para quen chega sen unha idea clara, con dúbidas ou con varias opcións mesturadas.", "options": ["Facer LUMEN-V para explorar vocación, intereses e habilidades.", "Explorar perfís amplos: persoas, tecnoloxía, saúde, natureza, creación, traballo práctico.", "Comparar dúas ou tres rutas sen decidir aínda."], "check": ["Que actividades che resultan sostibles, non só interesantes.", "Que tipo de estudo soportas mellor: práctico, teórico, mixto, longo, curto ou modular.", "Se hai presión externa que está confundindo a decisión."], "next": ["Abrir LUMEN-V.", "Elixir un perfil de orientación.", "Pedir a ItineraBot unha primeira lista de opcións."]}, {"id": "eso", "title": "Estou en ESO", "tag": "Primeiras decisións", "lead": "Aquí o importante é non pechar portas antes de tempo e entender as rutas despois da ESO.", "meaning": "A ESO é a etapa onde convén distinguir entre continuar a Bacharelato, FP de grao medio, FP básica ou outras vías de apoio.", "options": ["Bacharelato se queres universidade, FP superior ou unha vía máis académica.", "FP de grao medio se prefires aprendizaxe profesional aplicada.", "FP básica ou vías de persoas adultas se hai dificultades para rematar a ESO."], "check": ["Título de ESO ou vías alternativas.", "Materias que che abren mellor a modalidade posterior.", "Se precisas apoio educativo, beca NEAE ou unha ruta máis gradual."], "next": ["Comparar Bacharelato e FP.", "Usar LUMEN-V se non hai intereses claros.", "Simular unha ruta desde ESO."]}, {"id": "bach", "title": "Estou en Bacharelato", "tag": "Materias, ABAU e decisión", "lead": "Agora importan modalidade, materias, ponderacións, notas e tamén a posibilidade de FP superior.", "meaning": "Bacharelato é curto e decisivo. A mellor elección combina interese, rendemento e requisitos da meta.", "options": ["Universidade mediante ABAU/EBAU.", "FP de grao superior.", "Ensinanzas artísticas, deportivas ou reorientación a outra vía."], "check": ["Materias que ponderan para a túa meta.", "Notas de corte como referencia, non como garantía.", "Se o estudo require máster habilitante ou proba específica."], "next": ["Consultar ponderacións.", "Simular ruta desde Bacharelato.", "Comparar grao universitario e FP superior."]}, {"id": "fp", "title": "Quero facer FP", "tag": "Familias e ciclos", "lead": "A FP debe escollerse por familia profesional, ciclo, centro, modalidade, continuidade e saídas.", "meaning": "A FP non é unha soa vía. Hai grao básico, medio, superior, dual, modular e cursos de especialización.", "options": ["Grao medio para unha entrada profesional progresiva.", "Grao superior para maior cualificación e acceso á universidade.", "Modular ou distancia se precisas flexibilidade."], "check": ["Requisitos de acceso.", "Oferta real por centro, prazas e modalidade.", "Continuación posible cara a grao superior, universidade ou emprego."], "next": ["Abrir selector por familias no simulador.", "Buscar ciclos de FP.", "Ver ciclos modulares se traballas ou tes pouco tempo."]}, {"id": "fp-continuar", "title": "Estou en FP e quero continuar", "tag": "Continuar ou especializar", "lead": "Desde FP podes seguir dentro da FP, acceder á universidade ou especializarte.", "meaning": "Un ciclo non é un punto final. Pode ser unha etapa dentro dun itinerario máis longo.", "options": ["Grao medio → grao superior.", "Grao superior → universidade.", "Curso de especialización.", "Emprego e acreditación de experiencia posterior."], "check": ["Se compensa facer fase voluntaria da ABAU.", "Títulos previos necesarios para cursos de especialización.", "Posibles recoñecementos ou convalidacións."], "next": ["Simular ruta FP → universidade.", "Consultar cursos de especialización.", "Ver saídas profesionais."]}, {"id": "universidade", "title": "Quero ir á universidade", "tag": "Graos, acceso e oficialidade", "lead": "Non escollas só polo nome do grao. Mira acceso, plan, campus, oficialidade, saídas e estudos posteriores.", "meaning": "O grao é o primeiro nivel universitario, pero algunhas profesións esixen máster, oposición ou habilitación.", "options": ["Acceso desde Bacharelato e ABAU.", "Acceso desde FP superior.", "Acceso para persoas adultas segundo idade e vía."], "check": ["RUCT para oficialidade.", "QEDU e universidade para datos orientativos.", "Notas de corte, prazas, campus, prácticas e becas."], "next": ["Buscar graos.", "Consultar ponderacións e notas.", "Ver se require máster habilitante."]}, {"id": "universidade-dentro", "title": "Xa estou na universidade", "tag": "Reorientar ou avanzar", "lead": "Se xa estás nun grao, a orientación serve para decidir se continuar, cambiar, especializarte ou investigar.", "meaning": "Non todo malestar implica erro de elección, pero cómpre analizar método, interese, saúde, prazas e saídas.", "options": ["Continuar no grao.", "Cambiar de grao ou universidade.", "Máster oficial ou habilitante.", "Doutoramento ou saída profesional."], "check": ["Recoñecemento de créditos se cambias.", "Normas de permanencia.", "Requisitos de máster e becas universitarias."], "next": ["Comparar cambio e continuidade.", "Consultar másteres e doutoramentos.", "Preguntar a ItineraBot por reorientación."]}, {"id": "adultos", "title": "Son persoa adulta", "tag": "Volver estudar con flexibilidade", "lead": "Aquí importan tempo dispoñible, titulación previa, experiencia laboral, responsabilidades e obxectivo realista.", "meaning": "As persoas adultas poden volver por vías ordinarias, probas, modular, distancia, maiores de 25/40/45 ou acreditación de competencias.", "options": ["FP modular ou a distancia.", "Probas de acceso a grao medio ou superior.", "Acceso á universidade para maiores de 25, 40 ou 45.", "Acreditación de competencias."], "check": ["Prazos, idade e requisitos concretos.", "Carga semanal asumible.", "Compatibilidade con traballo, coidados e becas."], "next": ["Ver itinerarios modulares.", "Simular ruta flexible.", "Consultar probas de acceso e becas."]}, {"id": "becas", "title": "Necesito becas ou axudas", "tag": "Financiamento e apoio", "lead": "As becas poden facer viable a ruta, pero dependen de prazo, requisitos económicos, académicos e documentación.", "meaning": "Non se deben mirar ao final. Deben revisarse antes de escoller centro, residencia ou modalidade.", "options": ["Beca xeral do Ministerio.", "Axudas NEAE.", "Becas propias de universidades.", "Transporte, residencia ou outras axudas cando existan."], "check": ["Prazo de solicitude.", "Requisitos económicos e académicos.", "Documentación familiar, bancaria, académica ou informes."], "next": ["Abrir sección de becas.", "Preguntar por un caso concreto.", "Revisar fontes oficiais."]}, {"id": "neae", "title": "Teño NEAE ou circunstancias específicas", "tag": "Apoios e adaptacións", "lead": "A ruta debe ter en conta necesidades específicas, discapacidade, saúde, conciliación ou circunstancias socioeconómicas.", "meaning": "A boa orientación non reduce a persoa a unha etiqueta; adapta a ruta para que sexa posible e sostible.", "options": ["Axudas NEAE.", "Adaptacións ou apoios no centro.", "Cupos ou medidas específicas cando procedan.", "Rutas modulares, flexibles ou con menor carga."], "check": ["Documentación acreditativa.", "Prazos e procedemento oficial.", "Apoios reais no centro ou universidade."], "next": ["Consultar NEAE e becas.", "Buscar rutas flexibles.", "Preguntar a ItineraBot por unha situación concreta."]}];
+  const CONCEPTS_V37 = [["Grao", "Primeiro nivel universitario oficial. Serve para acceder a profesións, másteres, oposicións ou especialización."], ["Máster", "Formación posterior ao grao. Pode especializar, habilitar para unha profesión ou preparar investigación."], ["Doutoramento", "Etapa investigadora avanzada que culmina coa tese doutoral."], ["FP grao medio", "Ciclo profesional de nivel medio que permite traballar ou continuar cara a grao superior."], ["FP grao superior", "Ciclo profesional superior que tamén permite acceder á universidade."], ["Ciclo modular", "Forma flexible de cursar FP por módulos, frecuente en persoas adultas."], ["Ponderación", "Valor dunha materia na admisión universitaria para mellorar a nota."], ["Nota de corte", "Nota da última persoa admitida nun curso anterior. Orienta, pero non garante entrada."]];
+  let selectedStageV37 = localStorage.getItem('itinera_v37_stage') || 'no-sei';
+
+  function e37(x){ return escapeHTML(String(x ?? '')); }
+  function getStage37(){ return STAGES_V37.find(s=>s.id===selectedStageV37) || STAGES_V37[0]; }
+
+  function renderHero37(){
+    document.body.classList.add('v37');
+    const lead = document.getElementById('heroLead');
+    if(lead) lead.textContent = 'Unha guía paso a paso para atopar unha ruta académica segundo o teu momento, sen ter que coñecer de antemán estudos, conceptos nin procedementos.';
+    const right = document.querySelector('.v27-cover-card');
+    if(right){
+      right.classList.add('v37-hero-card');
+      right.innerHTML = `<div class="v37-hero-flow">
+        <p class="v37-kicker">Orientación guiada</p>
+        <h2>Atopa o teu camiño sen empezar polo final.</h2>
+        <ol>
+          <li><span>01</span><strong>Sitúate</strong><small>Escolle en que momento estás.</small></li>
+          <li><span>02</span><strong>Comprende</strong><small>Recibe só a información necesaria.</small></li>
+          <li><span>03</span><strong>Explora</strong><small>Consulta estudos, becas ou conceptos.</small></li>
+          <li><span>04</span><strong>Simula</strong><small>Xera unha ruta visual e verificable.</small></li>
+        </ol>
+        <a href="#v37GuidedExperience" class="v37-start">Comezar guía</a>
+      </div>`;
+    }
+  }
+
+  function renderStageButtons37(){
+    return `<div class="v37-stage-buttons">${STAGES_V37.map(s=>`<button type="button" class="${s.id===selectedStageV37?'active':''}" data-v37-stage="${e37(s.id)}"><strong>${e37(s.title)}</strong><small>${e37(s.tag)}</small></button>`).join('')}</div>`;
+  }
+
+  function list37(items){
+    return `<ul>${(items||[]).map(x=>`<li>${e37(x)}</li>`).join('')}</ul>`;
+  }
+
+  function renderStageDetail37(stage){
+    return `<article class="v37-detail-card">
+      <p class="v37-kicker">Paso 2 · Información necesaria</p>
+      <h3>${e37(stage.title)}</h3>
+      <p class="v37-lead">${e37(stage.lead)}</p>
+      <div class="v37-detail-actions">
+        <button type="button" data-v37-action="lumen">Comezar con LUMEN-V</button>
+        <button type="button" data-v37-action="sim">Simular ruta</button>
+        <button type="button" data-v37-action="bot">Preguntar a ItineraBot</button>
+      </div>
+      <div class="v37-just-enough">
+        <details open><summary>Que significa estar aquí?</summary><p>${e37(stage.meaning)}</p></details>
+        <details><summary>Que opcións tes?</summary>${list37(stage.options)}</details>
+        <details><summary>Que debes comprobar?</summary>${list37(stage.check)}</details>
+        <details><summary>Seguinte paso lóxico</summary>${list37(stage.next)}</details>
+      </div>
+    </article>`;
+  }
+
+  function renderQuickConsult37(){
+    return `<aside class="v37-consult-card">
+      <p class="v37-kicker">Consulta rápida</p>
+      <h3>Buscas algo concreto?</h3>
+      <div class="v37-consult-actions">
+        <button type="button" data-v37-action="study">Buscar estudos</button>
+        <button type="button" data-v37-action="glossary">Glosario</button>
+        <button type="button" data-v37-action="scholarships">Becas</button>
+      </div>
+      <div class="v37-concepts">
+        ${CONCEPTS_V37.map(c=>`<button type="button" data-v37-concept="${e37(c[0])}"><strong>${e37(c[0])}</strong><small>${e37(c[1])}</small></button>`).join('')}
+      </div>
+    </aside>`;
+  }
+
+  function renderGuidedExperience37(){
+    const inicio=document.getElementById('inicio');
+    if(!inicio) return;
+    const old36=document.getElementById('v36OrientationHub');
+    if(old36) old36.style.display='none';
+    const old35=document.getElementById('v35AcademicGuide');
+    if(old35) old35.style.display='none';
+
+    let panel=document.getElementById('v37GuidedExperience');
+    if(!panel){
+      panel=document.createElement('section');
+      panel.id='v37GuidedExperience';
+      panel.className='panel v37-guide';
+      const hero=inicio.querySelector('.hero-grid');
+      if(hero) hero.insertAdjacentElement('afterend', panel);
+      else inicio.appendChild(panel);
+    }
+    const stage=getStage37();
+    panel.innerHTML = `<div class="v37-head">
+      <p class="v37-kicker">Experiencia guiada</p>
+      <h2>En que momento estás?</h2>
+      <p>Escolle unha situación. ITINERA móstrache só a información útil para ese perfil e deixa o resto en consultas específicas.</p>
+    </div>
+    <div class="v37-layout">
+      <section class="v37-step-one">
+        <p class="v37-step-label">Paso 1 · Sitúate</p>
+        ${renderStageButtons37()}
+      </section>
+      <section class="v37-step-two">${renderStageDetail37(stage)}</section>
+      ${renderQuickConsult37()}
+    </div>`;
+    bindV37();
+  }
+
+  function bindV37(){
+    document.querySelectorAll('[data-v37-stage]').forEach(btn=>btn.onclick=()=>{
+      selectedStageV37 = btn.dataset.v37Stage;
+      localStorage.setItem('itinera_v37_stage', selectedStageV37);
+      renderGuidedExperience37();
+    });
+    document.querySelectorAll('[data-v37-action]').forEach(btn=>btn.onclick=()=>{
+      const action=btn.dataset.v37Action;
+      if(action==='lumen') window.open(window.ITINERA_LUMEN_URL || 'https://aulatribeca.github.io/lumen-v/','_blank','noopener');
+      if(action==='sim') routeTo('aventura');
+      if(action==='bot'){ routeTo('asistente'); setTimeout(()=>{ const input=document.getElementById('chatInput'); if(input){input.value='Oriéntame segundo este perfil: '+getStage37().title; input.focus();} },100); }
+      if(action==='study') routeTo('aventura');
+      if(action==='glossary') document.querySelector('.v37-concepts')?.scrollIntoView({behavior:'smooth', block:'center'});
+      if(action==='scholarships'){ selectedStageV37='becas'; localStorage.setItem('itinera_v37_stage', selectedStageV37); renderGuidedExperience37(); }
+    });
+    document.querySelectorAll('[data-v37-concept]').forEach(btn=>btn.onclick=()=>{
+      const term=btn.dataset.v37Concept;
+      const input=document.getElementById('chatInput');
+      routeTo('asistente');
+      setTimeout(()=>{ if(input){ input.value='Explícame de forma sencilla este concepto académico: '+term; input.focus(); } },100);
+    });
+  }
+
+  function improveSimulatorV37(){
+    const title=document.getElementById('adventureTitle');
+    if(title) title.textContent='Simulador de itinerarios';
+    const desc=document.getElementById('adventureDescription');
+    if(desc) desc.textContent='Cando xa teñas unha idea, escolle etapa e meta. Primeiro verás a ruta visual; a información complementaria queda pregable debaixo.';
+  }
+
+  function applyV37(){
+    renderHero37();
+    renderGuidedExperience37();
+    improveSimulatorV37();
+  }
+
+  const prevInit37=init;
+  init=function(){ prevInit37(); setTimeout(applyV37,1900); };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(applyV37,2200),{once:true});
+  else setTimeout(applyV37,1000);
+  document.addEventListener('change',e=>{ if(e.target && e.target.id==='languageSelect') setTimeout(applyV37,250); });
+})();

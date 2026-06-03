@@ -403,3 +403,13 @@ ITINERA v0.36
 - Procesa 150 másteres y 56 programas de doctorado desde documentación de USC/UDC.
 - Añade JSON trazable con toda la base documental 3.
 - Añade SQL v0.36 para Supabase con nuevas tablas normalizadas y estudios.
+
+
+ITINERA v0.37
+- Reorganiza la portada como experiencia guiada y progresiva.
+- Evita mostrar toda la información a bocajarro en inicio.
+- Sustituye el bloque largo de guía por un recorrido: situarse, comprender, explorar y simular.
+- Añade selector de perfil académico/vital con información mínima y desplegable.
+- Añade acciones directas según perfil: LUMEN-V, simulador, ItineraBot, buscador, becas y conceptos.
+- Mantiene el simulador, bases de datos y SQL ya generados en versiones anteriores.
+- No requiere SQL nuevo.
