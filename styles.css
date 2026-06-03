@@ -4311,3 +4311,131 @@ body.v28-scaled{
   .v34-portada-brand{gap:12px;align-items:center;}
   .v34-portada-name{font-size:clamp(2.1rem,12vw,3.4rem);}
 }
+
+
+/* ITINERA v0.35 · guía académica integral y ajuste de portada */
+.v35 .v35-hero-brand{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  margin:0 0 14px;
+}
+.v35 .v35-hero-brand img{
+  width:92px!important;
+  max-width:92px!important;
+  height:auto!important;
+  margin:0!important;
+}
+.v35 .v35-hero-brand span{
+  color:var(--green-950);
+  font-weight:900;
+  font-size:clamp(2.25rem,4.3vw,4.4rem);
+  line-height:.88;
+  letter-spacing:.04em;
+}
+.v35 .v27-hero-copy .lead{
+  max-width:52ch!important;
+}
+.v35 .v27-hero-grid{
+  grid-template-columns:minmax(0,.70fr) minmax(430px,.98fr)!important;
+  gap:36px!important;
+}
+.v35-guide{
+  margin-top:20px!important;
+  border-radius:30px!important;
+  background:rgba(255,250,242,.86)!important;
+}
+.v35-guide .section-heading h2{
+  color:var(--green-900);
+}
+.v35-accordion{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.v35-accordion details,
+.v35-extra{
+  border:1px solid rgba(175,131,48,.14);
+  background:#fff;
+  border-radius:20px;
+  overflow:hidden;
+}
+.v35-accordion summary,
+.v35-extra summary{
+  cursor:pointer;
+  padding:14px 16px;
+  color:var(--green-900);
+  font-weight:900;
+}
+.v35-accordion details[open] summary,
+.v35-extra[open] summary{
+  border-bottom:1px solid rgba(175,131,48,.12);
+  background:#fffaf2;
+}
+.v35-accordion details > div{
+  padding:12px 16px 16px;
+  display:grid;
+  gap:8px;
+}
+.v35-accordion p,
+.v35-extra p{
+  margin:0;
+  color:#4f5b52;
+  line-height:1.52;
+}
+.v35-accordion details:nth-child(6){
+  grid-column:1/-1;
+}
+.v35-accordion details:nth-child(6) > div{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+.v35-accordion details:nth-child(6) p{
+  border-radius:14px;
+  background:#fffaf2;
+  border:1px solid rgba(16,61,47,.08);
+  padding:.55rem .65rem;
+}
+.v35-extra{
+  margin-top:12px;
+}
+.v35-extra p{
+  padding:12px 16px 0;
+}
+.v35-extra ul{
+  columns:2;
+  gap:24px;
+  margin:10px 16px 16px;
+  padding-left:18px;
+}
+.v35-extra li{
+  break-inside:avoid;
+  margin:0 0 7px;
+  color:var(--green-900);
+}
+.v35-extra small{
+  display:block;
+  color:#667066;
+}
+@media(max-width:980px){
+  .v35 .v27-hero-grid{
+    grid-template-columns:1fr!important;
+  }
+  .v35-accordion{
+    grid-template-columns:1fr;
+  }
+  .v35-accordion details:nth-child(6) > div{
+    grid-template-columns:1fr;
+  }
+  .v35-extra ul{
+    columns:1;
+  }
+}
+@media(max-width:680px){
+  .v35 .v35-hero-brand span{
+    font-size:clamp(2rem,12vw,3.1rem);
+  }
+  .v35 .v35-hero-brand img{
+    width:72px!important;
+    max-width:72px!important;
+  }
+}

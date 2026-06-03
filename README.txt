@@ -381,3 +381,13 @@ ITINERA v0.34
 - Incluye Electromecánica de vehículos automóbiles y más familias/ciclos.
 - Añade archivo JSON de datos oficiales para trazabilidad.
 - Añade SQL para actualizar Supabase con la base oficial de FP.
+
+
+ITINERA v0.35
+- Reduce el tamaño de ITINERA en la portada para que no interfiera con el recuadro verde.
+- Añade una guía académica integral en la portada.
+- Explica Bacharelato, FP, ciclos modulares, universidad, grados, másteres, doctorados, becas y NEAE.
+- Añade un glosario académico amplio.
+- Procesa la segunda base de datos aportada: 73 itinerarios modulares de FP para régimen de personas adultas, 56 grados de la Universidade de Vigo y 85 documentos.
+- Añade JSON trazable con la documentación procesada.
+- Añade SQL para actualizar Supabase con guía académica, itinerarios modulares y grados UVigo.
