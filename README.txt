@@ -354,3 +354,11 @@ ITINERA v0.30
 - Botones/enlaces de ItineraBot y Simulador con colores diferenciados tomados del logo.
 - Simulador más sencillo, visual y premium.
 - Traducción avanzada de la interfaz y de los nombres de estudios a todos los idiomas del selector.
+
+
+ITINERA v0.31
+- Elimina el bloque pesado “Buscador guiado” de la portada.
+- Añade una secuencia lógica en la zona verde de portada: LUMEN-V, explorar estudios, simular ruta, ItineraBot y fuentes oficiales.
+- Mantiene un buscador ligero dentro de la secuencia, solo cuando se solicita.
+- Refuerza el favicon/logo nuevo con cache-busting v0.31.
+- Mantiene la interfaz simplificada y el simulador visual.

@@ -4532,3 +4532,244 @@ document.addEventListener('DOMContentLoaded',init);
   else setTimeout(applyV30,700);
   document.addEventListener('change',e=>{ if(e.target && e.target.id==='languageSelect') setTimeout(applyV30,100); });
 })();
+
+
+/* ITINERA v0.31 · portada sen buscador pesado, secuencia LUMEN e simulador máis claro */
+(function(){
+  const V31 = {
+    gl:{
+      title:'Orientación académica e deseño de itinerarios personalizados',
+      heroLead:'Deseña o teu itinerario con orde: primeiro coñece a túa vocación, despois explora estudos, simula rutas e comproba fontes oficiais.',
+      stepKicker:'Deseño guiado do itinerario',
+      step1:'Coñecer a vocación',
+      step1Text:'Abrir LUMEN-V para explorar intereses, habilidades e preferencias.',
+      step2:'Explorar estudos',
+      step2Text:'Buscar estudos por nome, profesión ou familia.',
+      step3:'Simular ruta',
+      step3Text:'Construír itinerarios posibles ata a meta seleccionada.',
+      step4:'Resolver dúbidas',
+      step4Text:'Preguntar a ItineraBot con apoio de fontes oficiais.',
+      step5:'Verificar fontes',
+      step5Text:'Comprobar requisitos, prazas, notas e ponderacións.',
+      quickSearch:'Buscar estudo',
+      quickSearchPlaceholder:'Ex.: psicoloxía, enfermaría, informática, soldadura…',
+      noResults:'Non hai coincidencias claras. Proba con outra palabra.',
+      useInSimulator:'Usar no simulador',
+      simulatorLead:'Resultado visual do itinerario. Cada paso é clicable e os datos dinámicos deben verificarse na fonte oficial.',
+      details:'Información do paso',
+      openLumen:'Abrir LUMEN-V',
+      openSources:'Fontes oficiais',
+      oldSearchHidden:''
+    },
+    es:{
+      title:'Orientación académica y diseño de itinerarios personalizados',
+      heroLead:'Diseña tu itinerario con orden: primero conoce tu vocación, después explora estudios, simula rutas y comprueba fuentes oficiales.',
+      stepKicker:'Diseño guiado del itinerario',
+      step1:'Conocer la vocación',
+      step1Text:'Abrir LUMEN-V para explorar intereses, habilidades y preferencias.',
+      step2:'Explorar estudios',
+      step2Text:'Buscar estudios por nombre, profesión o familia.',
+      step3:'Simular ruta',
+      step3Text:'Construir itinerarios posibles hasta la meta seleccionada.',
+      step4:'Resolver dudas',
+      step4Text:'Preguntar a ItineraBot con apoyo de fuentes oficiales.',
+      step5:'Verificar fuentes',
+      step5Text:'Comprobar requisitos, plazas, notas y ponderaciones.',
+      quickSearch:'Buscar estudio',
+      quickSearchPlaceholder:'Ej.: psicología, enfermería, informática, soldadura…',
+      noResults:'No hay coincidencias claras. Prueba con otra palabra.',
+      useInSimulator:'Usar en el simulador',
+      simulatorLead:'Resultado visual del itinerario. Cada paso es clicable y los datos dinámicos deben verificarse en la fuente oficial.',
+      details:'Información del paso',
+      openLumen:'Abrir LUMEN-V',
+      openSources:'Fuentes oficiales'
+    },
+    en:{
+      title:'Academic guidance and personalised pathway design',
+      heroLead:'Design your pathway in order: discover your vocation, explore studies, simulate routes and check official sources.',
+      stepKicker:'Guided pathway design',
+      step1:'Discover vocation',
+      step1Text:'Open LUMEN-V to explore interests, skills and preferences.',
+      step2:'Explore studies',
+      step2Text:'Search studies by name, profession or family.',
+      step3:'Simulate route',
+      step3Text:'Build possible pathways towards the selected goal.',
+      step4:'Ask questions',
+      step4Text:'Ask ItineraBot with support from official sources.',
+      step5:'Verify sources',
+      step5Text:'Check requirements, places, cut-off marks and weightings.',
+      quickSearch:'Search study',
+      quickSearchPlaceholder:'E.g. psychology, nursing, computing, welding…',
+      noResults:'No clear matches. Try another word.',
+      useInSimulator:'Use in simulator',
+      simulatorLead:'Visual pathway result. Each step is clickable and dynamic data must be checked in the official source.',
+      details:'Step information',
+      openLumen:'Open LUMEN-V',
+      openSources:'Official sources'
+    },
+    fr:{
+      title:'Orientation académique et conception de parcours personnalisés',
+      heroLead:'Concevez votre parcours dans l’ordre : connaître votre vocation, explorer les formations, simuler des routes et vérifier les sources officielles.',
+      stepKicker:'Conception guidée du parcours',
+      step1:'Connaître la vocation',
+      step1Text:'Ouvrir LUMEN-V pour explorer intérêts, compétences et préférences.',
+      step2:'Explorer les formations',
+      step2Text:'Rechercher par nom, profession ou famille.',
+      step3:'Simuler le parcours',
+      step3Text:'Construire les parcours possibles vers l’objectif choisi.',
+      step4:'Résoudre les doutes',
+      step4Text:'Demander à ItineraBot avec l’appui de sources officielles.',
+      step5:'Vérifier les sources',
+      step5Text:'Vérifier exigences, places, notes et pondérations.',
+      quickSearch:'Rechercher une formation',
+      quickSearchPlaceholder:'Ex. psychologie, soins infirmiers, informatique, soudage…',
+      noResults:'Aucune correspondance claire. Essayez un autre mot.',
+      useInSimulator:'Utiliser dans le simulateur',
+      simulatorLead:'Résultat visuel du parcours. Chaque étape est cliquable et les données dynamiques doivent être vérifiées dans la source officielle.',
+      details:'Information de l’étape',
+      openLumen:'Ouvrir LUMEN-V',
+      openSources:'Sources officielles'
+    },
+    pl:{
+      title:'Doradztwo akademickie i projektowanie spersonalizowanych ścieżek',
+      heroLead:'Projektuj ścieżkę w logicznej kolejności: poznaj powołanie, odkryj kierunki, symuluj trasy i sprawdź źródła urzędowe.',
+      stepKicker:'Prowadzone projektowanie ścieżki',
+      step1:'Poznać powołanie',
+      step1Text:'Otwórz LUMEN-V, aby zbadać zainteresowania, umiejętności i preferencje.',
+      step2:'Odkrywać kierunki',
+      step2Text:'Szukaj kierunków według nazwy, zawodu lub rodziny.',
+      step3:'Symulować trasę',
+      step3Text:'Buduj możliwe ścieżki do wybranego celu.',
+      step4:'Rozwiązać wątpliwości',
+      step4Text:'Zapytaj ItineraBot, korzystając ze źródeł urzędowych.',
+      step5:'Zweryfikować źródła',
+      step5Text:'Sprawdź wymagania, miejsca, progi i wagi.',
+      quickSearch:'Szukaj kierunku',
+      quickSearchPlaceholder:'Np. psychologia, pielęgniarstwo, informatyka, spawanie…',
+      noResults:'Brak jasnych wyników. Spróbuj innego słowa.',
+      useInSimulator:'Użyj w symulatorze',
+      simulatorLead:'Wizualny wynik ścieżki. Każdy krok jest klikalny, a dane dynamiczne należy sprawdzić w źródle urzędowym.',
+      details:'Informacja o kroku',
+      openLumen:'Otwórz LUMEN-V',
+      openSources:'Źródła urzędowe'
+    },
+    de:{
+      title:'Akademische Orientierung und Gestaltung personalisierter Bildungswege',
+      heroLead:'Gestalten Sie Ihren Weg in logischer Reihenfolge: Berufung klären, Studien erkunden, Routen simulieren und amtliche Quellen prüfen.',
+      stepKicker:'Geführte Weggestaltung',
+      step1:'Berufung klären',
+      step1Text:'LUMEN-V öffnen, um Interessen, Fähigkeiten und Vorlieben zu erkunden.',
+      step2:'Studien erkunden',
+      step2Text:'Nach Name, Beruf oder Familie suchen.',
+      step3:'Route simulieren',
+      step3Text:'Mögliche Wege zum gewählten Ziel erstellen.',
+      step4:'Fragen klären',
+      step4Text:'ItineraBot mit Unterstützung amtlicher Quellen fragen.',
+      step5:'Quellen prüfen',
+      step5Text:'Anforderungen, Plätze, Notengrenzen und Gewichtungen prüfen.',
+      quickSearch:'Studium suchen',
+      quickSearchPlaceholder:'Z. B. Psychologie, Pflege, Informatik, Schweißen…',
+      noResults:'Keine klaren Treffer. Versuchen Sie ein anderes Wort.',
+      useInSimulator:'Im Simulator verwenden',
+      simulatorLead:'Visuelles Wegergebnis. Jeder Schritt ist anklickbar und dynamische Daten müssen in der amtlichen Quelle geprüft werden.',
+      details:'Schrittinformation',
+      openLumen:'LUMEN-V öffnen',
+      openSources:'Amtliche Quellen'
+    }
+  };
+  function L31(k){ return (V31[state.lang] && V31[state.lang][k]) || V31.gl[k] || k; }
+  function esc31(x){ return escapeHTML(String(x ?? '')); }
+  const LUMEN_URL = window.ITINERA_LUMEN_URL || 'https://aulatribeca.github.io/lumen-v/';
+
+  function renderV31Journey(){
+    const card = document.querySelector('.v27-cover-card');
+    if(!card) return;
+    card.classList.add('v31-journey-card');
+    card.innerHTML = `<div class="v31-journey">
+      <p class="v31-kicker">${esc31(L31('stepKicker'))}</p>
+      <div class="v31-steps">
+        <a href="${LUMEN_URL}" target="_blank" rel="noopener noreferrer" class="v31-step-card lumen"><span>01</span><strong>${esc31(L31('step1'))}</strong><small>${esc31(L31('step1Text'))}</small></a>
+        <button type="button" class="v31-step-card search" id="v31OpenSearch"><span>02</span><strong>${esc31(L31('step2'))}</strong><small>${esc31(L31('step2Text'))}</small></button>
+        <a href="#aventura" data-route="aventura" class="v31-step-card sim"><span>03</span><strong>${esc31(L31('step3'))}</strong><small>${esc31(L31('step3Text'))}</small></a>
+        <a href="#asistente" data-route="asistente" class="v31-step-card bot"><span>04</span><strong>${esc31(L31('step4'))}</strong><small>${esc31(L31('step4Text'))}</small></a>
+        <a href="#fuentes" data-route="fuentes" class="v31-step-card sources"><span>05</span><strong>${esc31(L31('step5'))}</strong><small>${esc31(L31('step5Text'))}</small></a>
+      </div>
+      <section class="v31-search-drawer" id="v31SearchDrawer" hidden>
+        <label>${esc31(L31('quickSearch'))}</label>
+        <div><input id="v31SearchInput" type="search" placeholder="${esc31(L31('quickSearchPlaceholder'))}"><button type="button" id="v31SearchBtn">${esc31(L31('quickSearch'))}</button></div>
+        <div id="v31SearchResults" class="v31-search-results"></div>
+      </section>
+    </div>`;
+    bindRoutes();
+    const drawer=document.getElementById('v31SearchDrawer');
+    document.getElementById('v31OpenSearch')?.addEventListener('click',()=>{
+      drawer.hidden=!drawer.hidden;
+      if(!drawer.hidden) setTimeout(()=>document.getElementById('v31SearchInput')?.focus(),60);
+    });
+    document.getElementById('v31SearchBtn')?.addEventListener('click', v31Search);
+    document.getElementById('v31SearchInput')?.addEventListener('input', v31Search);
+    document.getElementById('v31SearchInput')?.addEventListener('keydown', e=>{ if(e.key==='Enter') v31Search(); });
+  }
+
+  function v31Search(){
+    const q=document.getElementById('v31SearchInput')?.value || '';
+    const target=document.getElementById('v31SearchResults');
+    if(!target) return;
+    const rows=programs(q).slice(0,6);
+    if(!q.trim()){ target.innerHTML=''; return; }
+    if(!rows.length){ target.innerHTML=`<p>${esc31(L31('noResults'))}</p>`; return; }
+    target.innerHTML=rows.map(p=>`<article>
+      <strong>${esc31(p.name)}</strong>
+      <small>${esc31([p.level,p.family].filter(Boolean).join(' · '))}</small>
+      <button type="button" data-study="${esc31(p.id)}">${esc31(L31('useInSimulator'))}</button>
+    </article>`).join('');
+    target.querySelectorAll('[data-study]').forEach(btn=>btn.onclick=()=>{
+      const p=state.data.studies.find(x=>x.id===btn.dataset.study);
+      if(p){
+        state.adventure.goalText=p.name;
+        state.adventure.selectedProgramId=p.id;
+        state.adventure.step=3;
+        routeTo('aventura');
+        renderAdventure();
+      }
+    });
+  }
+
+  function simplifyHome(){
+    document.body.classList.add('v31-simple-home');
+    const searchPanel=document.querySelector('#inicio .search-panel');
+    if(searchPanel) searchPanel.remove();
+    const lead=document.getElementById('heroLead');
+    if(lead) lead.textContent=L31('heroLead');
+    const title=document.getElementById('brandSubtitle');
+    if(title) title.textContent=L31('title');
+    document.title = 'ITINERA | ' + L31('title');
+    renderV31Journey();
+  }
+
+  function refineSimulatorCopy(){
+    const desc=document.getElementById('adventureDescription');
+    if(desc) desc.textContent=L31('simulatorLead');
+    const panel=document.getElementById('v30-step-info') || document.getElementById('v29StepInfo');
+    if(panel && !panel.classList.contains('active')){
+      const h=panel.querySelector('h3');
+      const p=panel.querySelector('p');
+      if(h) h.textContent=L31('details');
+      if(p) p.textContent=L31('simulatorLead');
+    }
+  }
+
+  function applyV31(){
+    simplifyHome();
+    refineSimulatorCopy();
+  }
+
+  const prevInit31 = init;
+  init=function(){
+    prevInit31();
+    setTimeout(applyV31, 1300);
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(applyV31,1600),{once:true});
+  else setTimeout(applyV31,800);
+  document.addEventListener('change', e=>{ if(e.target && e.target.id==='languageSelect') setTimeout(applyV31,120); });
+})();
