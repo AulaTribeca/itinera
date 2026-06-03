@@ -313,3 +313,9 @@ ITINERA v0.25.2
 - Repara el simulador vacío de v0.25.1.
 - El simulador ya no depende de funciones internas no accesibles.
 - Mantiene camino literal, movimiento, navegación libre entre pasos y PDF selectivo.
+
+
+ITINERA v0.26
+- Ajuste estético general para alinearlo con la línea visual de Tribeca Academia.
+- Header, hero, paneles y simulador refinados con una presentación más limpia y premium.
+- Favicon y logo visibles en barra de direcciones y marcadores del navegador.

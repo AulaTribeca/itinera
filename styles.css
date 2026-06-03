@@ -2410,3 +2410,75 @@ body.v25-clean{background:linear-gradient(180deg,#f8f1e7 0%,#fffaf2 100%);}
 .v252-simulator-fixed .v251-route-option{
   background:rgba(255,255,255,.96);
 }
+
+
+/* ITINERA v0.26 · estética alineada con Tribeca */
+:root{
+  --green-950:#09241b;
+  --green-900:#103d2f;
+  --green-800:#1a5a45;
+  --green-700:#2a6f57;
+  --gold-700:#af8330;
+  --gold-500:#c89d44;
+  --gold-200:#ead8a8;
+  --cream:#f4eee2;
+  --surface:#fbf7ef;
+  --ink:#13271f;
+  --muted:#5f685f;
+  --line:rgba(175,131,48,.18);
+  --shadow:0 18px 45px rgba(9,36,27,.07);
+  --shadow2:0 30px 70px rgba(9,36,27,.12);
+  --radius:24px;
+}
+body{
+  background:
+    radial-gradient(circle at 10% 4%,rgba(200,157,68,.12),transparent 22%),
+    radial-gradient(circle at 96% 0%,rgba(16,61,47,.07),transparent 24%),
+    var(--cream);
+  color:var(--ink);
+}
+.site-header{background:rgba(244,238,226,.96);border-bottom:1px solid rgba(175,131,48,.12);box-shadow:0 10px 28px rgba(16,61,47,.04)}
+.topbar{padding:14px 34px 12px}
+.brand{gap:14px}.brand-mark{width:54px;height:54px}.brand-copy strong{font-size:1.42rem;letter-spacing:.08em}.brand-copy small{color:#8a7343;font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.header-actions{gap:10px}.top-link{font-size:.84rem;padding:.45rem .2rem;border-radius:0;background:none;border:0;position:relative}.top-link::after,.main-nav a::after,.official-dropdown summary::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;border-radius:999px;background:var(--gold-500);transform:scaleX(0);transform-origin:center;transition:transform .2s ease}.top-link:hover::after,.main-nav a:hover::after,.official-dropdown summary:hover::after{transform:scaleX(1)}
+.premium-btn{min-height:40px;padding:.62rem 1.05rem;box-shadow:none;border:1px solid rgba(16,61,47,.1)}
+.premium-btn.sim{background:rgba(255,255,255,.86);color:var(--green-900)}
+.premium-btn.sim::before{content:"✦";color:var(--gold-700)}
+.premium-btn.bot{background:var(--green-900);color:#fff}
+.premium-btn.bot::before{content:"◆";color:var(--gold-200)}
+.update-pill{background:rgba(255,255,255,.75);box-shadow:none;border-color:rgba(175,131,48,.12);color:#7c6841}
+.compact-select{background:rgba(255,255,255,.72);box-shadow:none;border-color:rgba(175,131,48,.16);padding:.4rem .55rem}.compact-select span{font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:#8a7343}.compact-select select{font-size:.8rem}
+.main-nav{padding:0 34px 14px;gap:22px;align-items:center}.main-nav a,.official-dropdown summary{background:none!important;border:0!important;box-shadow:none!important;border-radius:0!important;padding:.45rem 0 .6rem;font-size:.92rem;font-weight:800;color:var(--green-900);position:relative}
+.main-nav a.active{color:var(--green-900)!important}.main-nav a.active::after,.official-dropdown[open] summary::after{transform:scaleX(1)}
+.official-dropdown{position:relative}.official-dropdown summary{list-style:none;cursor:pointer}.official-dropdown summary::-webkit-details-marker{display:none}.official-menu{margin-top:12px;border:1px solid rgba(175,131,48,.14);box-shadow:var(--shadow2);border-radius:20px;background:rgba(255,249,238,.98);padding:12px;min-width:270px}.official-menu a{padding:.7rem .8rem!important;border-radius:14px!important;background:transparent!important}.official-menu a:hover{background:#fff7e8!important}
+
+main.shell{padding-top:34px;padding-bottom:58px}
+.hero-grid{grid-template-columns:minmax(0,1.03fr) minmax(440px,.97fr);gap:34px;align-items:stretch}
+.hero-card,.panel,.content-card,.license-box,.chat-panel,.chat-help,.sim-wizard,.route-stage{background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}
+.green-card{background:transparent!important;color:var(--ink)!important;box-shadow:none!important;border:none!important;padding:34px 4px 34px 0;overflow:visible}
+.green-card:after{display:none}.green-card .eyebrow{color:#9c7732}.green-card h1{color:var(--green-950)!important;font-size:clamp(2.8rem,5vw,4.9rem);line-height:.98;max-width:10.5ch;text-shadow:none!important;margin-bottom:22px}.green-card .lead{color:#566256!important;font-size:1.05rem;max-width:62ch;text-shadow:none!important}.hero-actions{margin-top:26px;gap:14px}.button{min-height:46px;padding:0 20px}.action-sim{background:#fff;border:1px solid rgba(175,131,48,.18);box-shadow:none;color:var(--green-900)}.action-bot{background:var(--green-900);box-shadow:none;color:#fff}
+.living-map-card{position:relative;background:linear-gradient(135deg,#08271f 0%,#0f372b 46%,#163e2f 100%);border:1px solid rgba(200,157,68,.24);box-shadow:var(--shadow2);padding:16px;overflow:hidden}
+.living-map-card::before{content:"Ferramentas propias";position:absolute;left:26px;top:24px;z-index:8;color:#9f7a31;text-transform:uppercase;letter-spacing:.18em;font-size:.75rem;font-weight:900}
+.living-map-card::after{content:"Organizar, orientar e acompañar";position:absolute;left:26px;top:52px;right:26px;z-index:8;color:#f7f0df;font-size:clamp(1.6rem,2.8vw,2.45rem);line-height:1.05;font-weight:800;max-width:11ch}
+.academic-landscape.compass-hero{min-height:470px;background:transparent!important;border-radius:28px;padding-top:130px}
+.academic-landscape.compass-hero::before{inset:16px;border-radius:24px;border:1px solid rgba(200,157,68,.18);background:linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(180deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:34px 34px;mask-image:none}
+.academic-landscape.compass-hero::after{display:none!important}
+.compass-core{background:radial-gradient(circle,#fdf8ec 0 28%,#f3e6c1 29% 54%,#123d2f 55% 60%,#fff8ea 61% 100%);box-shadow:0 22px 46px rgba(0,0,0,.18),inset 0 0 0 3px rgba(200,157,68,.62),inset 0 0 0 12px rgba(255,255,255,.78)}
+.compass-n,.compass-e,.compass-s,.compass-w{color:#163f31}.study-word{background:rgba(249,244,233,.96);border:1px solid rgba(200,157,68,.26);box-shadow:0 14px 28px rgba(0,0,0,.10)}.study-word i{background:#ead8a8}
+
+.panel.search-panel{margin-top:8px;background:rgba(255,249,240,.82)}
+.section-heading.compact .eyebrow,.section-heading.wide .eyebrow{color:#9c7732}.section-heading h1,.section-heading h2{color:var(--green-900)}
+.finder{background:transparent}.search-row input,.chat-row input,input[type="search"],input[type="text"],select{border-radius:16px;background:rgba(255,255,255,.88);border-color:rgba(175,131,48,.16)}
+.quick-tags button,.chip,.question-chip,.adventure-options button,.adventure-questions button{background:rgba(255,255,255,.88);border-color:rgba(175,131,48,.18)}
+
+.simulator-shell{align-items:start;gap:22px}.sim-wizard{background:rgba(255,249,240,.94);border-radius:28px;padding:18px;box-shadow:var(--shadow)}
+.wizard-progress{gap:10px}.wizard-progress span{width:44px;height:44px;background:#fff;border:1px solid rgba(175,131,48,.16);color:var(--green-900);box-shadow:none}.wizard-progress span.active{background:var(--green-900);color:#fff;border-color:var(--green-900)}
+.wizard-step{background:rgba(255,255,255,.66);border:1px solid rgba(175,131,48,.14);border-radius:22px;padding:1rem 1rem 1.05rem}.wizard-step.active{box-shadow:none}
+.route-stage{background:linear-gradient(180deg,#fffaf0,#f3ead8 62%,#e9ddc1);box-shadow:var(--shadow2)}
+.v251-route-board,.route-board{background:transparent}.v251-bach-card,.route-intro,.route-info-panel{background:rgba(255,255,255,.86)!important;border:1px solid rgba(175,131,48,.14);box-shadow:0 16px 30px rgba(16,61,47,.07)}
+.v251-route-option,.branch{border:1px solid rgba(175,131,48,.14)!important;border-radius:24px!important;box-shadow:0 16px 30px rgba(16,61,47,.06)!important}
+.v251-node,.route-node{box-shadow:0 14px 28px rgba(16,61,47,.09)!important}.v251-connector i{background:linear-gradient(90deg,#c89d44,#1d5d47)!important}
+
+.view{animation:viewIn .26s ease}
+@media(max-width:1120px){.hero-grid{grid-template-columns:1fr}.green-card{padding-right:0}.academic-landscape.compass-hero{min-height:420px}.living-map-card::after{max-width:14ch;font-size:2rem}.header-actions{gap:8px}.main-nav{gap:16px}}
+@media(max-width:780px){.topbar{padding:12px 18px 10px}.main-nav{padding:0 18px 12px}.hero-grid{gap:22px}.green-card h1{font-size:clamp(2.35rem,12vw,3.7rem);max-width:none}.living-map-card::before{left:20px;top:18px}.living-map-card::after{left:20px;top:44px;font-size:1.65rem}.academic-landscape.compass-hero{padding-top:112px;min-height:360px}.study-word{font-size:.78rem;padding:.46rem .7rem}}
