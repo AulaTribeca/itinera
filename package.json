@@ -1,6 +1,6 @@
 {
   "name": "itinera-v0-25",
-  "version": "0.35-guia-academica-base2",
+  "version": "0.36-estructura-orientacion-base3",
   "private": true,
   "type": "module",
   "description": "ITINERA: GitHub Pages + Supabase official catalog + ItineraBot documental.",

@@ -4439,3 +4439,214 @@ body.v28-scaled{
     max-width:72px!important;
   }
 }
+
+
+/* ITINERA v0.36 · guía por etapa vital y académica */
+.v36 #v36OrientationHub{
+  margin-top:20px!important;
+  border-radius:30px!important;
+  background:rgba(255,250,242,.88)!important;
+}
+.v36-stage-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.v36-stage{
+  border:1px solid rgba(175,131,48,.14);
+  background:#fff;
+  border-radius:22px;
+  overflow:hidden;
+}
+.v36-stage summary{
+  cursor:pointer;
+  padding:16px 18px;
+  display:grid;
+  gap:4px;
+}
+.v36-stage summary span{
+  color:var(--green-900);
+  font-weight:900;
+  font-size:1.02rem;
+}
+.v36-stage summary small{
+  color:#6b756d;
+}
+.v36-stage[open] summary{
+  background:#fffaf2;
+  border-bottom:1px solid rgba(175,131,48,.12);
+}
+.v36-stage-body{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  padding:14px;
+}
+.v36-stage-body article{
+  border-radius:16px;
+  background:#fffaf2;
+  border:1px solid rgba(16,61,47,.08);
+  padding:12px;
+}
+.v36-stage-body article:first-child,
+.v36-stage-body article:last-child{
+  grid-column:1/-1;
+}
+.v36-stage-body h4{
+  margin:0 0 6px;
+  color:#9c7732;
+  font-size:.78rem;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+}
+.v36-stage-body p,
+.v36-stage-body li{
+  color:#4e5b52;
+  line-height:1.48;
+}
+.v36-stage-body ul{
+  margin:.2rem 0 0;
+  padding-left:1.05rem;
+}
+.v36-profiles,
+.v36-maps,
+.v36-scholarships,
+.v36-glossary{
+  margin-top:16px;
+  border:1px solid rgba(175,131,48,.14);
+  background:#fff;
+  border-radius:24px;
+  padding:16px;
+}
+.v36-profiles h3,
+.v36-maps h3,
+.v36-scholarships h3,
+.v36-glossary h3{
+  margin:0 0 6px;
+  color:var(--green-900);
+}
+.v36-profiles > p,
+.v36-maps > p,
+.v36-scholarships > p,
+.v36-glossary > p{
+  margin:.1rem 0 12px;
+  color:#617067;
+}
+.v36-profiles > div{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:8px;
+}
+.v36-profiles button{
+  border:1px solid rgba(16,61,47,.10);
+  background:#fffaf2;
+  border-radius:18px;
+  padding:12px;
+  text-align:left;
+  color:var(--green-900);
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+.v36-profiles button:hover{
+  transform:translateY(-2px);
+  border-color:rgba(200,157,68,.35);
+  box-shadow:0 12px 24px rgba(16,61,47,.07);
+}
+.v36-profiles strong,
+.v36-profiles small{
+  display:block;
+}
+.v36-profiles small{
+  color:#657066;
+  margin-top:4px;
+}
+.v36-maps > div{
+  display:grid;
+  gap:10px;
+}
+.v36-maps article{
+  border-radius:18px;
+  background:#fffaf2;
+  border:1px solid rgba(16,61,47,.08);
+  padding:12px;
+}
+.v36-maps h4{
+  margin:0 0 8px;
+  color:var(--green-900);
+}
+.v36-map-steps{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:7px;
+}
+.v36-map-steps span{
+  border-radius:999px;
+  background:#fff;
+  border:1px solid rgba(175,131,48,.18);
+  padding:.42rem .65rem;
+  color:var(--green-900);
+  font-weight:850;
+}
+.v36-map-steps b{
+  color:#9c7732;
+}
+.v36-scholarships > div{
+  display:grid;
+  gap:8px;
+}
+.v36-scholarships details{
+  border:1px solid rgba(16,61,47,.08);
+  background:#fffaf2;
+  border-radius:16px;
+  overflow:hidden;
+}
+.v36-scholarships summary{
+  cursor:pointer;
+  padding:12px 14px;
+  color:var(--green-900);
+  font-weight:900;
+}
+.v36-scholarships details p{
+  margin:0;
+  padding:0 14px 14px;
+  color:#4e5b52;
+}
+.v36-glossary input{
+  width:100%;
+  border:1px solid rgba(175,131,48,.18);
+  border-radius:16px;
+  padding:.75rem .85rem;
+  margin-bottom:12px;
+  background:#fffaf2;
+}
+#v36GlossaryRows{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:8px;
+}
+#v36GlossaryRows article{
+  border:1px solid rgba(16,61,47,.08);
+  background:#fffaf2;
+  border-radius:16px;
+  padding:12px;
+}
+#v36GlossaryRows strong{
+  display:block;
+  color:var(--green-900);
+  margin-bottom:4px;
+}
+#v36GlossaryRows p{
+  margin:0;
+  color:#4e5b52;
+  line-height:1.45;
+}
+@media(max-width:960px){
+  .v36-stage-grid,
+  .v36-stage-body{
+    grid-template-columns:1fr;
+  }
+  .v36-stage-body article:first-child,
+  .v36-stage-body article:last-child{
+    grid-column:auto;
+  }
+}

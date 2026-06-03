@@ -391,3 +391,15 @@ ITINERA v0.35
 - Procesa la segunda base de datos aportada: 73 itinerarios modulares de FP para régimen de personas adultas, 56 grados de la Universidade de Vigo y 85 documentos.
 - Añade JSON trazable con la documentación procesada.
 - Añade SQL para actualizar Supabase con guía académica, itinerarios modulares y grados UVigo.
+
+
+ITINERA v0.36
+- Reestructura ITINERA como guía progresiva por etapa vital y académica.
+- Añade entrada principal: "En que momento estás?"
+- Añade 10 perfiles/etapas: ESO, Bacharelato, FP, continuidad desde FP, universidad, alumnado universitario, persona adulta, orientación vocacional, becas y NEAE.
+- Añade perfiles de orientación, mapas de continuidad, sección de becas y glosario con buscador.
+- Integra la tercera base documental aportada.
+- Procesa 188 ciclos de FP desde catálogos por familias profesionales.
+- Procesa 150 másteres y 56 programas de doctorado desde documentación de USC/UDC.
+- Añade JSON trazable con toda la base documental 3.
+- Añade SQL v0.36 para Supabase con nuevas tablas normalizadas y estudios.
