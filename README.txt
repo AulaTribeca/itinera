@@ -319,3 +319,10 @@ ITINERA v0.26
 - Ajuste estético general para alinearlo con la línea visual de Tribeca Academia.
 - Header, hero, paneles y simulador refinados con una presentación más limpia y premium.
 - Favicon y logo visibles en barra de direcciones y marcadores del navegador.
+
+
+ITINERA v0.27
+- Portada reconstruida por completo.
+- Botones superiores convertidos en enlaces de texto con línea dinámica inferior al pasar el cursor.
+- Se elimina visualmente la portada anterior con la brújula saturada.
+- Pie de página: "Ecosistema educativo Tribeca".

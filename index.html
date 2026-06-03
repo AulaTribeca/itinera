@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ITINERA v0.26 | Orientación académica oficial</title>
+  <title>ITINERA v0.27 | Orientación académica oficial</title>
   <meta name="theme-color" content="#103d2f">
   <link rel="icon" type="image/png" sizes="512x512" href="assets/favicon-itinera.png">
   <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
@@ -54,42 +54,25 @@
 
   <main id="contenido" class="shell">
     <section id="inicio" class="view active-view" tabindex="-1">
-      <div class="hero-grid">
-        <article class="hero-card green-card">
+      <div class="hero-grid v27-hero-grid">
+        <article class="hero-card green-card v27-hero-copy">
           <p class="eyebrow" id="heroEyebrow"></p>
           <h1 id="heroTitle"></h1>
           <p class="lead" id="heroLead"></p>
-          <div class="hero-actions">
-            <a href="#aventura" data-route="aventura" class="button action-sim" id="heroSimulatorCta"></a>
-            <a href="#asistente" data-route="asistente" class="button action-bot" id="heroBotCta"></a>
+          <div class="hero-actions v27-hero-actions">
+            <a href="#inicio" data-route="inicio" class="v27-text-link">Buscador guiado</a>
+            <a href="#aventura" data-route="aventura" class="v27-text-link" id="heroSimulatorCta"></a>
+            <a href="#asistente" data-route="asistente" class="v27-text-link" id="heroBotCta"></a>
           </div>
         </article>
-        <article class="living-map-card" aria-label="Mapa visual académico">
-          
-          
-          <div class="academic-landscape compass-hero" aria-hidden="true">
-            <div class="compass-core">
-              <span class="compass-ring"></span>
-              <span class="compass-needle"></span>
-              <span class="compass-center"></span>
-              <span class="compass-n">N</span>
-              <span class="compass-e">E</span>
-              <span class="compass-s">S</span>
-              <span class="compass-w">O</span>
-            </div>
-            <span class="study-word word-a"><i>◈</i>Bacharelato</span>
-            <span class="study-word word-b"><i>▣</i>FP</span>
-            <span class="study-word word-c"><i>◎</i>ABAU</span>
-            <span class="study-word word-d"><i>✦</i>Grao</span>
-            <span class="study-word word-e"><i>◇</i>Máster</span>
-            <span class="study-word word-f"><i>☉</i>Créditos</span>
-            <span class="study-word word-g"><i>✓</i>Título oficial</span>
-            <span class="study-word word-h"><i>↗</i>Itinerario</span>
-            <span class="study-word word-i"><i>✧</i>Becas</span>
-            <span class="study-word word-j"><i>⌂</i>Centros</span>
-            <span class="study-glow glow-a"></span>
-            <span class="study-glow glow-b"></span>
-            <span class="study-glow glow-c"></span>
+        <article class="v27-cover-card" aria-label="Ferramentas principais de ITINERA">
+          <p class="v27-cover-kicker">Ferramentas propias</p>
+          <h2>Orientación clara, rutas verificables.</h2>
+          <p>ITINERA organiza a decisión académica en tres xestos: buscar, simular e comprobar fontes oficiais.</p>
+          <div class="v27-cover-tools">
+            <a href="#inicio" data-route="inicio"><span>01</span><strong>Buscador de estudos</strong><small>Busca por nome, familia ou profesión.</small></a>
+            <a href="#aventura" data-route="aventura"><span>02</span><strong>Simulador de itinerarios</strong><small>Compara rutas curtas e alternativas.</small></a>
+            <a href="#asistente" data-route="asistente"><span>03</span><strong>ItineraBot</strong><small>Pregunta con apoio das fontes oficiais.</small></a>
           </div>
         </article>
       </div>
@@ -205,7 +188,7 @@
     <div class="modal-body" id="routeLinkBody"></div>
   </section>
 
-  <script src="app-config.js?v=0.26"></script>
-  <script src="app.js?v=0.26"></script>
+  <script src="app-config.js?v=0.27"></script>
+  <script src="app.js?v=0.27"></script>
 </body>
 </html>
