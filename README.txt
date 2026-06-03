@@ -362,3 +362,11 @@ ITINERA v0.31
 - Mantiene un buscador ligero dentro de la secuencia, solo cuando se solicita.
 - Refuerza el favicon/logo nuevo con cache-busting v0.31.
 - Mantiene la interfaz simplificada y el simulador visual.
+
+
+ITINERA v0.32
+- Añade descarga real de PDF del itinerario mediante jsPDF, con fallback a impresión si no carga la librería.
+- El PDF incluye encabezado ITINERA, meta, vía recomendada, materias, ponderaciones, disponibilidad, salidas profesionales y rutas seleccionadas.
+- Los pasos del itinerario abren una ventana visible, cerrable y contextual.
+- Añade 10 salidas profesionales de ejemplo para todos los títulos del catálogo base.
+- Refuerza ItineraBot con respuesta rápida, fallback útil y uso del endpoint cuando esté disponible.

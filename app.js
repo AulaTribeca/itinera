@@ -4773,3 +4773,218 @@ document.addEventListener('DOMContentLoaded',init);
   else setTimeout(applyV31,800);
   document.addEventListener('change', e=>{ if(e.target && e.target.id==='languageSelect') setTimeout(applyV31,120); });
 })();
+
+
+/* ITINERA v0.32 · PDF descargable, ventá de pasos, saídas profesionais e ItineraBot reforzado */
+(function(){
+  const JOBS_GL = {"cm-instalaciones-electricas-automaticas": ["electricista instalador/a", "mantemento de instalacións eléctricas", "instalador/a de baixa tensión", "montador/a de cadros eléctricos", "técnico/a de automatismos", "instalador/a domótico/a", "operario/a de instalacións solares básicas", "técnico/a auxiliar de mantemento industrial", "instalador/a de iluminación", "reparador/a de instalacións eléctricas"], "cs-sistemas-electrotecnicos-automatizados": ["técnico/a superior en sistemas electrotécnicos", "proxectista de instalacións eléctricas", "técnico/a en automatización de edificios", "responsable de mantemento eléctrico", "técnico/a de eficiencia enerxética", "instalador/a autorizado/a especializado/a", "coordinador/a de obras eléctricas", "técnico/a en domótica", "técnico/a de redes eléctricas interiores", "xefe/a de equipo de instalacións"], "cs-automatizacion-robotica-industrial": ["técnico/a en automatización industrial", "programador/a de PLC", "técnico/a de robótica industrial", "técnico/a de mantemento automatizado", "integrador/a de sistemas industriais", "técnico/a de control de procesos", "operador/a de sistemas SCADA", "técnico/a de instrumentación", "técnico/a de industria 4.0", "responsable de liña automatizada"], "cm-soldadura-caldeiraria": ["soldador/a", "caldeireiro/a", "montador/a de estruturas metálicas", "operario/a de fabricación metálica", "tubaxeiro/a industrial", "chapista industrial", "montador/a de carpintaría metálica", "soldador/a TIG/MIG/MAG", "reparador/a de estruturas metálicas", "operario/a de corte e conformado"], "cm-carpinteria-mueble": ["carpinteiro/a", "ebanista", "montador/a de mobles", "operario/a de fabricación de moble", "instalador/a de carpintaría", "técnico/a de taller de madeira", "restaurador/a auxiliar de mobles", "operario/a CNC madeira básico", "montador/a de portas e armarios", "axudante de deseño e produción de moble"], "grado-medicina": ["médico/a de atención primaria", "médico/a especialista tras MIR", "médico/a hospitalario/a", "médico/a de urxencias", "investigador/a biomédico/a", "médico/a de saúde pública", "médico/a de medicina laboral", "médico/a en cooperación sanitaria", "docente universitario/a en ciencias da saúde", "xestor/a sanitario/a con formación médica"], "grado-psicologia": ["psicólogo/a educativo/a", "orientador/a con formación complementaria", "psicólogo/a de recursos humanos", "técnico/a de intervención psicosocial", "investigador/a en psicoloxía", "psicólogo/a sanitario/a tras máster habilitante", "psicólogo/a deportivo/a con especialización", "consultor/a de benestar laboral", "mediador/a familiar con formación específica", "técnico/a en programas de prevención"], "grado-derecho": ["avogado/a tras máster de acceso", "procurador/a tras formación habilitante", "asesor/a xurídico/a", "técnico/a de administración pública", "xestor/a de contratos", "consultor/a de cumprimento normativo", "mediador/a xurídico/a", "técnico/a en protección de datos", "opositor/a a corpos xurídicos", "consultor/a laboral ou mercantil"], "grado-arquitectura": ["arquitecto/a tras itinerario habilitante", "deseñador/a de proxectos arquitectónicos", "técnico/a de urbanismo", "consultor/a de eficiencia enerxética en edificación", "modelador/a BIM", "xestor/a de proxectos de construción", "deseñador/a de interiores con especialización", "técnico/a de rehabilitación", "perito/a técnico/a con habilitación correspondente", "docente ou investigador/a en arquitectura"], "grado-informatica": ["enxeñeiro/a de software", "desenvolvedor/a web", "desenvolvedor/a de aplicacións", "administrador/a de sistemas", "analista de datos", "especialista en ciberseguridade", "arquitecto/a cloud", "técnico/a DevOps", "consultor/a tecnolóxico/a", "investigador/a en intelixencia artificial"], "grado-enfermeria": ["enfermeiro/a hospitalario/a", "enfermeiro/a de atención primaria", "enfermeiro/a de urxencias", "enfermeiro/a comunitario/a", "enfermeiro/a de saúde laboral", "enfermeiro/a escolar segundo normativa", "enfermeiro/a de saúde mental con especialización", "xestor/a de coidados", "docente en ciencias da saúde", "investigador/a en coidados"], "fp-ca-enfermeria": ["técnico/a en coidados auxiliares de enfermaría", "auxiliar de clínica", "auxiliar de xeriatría", "auxiliar en consultas médicas", "auxiliar en unidades hospitalarias", "auxiliar en saúde bucodental con formación complementaria", "coidador/a en centros sociosanitarios", "auxiliar de enfermaría en atención primaria", "auxiliar en esterilización", "apoio en programas de coidados"], "fp-ts-educacion-infantil": ["educador/a infantil", "técnico/a en escola infantil", "educador/a en programas de conciliación", "monitor/a de actividades infantís", "educador/a en ludotecas", "apoio educativo en programas 0-6", "técnico/a en atención á infancia", "coordinador/a de actividades infantís", "educador/a en contextos sociais", "auxiliar técnico/a en proxectos educativos"], "master-profesorado": ["profesor/a de educación secundaria", "profesor/a de bacharelato", "profesor/a de formación profesional", "orientador/a educativo/a segundo especialidade", "docente en escolas oficiais de idiomas se procede", "preparador/a de materiais didácticos", "titor/a académico/a", "coordinador/a pedagóxico/a", "deseñador/a de programacións didácticas", "docente en programas de formación"], "cm-instalaciones-telecomunicaciones": ["instalador/a de telecomunicacións", "técnico/a de redes domésticas", "instalador/a de fibra óptica", "técnico/a de antenas", "instalador/a de sistemas de seguridade", "técnico/a de telefonía", "montador/a de infraestruturas TIC", "técnico/a de cableado estruturado", "instalador/a de redes locais", "mantemento de sistemas de comunicación"], "cs-mantenimiento-electronico": ["técnico/a superior en mantemento electrónico", "técnico/a de reparación electrónica", "técnico/a de equipos industriais", "técnico/a de instrumentación electrónica", "técnico/a de laboratorio electrónico", "responsable de mantemento de equipos", "técnico/a de sistemas audiovisuais", "técnico/a de control electrónico", "técnico/a de equipos médicos con especialización", "consultor/a técnico/a de soporte"], "cs-energias-renovables": ["técnico/a superior en enerxías renovables", "técnico/a de parques eólicos", "técnico/a de instalacións solares", "operador/a de planta enerxética", "técnico/a de eficiencia enerxética", "mantemento de instalacións renovables", "técnico/a de autoconsumo", "xestor/a de proxectos renovables", "técnico/a de biomasa", "comercial técnico/a de solucións enerxéticas"], "grado-ade": ["analista financeiro/a", "consultor/a de empresa", "xestor/a administrativo/a", "responsable de marketing", "técnico/a de recursos humanos", "emprendedor/a ou xestor/a de negocio", "controller de xestión", "asesor/a fiscal con especialización", "técnico/a de comercio internacional", "xestor/a de proxectos"], "grado-educacion-primaria": ["mestre/a de educación primaria", "titor/a de primaria", "especialista educativo/a segundo mención", "deseñador/a de materiais didácticos", "coordinador/a de proxectos educativos", "educador/a en programas de reforzo", "asesor/a pedagóxico/a con formación complementaria", "docente en centros privados/concertados", "preparador/a de recursos educativos", "investigador/a en educación"], "grado-educacion-infantil": ["mestre/a de educación infantil", "titor/a de infantil", "deseñador/a de materiais para 0-6", "coordinador/a de proxectos de infancia", "educador/a en programas temperáns", "docente en centros privados/concertados", "asesor/a pedagóxico/a infantil", "especialista en atención temperá con formación específica", "creador/a de recursos educativos infantís", "investigador/a en educación infantil"], "grado-biologia": ["biólogo/a", "técnico/a de laboratorio", "investigador/a biomédico/a", "técnico/a ambiental", "consultor/a de biodiversidade", "docente de ciencias con máster habilitante", "técnico/a de control de calidade", "divulgador/a científico/a", "xestor/a de conservación", "técnico/a en biotecnoloxía con especialización"], "grado-criminologia": ["criminólogo/a", "técnico/a de prevención delitiva", "analista de seguridade", "técnico/a en intervención con menores", "consultor/a en políticas de seguridade", "perito/a criminolóxico/a segundo requisitos", "técnico/a en mediación penal", "analista de datos criminolóxicos", "técnico/a de reinserción social", "investigador/a en criminoloxía"]};
+  const UI32 = {
+    gl:{jobs:'Saídas profesionais de exemplo', download:'Descargar PDF do itinerario', choose:'Escoller rutas para o PDF', all:'Todas', none:'Ningunha', close:'Pechar', popTitle:'Información do paso', pdfSubtitle:'Orientación académica e deseño de itinerarios personalizados', botWorking:'Estou consultando ItineraBot…', botFallback:'Resposta orientativa rápida'},
+    es:{jobs:'Puestos de trabajo de ejemplo', download:'Descargar PDF del itinerario', choose:'Escoger rutas para el PDF', all:'Todas', none:'Ninguna', close:'Cerrar', popTitle:'Información del paso', pdfSubtitle:'Orientación académica y diseño de itinerarios personalizados', botWorking:'Estoy consultando ItineraBot…', botFallback:'Respuesta orientativa rápida'},
+    en:{jobs:'Example career outcomes', download:'Download pathway PDF', choose:'Choose routes for the PDF', all:'All', none:'None', close:'Close', popTitle:'Step information', pdfSubtitle:'Academic guidance and personalised pathway design', botWorking:'Checking ItineraBot…', botFallback:'Fast guidance answer'},
+    fr:{jobs:'Métiers possibles', download:'Télécharger le PDF du parcours', choose:'Choisir les parcours pour le PDF', all:'Tous', none:'Aucun', close:'Fermer', popTitle:'Information de l’étape', pdfSubtitle:'Orientation académique et conception de parcours personnalisés', botWorking:'Consultation d’ItineraBot…', botFallback:'Réponse rapide d’orientation'},
+    pl:{jobs:'Przykładowe ścieżki zawodowe', download:'Pobierz PDF ścieżki', choose:'Wybierz trasy do PDF', all:'Wszystkie', none:'Żadna', close:'Zamknij', popTitle:'Informacja o kroku', pdfSubtitle:'Doradztwo akademickie i projektowanie spersonalizowanych ścieżek', botWorking:'Sprawdzam ItineraBot…', botFallback:'Szybka odpowiedź orientacyjna'},
+    de:{jobs:'Beispielberufe', download:'PDF des Bildungswegs herunterladen', choose:'Wege für PDF auswählen', all:'Alle', none:'Keine', close:'Schließen', popTitle:'Schrittinformation', pdfSubtitle:'Akademische Orientierung und Gestaltung personalisierter Bildungswege', botWorking:'ItineraBot wird abgefragt…', botFallback:'Schnelle Orientierung'}
+  };
+  function T32(k){ return (UI32[state.lang]&&UI32[state.lang][k]) || UI32.gl[k] || k; }
+  function e32(x){ return escapeHTML(String(x ?? '')); }
+  function n32(x){ return normalise(String(x||'')); }
+  function a32(x){ return Array.isArray(x)?x:[]; }
+  function currentStudy32(){ return state.data.studies.find(p=>p.id===state.adventure.selectedProgramId) || programs(state.adventure.goalText)[0]; }
+  function jobsFor(p){
+    const list = JOBS_GL[p?.id] || [];
+    if(list.length) return list.slice(0,10);
+    const q=n32([p?.name,p?.family,p?.level].join(' '));
+    if(q.includes('grado')||q.includes('grao')||q.includes('degree')) return ['consultor/a especializado/a','técnico/a de proxectos','analista sectorial','docente con formación habilitante se procede','investigador/a','xestor/a de programas','asesor/a técnico/a','coordinador/a de equipos','técnico/a de administración','emprendedor/a no sector'];
+    if(q.includes('fp')||q.includes('técnico')) return ['técnico/a cualificado/a','operario/a especializado/a','instalador/a','mantemento técnico','axudante técnico/a','responsable de equipo con experiencia','técnico/a de soporte','profesional autónomo/a','control de calidade','comercial técnico/a'];
+    return ['profesional do sector','técnico/a de apoio','xestor/a de proxectos','asesor/a especializado/a','docente con formación complementaria'];
+  }
+
+  function getRoutes32(){
+    if(typeof currentRoutes === 'function'){
+      try{ return currentRoutes(); }catch(e){}
+    }
+    const p=currentStudy32(); if(!p) return {p:null,b:null,routes:[]};
+    return {p,b:{name:'Consultar modalidade recomendada',why:'Comprobar fonte oficial.'},routes:[{title:'Ruta orientativa',steps:['Etapa actual','Requisitos oficiais',p.name],note:'Verificar fontes oficiais.',sources:p.sources||[]}]};
+  }
+
+  function stepInfo32(step,p){
+    if(typeof stepInfo === 'function'){ try{ return stepInfo(step,p); }catch(e){} }
+    return {title:step,text:'Comproba requisitos, prazos e condicións na fonte oficial vixente.',sources:p?.sources||['qedu','ruct','xunta-fp-oferta-2025-2026']};
+  }
+
+  function routeVisual32(route,idx,p){
+    return `<article class="v32-route-card" style="--delay:${idx*75}ms">
+      <header><label><input type="checkbox" class="v32-route-check" value="${idx}" checked> <span>${idx+1}</span><strong>${e32(route.title)}</strong></label></header>
+      <div class="v32-path">${route.steps.map((s,i)=>`<button type="button" class="v32-step ${i===0?'start':''} ${i===route.steps.length-1?'end':''}" data-step="${e32(s)}" data-route="${idx}"><i>${i+1}</i><b>${e32(s)}</b></button>${i<route.steps.length-1?'<em></em>':''}`).join('')}</div>
+      ${route.note?`<p>${e32(route.note)}</p>`:''}
+      ${sourceLinks(route.sources||[])}
+    </article>`;
+  }
+
+  function jobsHTML32(p){
+    return `<section class="v32-jobs"><h3>${e32(T32('jobs'))}</h3><div>${jobsFor(p).map((j,i)=>`<button type="button" class="v32-job" data-job="${e32(j)}"><span>${i+1}</span>${e32(j)}</button>`).join('')}</div></section>`;
+  }
+
+  function pdfPanel32(routes){
+    return `<section class="v32-pdf-panel"><h3>${e32(T32('choose'))}</h3><p>${e32(state.lang==='gl'?'Marca unha, varias ou todas as rutas antes de descargar o PDF.':'Select one, several or all routes before downloading the PDF.')}</p><div><button type="button" id="v32AllRoutes">${e32(T32('all'))}</button><button type="button" id="v32NoRoutes">${e32(T32('none'))}</button><button type="button" id="v32DownloadPdf">${e32(T32('download'))}</button></div></section>`;
+  }
+
+  function availabilityText32(p){
+    const av=p?.availability_by_province||{};
+    const lines=[];
+    Object.keys(av).forEach(k=>{
+      lines.push(k+':');
+      a32(av[k]).forEach(x=>{
+        if(typeof x==='string') lines.push('  - '+x);
+        else lines.push('  - '+[x.city,x.center,x.note].filter(Boolean).join(' · '));
+      });
+    });
+    return lines.length?lines:['Consultar oferta oficial vixente.'];
+  }
+  function ponderText32(p){ const ps=a32(p?.ponderation_subjects); return ps.length?ps.map(x=>(x.subject||x)+' · '+(x.weight||'consultar fonte oficial')):['Consultar CIUG ou fonte oficial correspondente.']; }
+  function subjectsText32(p){ return a32(p?.subjects).length?a32(p.subjects):['Consultar materias recomendadas na fonte oficial ou no centro.']; }
+
+  async function downloadItineraryPDF32(p,b,routes){
+    const jsPDF = await loadJsPDF32();
+    if(!jsPDF){ exportPDF('adventureResult','ITINERA · Itinerario'); return; }
+    const doc = new jsPDF({unit:'mm',format:'a4'});
+    const margin=14, width=182;
+    let y=14;
+    const line=(txt,size=10,bold=false)=>{
+      doc.setFont('helvetica', bold?'bold':'normal'); doc.setFontSize(size);
+      const chunks=doc.splitTextToSize(String(txt||''), width);
+      chunks.forEach(c=>{ if(y>282){doc.addPage(); y=14;} doc.text(c, margin, y); y+=size*0.46+2; });
+    };
+    doc.setDrawColor(16,61,47); doc.setFillColor(16,61,47); doc.rect(0,0,210,22,'F');
+    doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.text('ITINERA', margin, 14);
+    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.text(T32('pdfSubtitle'), margin+36, 14);
+    doc.setTextColor(18,39,31); y=32;
+    line(p.name,17,true);
+    line(T32('download'),9,false); y+=2;
+    line(state.lang==='gl'?'Resumo da meta':'Goal summary',12,true);
+    line([p.level,p.family].filter(Boolean).join(' · '),10,false);
+    y+=2;
+    line(state.lang==='gl'?'Bacharelato / vía recomendada':'Recommended route',12,true);
+    line((b?.name||'')+'. '+(b?.why||''),10,false);
+    y+=2;
+    line(state.lang==='gl'?'Materias recomendables':'Recommended subjects',12,true);
+    subjectsText32(p).forEach(x=>line('• '+x,9,false));
+    y+=1;
+    line(state.lang==='gl'?'Ponderacións':'Weightings',12,true);
+    ponderText32(p).forEach(x=>line('• '+x,9,false));
+    y+=1;
+    line(state.lang==='gl'?'Onde está dispoñible':'Availability',12,true);
+    availabilityText32(p).forEach(x=>line(x,9,false));
+    y+=1;
+    line(T32('jobs'),12,true);
+    jobsFor(p).forEach(x=>line('• '+x,9,false));
+    routes.forEach((r,i)=>{
+      y+=2; line((i+1)+'. '+r.title,12,true);
+      r.steps.forEach((s,j)=>line((j+1)+') '+s,9,false));
+      if(r.note) line(r.note,9,false);
+    });
+    y+=2; line(state.lang==='gl'?'Nota: documento orientativo. Verifica requisitos, prazas, notas, centros e ponderacións na fonte oficial vixente.':'Note: guidance document. Verify dynamic data in the current official source.',8,false);
+    doc.save('itinera-itinerario-'+slug(p.name)+'.pdf');
+  }
+  function loadJsPDF32(){
+    return new Promise(resolve=>{
+      if(window.jspdf?.jsPDF) return resolve(window.jspdf.jsPDF);
+      const s=document.createElement('script');
+      s.src='https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js';
+      s.onload=()=>resolve(window.jspdf?.jsPDF||null);
+      s.onerror=()=>resolve(null);
+      document.head.appendChild(s);
+    });
+  }
+
+  function showStepPopover32(ev,info){
+    document.querySelector('.v32-popover')?.remove();
+    const pop=document.createElement('aside');
+    pop.className='v32-popover';
+    pop.innerHTML=`<button type="button" class="v32-close" aria-label="${e32(T32('close'))}">×</button><h3>${e32(info.title||T32('popTitle'))}</h3><p>${e32(info.text||'')}</p>${sourceLinks(info.sources||[])}`;
+    document.body.appendChild(pop);
+    const x=ev.clientX, y=ev.clientY;
+    const rect=pop.getBoundingClientRect();
+    pop.style.left=Math.min(Math.max(12,x-rect.width/2), window.innerWidth-rect.width-12)+'px';
+    pop.style.top=Math.max(12,y-rect.height-18)+'px';
+    pop.querySelector('.v32-close').onclick=()=>pop.remove();
+    setTimeout(()=>document.addEventListener('click',function closeOutside(e){ if(!pop.contains(e.target) && !e.target.classList.contains('v32-step')){pop.remove();document.removeEventListener('click',closeOutside);} }),80);
+  }
+
+  const prevRender32 = renderAdventureResult;
+  renderAdventureResult = function(){
+    const stage=document.getElementById('adventureResult'); if(!stage) return prevRender32();
+    const {p,b,routes}=getRoutes32();
+    if(!state.adventure.goalText || !p) return prevRender32();
+    stage.innerHTML=`<article class="v32-sim-result">
+      <header><h2>${e32(p.name)}</h2><p>${e32(state.lang==='gl'?'Itinerario visual con información ampliada, saídas profesionais e PDF descargable.':'Visual pathway with expanded information, career outcomes and downloadable PDF.')}</p></header>
+      <section class="v32-summary-grid">
+        <article><h3>${e32(state.lang==='gl'?'Bacharelato / vía':'Recommended route')}</h3><strong>${e32(b?.name||'')}</strong><p>${e32(b?.why||'')}</p></article>
+        <article><h3>${e32(state.lang==='gl'?'Materias':'Subjects')}</h3><div class="v30-chips">${subjectsText32(p).map(s=>`<span>${e32(s)}</span>`).join('')}</div></article>
+        <article><h3>${e32(state.lang==='gl'?'Ponderacións':'Weightings')}</h3><div class="v32-list">${ponderText32(p).map(s=>`<p>${e32(s)}</p>`).join('')}</div></article>
+        <article><h3>${e32(state.lang==='gl'?'Onde está dispoñible':'Availability')}</h3><div class="v32-list">${availabilityText32(p).map(s=>`<p>${e32(s)}</p>`).join('')}</div></article>
+      </section>
+      ${jobsHTML32(p)}
+      <section class="v32-routes"><h3>${e32(state.lang==='gl'?'Rutas xeradas':'Generated routes')}</h3><p>${e32(state.lang==='gl'?'Fai clic en calquera paso para abrir unha ventá con información específica.':'Click any step to open a visible information window.')}</p>${routes.map((r,i)=>routeVisual32(r,i,p)).join('')}</section>
+      ${pdfPanel32(routes)}
+    </article>`;
+    document.querySelectorAll('.v32-step').forEach(btn=>btn.onclick=(ev)=>{
+      const info=stepInfo32(btn.dataset.step,p);
+      showStepPopover32(ev,info);
+    });
+    document.querySelectorAll('.v32-job').forEach(btn=>btn.onclick=(ev)=>showStepPopover32(ev,{title:btn.dataset.job,text:state.lang==='gl'?'Saída profesional de exemplo asociada ao título seleccionado. A dispoñibilidade real depende do mercado laboral, especialización, experiencia e normativa aplicable.':'Example career outcome associated with the selected qualification. Real access depends on labour market, specialisation, experience and regulations.',sources:p.sources||[]}));
+    document.getElementById('v32AllRoutes')?.addEventListener('click',()=>document.querySelectorAll('.v32-route-check').forEach(c=>c.checked=true));
+    document.getElementById('v32NoRoutes')?.addEventListener('click',()=>document.querySelectorAll('.v32-route-check').forEach(c=>c.checked=false));
+    document.getElementById('v32DownloadPdf')?.addEventListener('click',()=>{
+      const selected=[...document.querySelectorAll('.v32-route-check')].filter(c=>c.checked).map(c=>routes[Number(c.value)]).filter(Boolean);
+      downloadItineraryPDF32(p,b,selected.length?selected:routes);
+    });
+  };
+
+  const previousAsk32 = askItineraBot;
+  askItineraBot = async function(text){
+    const fast = new Promise(resolve=>setTimeout(()=>resolve(null),4500));
+    const remote = previousAsk32(text).catch(()=>null);
+    const first = await Promise.race([remote, fast]);
+    if(first) return first;
+    return improvedBotFallback32(text);
+  };
+  function improvedBotFallback32(text){
+    const p=programs(text)[0];
+    const q=n32(text);
+    if(p){
+      return `<p><strong>${e32(T32('botFallback'))}.</strong> ${e32(p.name)}: ${e32([p.level,p.family].filter(Boolean).join(' · '))}.</p><p>${e32(state.lang==='gl'?'Podo orientarte sobre rutas, materias, saídas profesionais e fontes oficiais. Para datos dinámicos, comproba sempre a fonte vixente.':'I can guide you on routes, subjects, career outcomes and official sources. Always check dynamic data in the current official source.')}</p>${sourceLinks(p.sources||['qedu','ruct','ciug-admision','xunta-fp-oferta-2025-2026'])}`;
+    }
+    if(q.includes('ponder')||q.includes('nota')||q.includes('ciug')) return `<p>${e32(state.lang==='gl'?'As notas e ponderacións cambian por curso, grao e universidade. Usa CIUG como fonte principal en Galicia e comproba sempre a táboa vixente.':'Cut-off marks and weightings change by year, degree and university. Check the current official table.')}</p>${sourceLinks(['ciug-admision','ciug-ponderaciones-2026','ciug-notas-corte-2025'])}`;
+    if(q.includes('fp')||q.includes('ciclo')) return `<p>${e32(state.lang==='gl'?'Para FP, comproba familia profesional, modalidade, centro, prazas e requisitos na Xunta FP e TodoFP.':'For VET, check family, modality, centre, places and requirements in official sources.')}</p>${sourceLinks(['xunta-fp-oferta-2025-2026','todofp-familias','xunta-fp-ciclos'])}`;
+    return `<p><strong>${e32(T32('botFallback'))}.</strong> ${e32(state.lang==='gl'?'Podo axudarche a ordenar unha decisión académica, comparar rutas, revisar estudos e localizar fontes oficiais. Escribe unha meta concreta, por exemplo “psicoloxía”, “enfermaría”, “electricidade” ou “ciclo superior sen bacharelato”.':'I can help you organise an academic decision, compare routes and locate official sources. Type a specific goal.')}</p>${sourceLinks(['qedu','ruct','ciug-admision','xunta-fp-oferta-2025-2026'])}`;
+  }
+
+  function bindChat32(){
+    const form=document.getElementById('chatForm');
+    if(!form || form.dataset.v32Bound) return;
+    form.dataset.v32Bound='1';
+    form.onsubmit=async e=>{
+      e.preventDefault();
+      const input=document.getElementById('chatInput');
+      const txt=input.value.trim();
+      if(!txt) return;
+      addMsg('user',`<p>${e32(txt)}</p>`);
+      input.value='';
+      const pending=document.createElement('div');
+      pending.className='msg bot v32-pending';
+      pending.innerHTML=`<p>${e32(T32('botWorking'))}</p>`;
+      document.getElementById('chatLog').appendChild(pending);
+      document.getElementById('chatLog').scrollTop=document.getElementById('chatLog').scrollHeight;
+      const ans=await askItineraBot(txt);
+      pending.innerHTML=ans;
+    };
+  }
+
+  const prevInit32 = init;
+  init=function(){ prevInit32(); setTimeout(()=>{bindChat32(); try{renderAdventureResult();}catch(e){}},1400); };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{bindChat32(); try{renderAdventureResult();}catch(e){}},1700),{once:true});
+  else setTimeout(()=>{bindChat32(); try{renderAdventureResult();}catch(e){}},900);
+  document.addEventListener('change',e=>{ if(e.target && e.target.id==='languageSelect') setTimeout(()=>{bindChat32(); try{renderAdventureResult();}catch(err){}},200); });
+})();
