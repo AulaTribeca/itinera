@@ -344,3 +344,13 @@ ITINERA v0.29
 - Pie de página reducido visualmente y texto “Ecosistema educativo Tribeca”.
 - Encabezado ordenado, sin botones pesados, con enlaces de texto.
 - Simulador avanzado en gallego: disponibilidad, materias, ponderaciones, rutas visuales y pasos clicables.
+
+
+ITINERA v0.30
+- Logo solo con imagen, sin letras inferiores, en cabecera, portada, símbolo y favicon.
+- Nuevo título: orientación académica y diseño de itinerarios personalizados.
+- El subtítulo aparece junto al logo en el encabezado.
+- Se eliminan los indicadores visibles de versión.
+- Botones/enlaces de ItineraBot y Simulador con colores diferenciados tomados del logo.
+- Simulador más sencillo, visual y premium.
+- Traducción avanzada de la interfaz y de los nombres de estudios a todos los idiomas del selector.
