@@ -333,3 +333,14 @@ ITINERA v0.28
 - Refuerza gallego como idioma por defecto.
 - Traduce la interfaz simplificada completa al idioma seleccionado.
 - Traduce portada, menú, buscador, botones superiores y pie.
+
+
+ITINERA v0.29
+- Sustituye el logo por la nueva versión con fondo transparente.
+- Actualiza favicon, logo de cabecera, portada y símbolo base.
+- Elimina la información visible de versión.
+- Portada mucho más limpia: logo, texto breve y tres botones principales.
+- El panel derecho de portada contiene solo ItineraBot, Simular itinerario y Buscador de estudos.
+- Pie de página reducido visualmente y texto “Ecosistema educativo Tribeca”.
+- Encabezado ordenado, sin botones pesados, con enlaces de texto.
+- Simulador avanzado en gallego: disponibilidad, materias, ponderaciones, rutas visuales y pasos clicables.

@@ -4008,3 +4008,322 @@ document.addEventListener('DOMContentLoaded',init);
     if(e.target && e.target.id==='languageSelect') setTimeout(v28Apply, 80);
   });
 })();
+
+
+/* ITINERA v0.29 · logo novo, portada limpa e simulador galego avanzado */
+(function(){
+  const GL = {
+    menuSearch:'Buscador',
+    menuSimulator:'Simulador',
+    menuBot:'ItineraBot',
+    menuSources:'Fontes oficiais',
+    heroLead:'Escolle, deseña e infórmate. ITINERA axúdache a ordenar decisións académicas con rutas visuais, estudos dispoñibles e fontes oficiais.',
+    heroSearch:'Buscar estudos',
+    heroSim:'Simular itinerario',
+    heroBot:'ItineraBot',
+    finderEyebrow:'Buscador guiado',
+    finderTitle:'Buscar estudos',
+    finderDescription:'Busca por nome, familia profesional, área universitaria ou profesión.',
+    finderLabel:'Que queres estudar ou explorar?',
+    finderPlaceholder:'Ex.: psicoloxía, enfermaría, soldadura, informática, educación infantil…',
+    simTitle:'Simulador de itinerarios',
+    simLead:'Escolle onde estás e a túa meta. O simulador constrúe rutas, materias recomendables, dispoñibilidade e fontes de verificación.',
+    stepStart:'Punto de partida',
+    stepGoal:'Meta académica',
+    stepMode:'Tipo de ruta',
+    direct:'Ruta máis curta',
+    all:'Mostrar todas as rutas',
+    examples:'Exemplos. Podes escribir calquera estudo ou profesión.',
+    bach:'Bacharelato recomendado',
+    subjects:'Materias recomendables',
+    ponderations:'Ponderacións',
+    availability:'Onde está dispoñible',
+    routes:'Itinerarios posibles',
+    sources:'Fontes para comprobar',
+    clickStep:'Preme nun paso do itinerario para ver a información correspondente.',
+    noGoal:'Escribe unha meta para debuxar a ruta.',
+    noExactPonderation:'ITINERA non ten ponderación exacta cargada para este estudo. Consulta a táboa oficial da CIUG ou a fonte autonómica correspondente antes de escoller materias.',
+    checkOfficial:'Dato dinámico: comproba sempre convocatoria, prazas, notas, centros e ponderacións na fonte oficial vixente.',
+    pdfChoose:'Escoller rutas para o PDF',
+    pdfAll:'Todas',
+    pdfNone:'Ningunha',
+    pdfGenerate:'Xerar PDF',
+    startOptions:{
+      eso_cursando:'Estou cursando ESO',
+      eso_titulo:'Teño título de ESO',
+      eso_sin:'Non teño título de ESO',
+      bach:'Estou en Bacharelato',
+      fpgm:'Estou en FP de grao medio',
+      fpgs:'Estou en FP de grao superior',
+      grado:'Xa teño un grao universitario'
+    }
+  };
+
+  function gl(k){ return GL[k] || k; }
+  function esc(x){ return escapeHTML(String(x ?? '')); }
+  function norm(x){ return normalise(String(x || '')); }
+  function arr(x){ return Array.isArray(x) ? x : []; }
+  function currentStudy(){ return state.data.studies.find(p=>p.id===state.adventure.selectedProgramId) || programs(state.adventure.goalText)[0]; }
+
+  function glSubject(text=''){
+    return String(text)
+      .replaceAll('Tecnología','Tecnoloxía')
+      .replaceAll('Dibujo técnico','Debuxo técnico')
+      .replaceAll('Dibujo Técnico','Debuxo Técnico')
+      .replaceAll('Biología','Bioloxía')
+      .replaceAll('Geografía','Xeografía')
+      .replaceAll('Historia de la Filosofía','Historia da Filosofía')
+      .replaceAll('Matemáticas Aplicadas a las Ciencias Sociales','Matemáticas Aplicadas ás Ciencias Sociais')
+      .replaceAll('Química','Química')
+      .replaceAll('Física','Física')
+      .replaceAll('Programación','Programación')
+      .replaceAll('Empresa','Empresa');
+  }
+
+  function kind(p){
+    const t=norm(p?.type), l=norm(p?.level);
+    if(t==='grado' || l.includes('univers')) return 'grado';
+    if(t==='fpgs' || l.includes('superior')) return 'fpgs';
+    if(t==='fpgm' || l.includes('medio')) return 'fpgm';
+    if(t==='fpb' || l.includes('basic')) return 'fpb';
+    if(t.includes('especializacion') || l.includes('especializacion')) return 'especializacion';
+    if(t==='master' || l.includes('master')) return 'master';
+    return t || 'outro';
+  }
+
+  function hay(p){
+    return norm([p?.name,p?.family,p?.level,p?.regulated,p?.route,arr(p?.keywords).join(' ')].join(' '));
+  }
+
+  function bachForStudy(p){
+    const q=hay(p);
+    if(/arquitect|ingenier|informat|matematic|fisic|industrial|tecnolog|aeronaut|telecom|edificacion|dibujo|debuxo/.test(q)){
+      return {name:'Bacharelato de Ciencias e Tecnoloxía', why:'É a vía máis coherente para arquitectura, enxeñarías, tecnoloxía, informática e estudos con Matemáticas II, Física ou Debuxo Técnico II.'};
+    }
+    if(/medicin|enfermer|farmac|biolog|quimic|veterinar|odontolog|fisioterapia|salud|sanidad|nutricion|psicolog/.test(q)){
+      return {name:'Bacharelato de Ciencias e Tecnoloxía', why:'É recomendable para Ciencias da Saúde. En Psicoloxía convén revisar Bioloxía, Matemáticas II ou Matemáticas Aplicadas segundo a ponderación oficial.'};
+    }
+    if(/derecho|dereito|econom|empresa|administracion|marketing|turismo|educacion|pedagog|trabajo social|sociolog|periodismo|comunicacion|criminolog/.test(q)){
+      return {name:'Bacharelato de Humanidades e Ciencias Sociais', why:'É a vía coherente para estudos sociais, xurídicos, económicos, educativos e de comunicación. Comproba ponderacións por grao e universidade.'};
+    }
+    if(/filolog|historia|filosof|humanidad|latin|lingua|lengua|traduc|patrimonio/.test(q)){
+      return {name:'Bacharelato de Humanidades e Ciencias Sociais', why:'É a vía máis coherente para humanidades, linguas, historia, filosofía e estudos culturais.'};
+    }
+    if(/arte|diseñ|diseno|musica|danza|audiovisual|bellas artes|escenic/.test(q)){
+      return {name:'Bacharelato de Artes', why:'É a vía máis coherente para ensinanzas artísticas, deseño, música, artes escénicas e creación audiovisual.'};
+    }
+    return {name:'Bacharelato segundo a rama do estudo', why:'Escolle a modalidade que dea mellor base e mellores ponderacións para a meta concreta. Comproba a fonte oficial.'};
+  }
+
+  function makeRoute(title, steps, note='', sources=[]){ return {title, steps:steps.filter(Boolean), note, sources}; }
+
+  function buildRoutes(p){
+    const k=kind(p), b=bachForStudy(p), r=[];
+    if(k==='grado'){
+      r.push(makeRoute('Ruta universitaria directa', ['ESO con título', b.name, 'ABAU/EBAU e admisión universitaria', p.name], 'Ruta habitual cara á universidade. A nota de admisión pode depender de materias ponderables.', ['ciug-admision','ciug-ponderaciones-2026','qedu','ruct']));
+      r.push(makeRoute('Ruta desde FP superior', ['ESO con título', 'Ciclo formativo de grao superior relacionado', 'Admisión universitaria desde FP superior', p.name], 'Pode requirir fase voluntaria da ABAU se a nota de corte é alta.', ['ciug-admision','qedu','ruct']));
+      r.push(makeRoute('Ruta por proba de acceso a grao superior', ['Formación previa', 'Proba de acceso a ciclo superior se cumpres idade/requisitos', 'Ciclo formativo de grao superior relacionado', 'Admisión universitaria desde FP superior', p.name], 'Contempla chegar a ciclo superior sen pasar necesariamente por Bacharelato nin grao medio.', ['xunta-fp-ciclos','ciug-admision']));
+    }else if(k==='fpgs'){
+      r.push(makeRoute('Desde Bacharelato', ['ESO con título', 'Bacharelato', p.name], 'Vía habitual de acceso a un ciclo superior.', ['xunta-fp-oferta-2025-2026']));
+      r.push(makeRoute('Desde FP de grao medio', ['ESO con título', 'Ciclo formativo de grao medio relacionado ou compatible', p.name], 'Permite continuar dentro da FP sen facer Bacharelato.', ['xunta-fp-ciclos']));
+      r.push(makeRoute('Mediante proba de acceso', ['Formación previa', 'Proba de acceso a ciclo superior se cumpres idade/requisitos', p.name], 'Permite acceder a ciclo superior sen pasar por grao medio nin Bacharelato cando se cumpren os requisitos.', ['xunta-fp-ciclos']));
+    }else if(k==='fpgm'){
+      r.push(makeRoute('Desde ESO', ['ESO con título', p.name], 'Ruta directa habitual cara a FP de grao medio.', ['xunta-fp-oferta-2025-2026']));
+      r.push(makeRoute('Mediante proba de acceso', ['Sen título de ESO ou vía alternativa', 'Proba de acceso a grao medio se cumpres requisitos', p.name], 'Vía útil cando non se dispón da titulación ordinaria.', ['xunta-fp-ciclos']));
+      r.push(makeRoute('Desde FP básica', ['FP básica relacionada', 'Acceso a grao medio', p.name], 'Vía máis gradual para continuar dentro da FP.', ['todofp-familias']));
+    }else if(k==='especializacion'){
+      r.push(makeRoute('Desde FP previa', ['Ciclo formativo esixido na ficha oficial', p.name], 'Cada curso de especialización esixe titulacións concretas de acceso.', ['todofp-cursos-especializacion']));
+    }else if(k==='master'){
+      r.push(makeRoute('Ruta de máster', ['Grao universitario oficial compatible', 'Admisión ao máster', p.name], 'Se é habilitante, comproba RUCT, universidade e normativa profesional.', ['ruct','qedu']));
+    }else{
+      r.push(makeRoute('Ruta orientativa', ['Etapa actual', 'Requisitos oficiais de acceso', p.name], 'Comproba sempre a fonte oficial antes de decidir.', ['qedu','ruct','xunta-fp-oferta-2025-2026']));
+    }
+    return r;
+  }
+
+  function adaptStart(routes,start,p){
+    const k=kind(p);
+    if(start==='bach') return routes.map(r=>({...r,steps:r.steps.filter(s=>!s.startsWith('ESO')).map(s=>s==='Bacharelato'?'Bacharelato actual':s)}));
+    if(start==='fpgm' && k==='fpgs') return [makeRoute('Desde grao medio actual', ['Ciclo formativo de grao medio actual', p.name], 'Ruta natural de continuidade dentro da FP.', ['xunta-fp-ciclos'])].concat(routes);
+    if(start==='fpgm' && k==='grado') return [makeRoute('Desde grao medio cara á universidade', ['Ciclo formativo de grao medio actual', 'Ciclo formativo de grao superior relacionado', 'Admisión universitaria desde FP superior', p.name], 'Non require Bacharelato, pero pode ser necesario mellorar nota mediante fase voluntaria da ABAU.', ['ciug-admision','qedu'])].concat(routes);
+    if(start==='fpgs' && k==='grado') return [makeRoute('Desde FP superior a grao universitario', ['Ciclo formativo de grao superior actual', 'Admisión universitaria desde FP superior', 'Fase voluntaria da ABAU se precisas subir nota', p.name], 'Ruta directa desde FP superior cara á universidade.', ['ciug-admision','qedu','ruct'])].concat(routes);
+    if(start==='eso_sin') return routes.map(r=>({...r,steps:['Regularizar acceso: ensinanzas de adultos, FP básica ou proba segundo idade e requisitos'].concat(r.steps.filter(s=>!s.startsWith('ESO')))}));
+    return routes;
+  }
+
+  function currentRoutes(){
+    const p=currentStudy();
+    if(!p) return {p:null,b:null,routes:[]};
+    const b=bachForStudy(p);
+    let routes=adaptStart(buildRoutes(p), state.adventure.start, p);
+    routes=[...new Map(routes.map(r=>[r.title+'|'+r.steps.join('>'),r])).values()];
+    if((state.adventure.adjustment||'direct')!=='all'){
+      routes=routes.sort((a,b)=>a.steps.length-b.steps.length).slice(0,1);
+    }
+    return {p,b,routes};
+  }
+
+  function availabilityHTML(p){
+    const av=p?.availability_by_province || {};
+    const keys=Object.keys(av);
+    if(!keys.length) return `<p class="v29-warning">${gl('checkOfficial')}</p>`;
+    return `<div class="v29-info-grid">${keys.map(k=>{
+      const val=av[k];
+      let body='';
+      if(Array.isArray(val)){
+        body=val.map(x=>{
+          if(typeof x==='string') return `<li>${esc(x).replaceAll('Consultar','Consultar na fonte oficial:')}</li>`;
+          return `<li><strong>${esc(x.city||'')}</strong>${x.center?` · ${esc(x.center)}`:''}${x.note?` <small>${esc(x.note)}</small>`:''}</li>`;
+        }).join('');
+      }else body=`<li>${esc(val)}</li>`;
+      return `<article><h4>${esc(k)}</h4><ul>${body}</ul></article>`;
+    }).join('')}</div>`;
+  }
+
+  function subjectsHTML(p){
+    const subs=arr(p?.subjects);
+    if(!subs.length) return `<p class="v29-warning">Non hai materias específicas cargadas para este estudo. Revisa a ficha oficial e a orientación do centro.</p>`;
+    return `<div class="v29-chip-list">${subs.map(s=>`<span>${esc(glSubject(s))}</span>`).join('')}</div>`;
+  }
+
+  function ponderationsHTML(p){
+    const pond=arr(p?.ponderation_subjects);
+    if(!pond.length) return `<p class="v29-warning">${gl('noExactPonderation')}</p>`;
+    const exact=pond.some(x=>x.weight && !String(x.weight).toLowerCase().includes('consultar'));
+    return `<div class="v29-ponder-list">${pond.map(x=>`<article><strong>${esc(glSubject(x.subject||x))}</strong><span>${esc(x.weight||'consultar CIUG')}</span></article>`).join('')}</div>
+      ${!exact?`<p class="v29-warning">${gl('noExactPonderation')}</p>`:''}`;
+  }
+
+  function stepInfo(step,p){
+    const q=norm(step);
+    if(q.includes('bacharelato')) return {title:step, text:'Escolle a modalidade de Bacharelato que dea mellor base e mellores ponderacións para o estudo obxectivo.', sources:['ciug-ponderaciones-2026','ciug-admision']};
+    if(q.includes('abau')||q.includes('ebau')||q.includes('admis')) return {title:step, text:'A admisión depende da nota de acceso, da fase voluntaria e das ponderacións vixentes para cada grao e universidade.', sources:['ciug-admision','ciug-ponderaciones-2026','ciug-notas-corte-2025']};
+    if(q.includes('grao superior')||q.includes('ciclo superior')) return {title:step, text:'O acceso a ciclos superiores pode facerse desde Bacharelato, desde grao medio ou mediante proba de acceso se cumpres idade e requisitos.', sources:['xunta-fp-ciclos','xunta-fp-oferta-2025-2026']};
+    if(q.includes('grao medio')) return {title:step, text:'O grao medio permite acceder a unha cualificación profesional e pode ser paso cara a grao superior.', sources:['todofp-familias','xunta-fp-oferta-2025-2026']};
+    if(q.includes('proba')) return {title:step, text:'As probas de acceso son vías alternativas reguladas. Debes comprobar idade, prazos, temarios e convocatoria vixente.', sources:['xunta-fp-ciclos']};
+    if(step===p.name) return {title:step, text:'Meta seleccionada. Comproba onde se oferta, requisitos, prazas, modalidade e fontes oficiais antes de decidir.', sources:p.sources||['qedu','ruct','xunta-fp-oferta-2025-2026']};
+    return {title:step, text:'Paso do itinerario. Preme nas fontes oficiais para confirmar requisitos, prazos e condicións.', sources:['qedu','ruct','xunta-fp-oferta-2025-2026']};
+  }
+
+  function sourcesMini(ids){
+    return `<div class="v29-mini-sources">${sourceLinks(ids||[])}</div>`;
+  }
+
+  function routeVisual(route,idx,p){
+    return `<article class="v29-route-card" style="--delay:${idx*70}ms">
+      <header><span>${idx+1}</span><h4>${esc(route.title)}</h4></header>
+      <div class="v29-path">${route.steps.map((s,i)=>`<button type="button" class="v29-step ${i===0?'start':''} ${i===route.steps.length-1?'end':''}" data-step="${esc(s)}">
+        <i>${i+1}</i><strong>${esc(s)}</strong>
+      </button>${i<route.steps.length-1?'<b class="v29-line"></b>':''}`).join('')}</div>
+      ${route.note?`<p>${esc(route.note)}</p>`:''}
+      ${sourcesMini(route.sources)}
+    </article>`;
+  }
+
+  function bindStepInfo(p){
+    const panel=document.getElementById('v29StepInfo');
+    document.querySelectorAll('.v29-step').forEach(btn=>{
+      btn.onclick=()=>{
+        const info=stepInfo(btn.dataset.step,p);
+        if(panel){
+          panel.innerHTML=`<h3>${esc(info.title)}</h3><p>${esc(info.text)}</p>${sourcesMini(info.sources)}`;
+          panel.classList.add('active');
+          panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+        }
+      };
+    });
+  }
+
+  function pdfControls(routes){
+    return `<section class="v251-pdf-select v29-pdf-select"><h3>Escoller rutas para o PDF</h3><div class="v251-checks">${routes.map((r,i)=>`<label><input type="checkbox" class="v29-route-check" value="${i}" checked><span>${esc(r.title)}</span></label>`).join('')}</div><div class="v251-pdf-actions"><button type="button" class="button ghost" id="v29PdfAll">Todas</button><button type="button" class="button ghost" id="v29PdfNone">Ningunha</button><button type="button" class="button primary" id="v29Pdf">Xerar PDF</button></div></section>`;
+  }
+
+  function bindPdf(p,b,routes){
+    document.getElementById('v29PdfAll')?.addEventListener('click',()=>document.querySelectorAll('.v29-route-check').forEach(c=>c.checked=true));
+    document.getElementById('v29PdfNone')?.addEventListener('click',()=>document.querySelectorAll('.v29-route-check').forEach(c=>c.checked=false));
+    document.getElementById('v29Pdf')?.addEventListener('click',()=>{
+      const selected=[...document.querySelectorAll('.v29-route-check')].filter(c=>c.checked).map(c=>routes[Number(c.value)]).filter(Boolean);
+      if(!selected.length){ alert('Selecciona polo menos unha ruta.'); return; }
+      exportPDF('adventureResult','ITINERA · Itinerario académico');
+    });
+  }
+
+  function renderAdventure(){
+    const starts=[['eso_cursando','Estou cursando ESO'],['eso_titulo','Teño título de ESO'],['eso_sin','Non teño título de ESO'],['bach','Estou en Bacharelato'],['fpgm','Estou en FP de grao medio'],['fpgs','Estou en FP de grao superior'],['grado','Xa teño un grao universitario']];
+    const sb=document.getElementById('adventureStartOptions');
+    document.getElementById('adventureStartTitle').textContent=gl('stepStart');
+    if(sb){ sb.innerHTML=starts.map(([id,label])=>`<button type="button" class="${state.adventure.start===id?'active':''}" data-start="${id}">${esc(label)}</button>`).join(''); sb.querySelectorAll('[data-start]').forEach(b=>b.onclick=()=>{state.adventure.start=b.dataset.start;state.adventure.step=2;renderAdventure();}); }
+    const input=document.getElementById('adventureGoalSearch');
+    document.getElementById('adventureGoalTitle').textContent=gl('stepGoal');
+    if(input){ input.placeholder='Escribe unha carreira, ciclo ou profesión'; input.value=state.adventure.goalText||''; input.oninput=e=>{state.adventure.goalText=e.target.value;state.adventure.selectedProgramId=null;renderAdventure();}; }
+    const examples=document.getElementById('adventureGoalOptions');
+    if(examples){ examples.innerHTML=`<p class="v251-example-label">${gl('examples')}</p>`+['psicoloxía','enfermaría','arquitectura','dereito','electricidade','soldadura','informática','educación infantil'].map(x=>`<button type="button" data-goal="${esc(x)}">${esc(x)}</button>`).join(''); examples.querySelectorAll('[data-goal]').forEach(b=>b.onclick=()=>{state.adventure.goalText=b.dataset.goal;state.adventure.step=3;renderAdventure();}); }
+    const matches=programs(state.adventure.goalText), dis=document.getElementById('adventureDisambiguation');
+    if(dis){ if(state.adventure.goalText&&matches.length>1){ dis.innerHTML=matches.slice(0,5).map(p=>`<button type="button" class="choice-card" data-pid="${p.id}">${esc(p.name)}<br><small>${esc([p.family,p.level].filter(Boolean).join(' · '))}</small></button>`).join(''); dis.querySelectorAll('[data-pid]').forEach(b=>b.onclick=()=>{state.adventure.selectedProgramId=b.dataset.pid;state.adventure.step=3;renderAdventure();}); }else dis.innerHTML=''; }
+    const q=document.getElementById('adventureQuestions');
+    document.getElementById('adventureQuestionsTitle').textContent=gl('stepMode');
+    if(q){ const mode=state.adventure.adjustment||'direct'; q.innerHTML=[['direct',gl('direct')],['all',gl('all')]].map(([id,label])=>`<button type="button" class="${mode===id?'active':''}" data-adjust="${id}">${esc(label)}</button>`).join(''); q.querySelectorAll('[data-adjust]').forEach(b=>b.onclick=()=>{state.adventure.adjustment=b.dataset.adjust;state.adventure.step=3;renderAdventure();}); }
+    document.querySelectorAll('.wizard-step').forEach((el,i)=>el.classList.toggle('active',i+1===Math.min(state.adventure.step||1,3)));
+    document.querySelectorAll('.wizard-progress span').forEach((el,i)=>{el.classList.toggle('active',i+1<=Math.min(state.adventure.step||1,3));el.onclick=()=>{state.adventure.step=i+1;renderAdventure();};el.style.cursor='pointer';});
+    renderAdventureResult();
+  }
+
+  function renderAdventureResult(){
+    const stage=document.getElementById('adventureResult');
+    if(!stage) return;
+    if(!state.adventure.goalText){ stage.innerHTML=`<div class="v25-route-empty"><h2>${gl('simTitle')}</h2><p>${gl('noGoal')}</p></div>`; return; }
+    const {p,b,routes}=currentRoutes();
+    if(!p){ stage.innerHTML=`<div class="v25-route-empty"><h2>${gl('simTitle')}</h2><p>Non hai coincidencias claras. Proba con outra palabra ou consulta as fontes oficiais.</p>${sourcesMini(['qedu','ruct','xunta-fp-oferta-2025-2026','ciug-admision'])}</div>`; return; }
+    stage.innerHTML=`<article class="v29-simulator-result">
+      <header class="v29-result-head"><p class="eyebrow">${gl('simTitle')}</p><h2>${esc(p.name)}</h2><p>${gl('simLead')}</p></header>
+      <section class="v29-detail-grid">
+        <article><h3>${gl('bach')}</h3><strong>${esc(b.name)}</strong><p>${esc(b.why)}</p></article>
+        <article><h3>${gl('subjects')}</h3>${subjectsHTML(p)}</article>
+        <article><h3>${gl('ponderations')}</h3>${ponderationsHTML(p)}</article>
+        <article><h3>${gl('availability')}</h3>${availabilityHTML(p)}</article>
+      </section>
+      <section class="v29-routes"><h3>${gl('routes')}</h3><p>${gl('clickStep')}</p>${routes.map((r,i)=>routeVisual(r,i,p)).join('')}</section>
+      <aside id="v29StepInfo" class="v29-step-info"><h3>Información do paso</h3><p>${gl('clickStep')}</p></aside>
+      <p class="v29-warning">${gl('checkOfficial')}</p>
+      ${pdfControls(routes)}
+    </article>`;
+    bindStepInfo(p);
+    bindPdf(p,b,routes);
+  }
+
+  function headerAndHero(){
+    document.body.classList.add('v29-clean');
+    const badge=document.getElementById('updateBadge'); if(badge) badge.remove();
+    const faq=document.getElementById('headerFaqBtn'); if(faq) faq.style.display='none';
+    const sources=document.getElementById('headerSourcesBtn'); if(sources){ sources.textContent='Fontes oficiais'; sources.style.display='inline-flex';}
+    const sim=document.getElementById('headerSimulatorBtn'); if(sim) sim.textContent='Simular itinerario';
+    const bot=document.getElementById('headerItinerabotBtn'); if(bot) bot.textContent='ItineraBot';
+    const nav=document.getElementById('mainNav'); if(nav) nav.style.display='none';
+    const brandCopy=document.querySelector('.brand-copy'); if(brandCopy) brandCopy.style.display='none';
+    const heroTitle=document.getElementById('heroTitle'); if(heroTitle) heroTitle.style.display='none';
+    const heroEyebrow=document.getElementById('heroEyebrow'); if(heroEyebrow) heroEyebrow.style.display='none';
+    const lead=document.getElementById('heroLead'); if(lead) lead.textContent=GL.heroLead;
+    const links=document.querySelectorAll('.v27-text-link');
+    if(links[0]) links[0].textContent='Buscar estudos';
+    if(links[1]) links[1].textContent='Simular itinerario';
+    if(links[2]) links[2].textContent='ItineraBot';
+    const card=document.querySelector('.v27-cover-card');
+    if(card){
+      card.innerHTML=`<div class="v29-cover-buttons">
+        <a href="#asistente" data-route="asistente"><span>01</span><strong>ItineraBot</strong><small>Pregunta con apoio das fontes oficiais.</small></a>
+        <a href="#aventura" data-route="aventura"><span>02</span><strong>Simular itinerario</strong><small>Constrúe rutas dinámicas e compara alternativas.</small></a>
+        <a href="#inicio" data-route="inicio"><span>03</span><strong>Buscador de estudos</strong><small>Busca por nome, familia ou profesión.</small></a>
+      </div>`;
+      bindRoutes();
+    }
+    document.getElementById('footerBrandSub') && (document.getElementById('footerBrandSub').textContent='Ecosistema educativo Tribeca');
+  }
+
+  const previousInit29 = init;
+  init = function(){
+    previousInit29();
+    setTimeout(()=>{headerAndHero(); renderAdventure();}, 900);
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{headerAndHero(); renderAdventure();},1300),{once:true});
+  else setTimeout(()=>{headerAndHero(); renderAdventure();},600);
+})();
