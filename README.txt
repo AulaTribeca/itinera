@@ -413,3 +413,10 @@ ITINERA v0.37
 - Añade acciones directas según perfil: LUMEN-V, simulador, ItineraBot, buscador, becas y conceptos.
 - Mantiene el simulador, bases de datos y SQL ya generados en versiones anteriores.
 - No requiere SQL nuevo.
+
+
+ITINERA v0.37.1
+- Reorganiza la portada para evitar solapes y exceso de información.
+- La portada pasa a ser una entrada guiada: perfil -> información necesaria -> acción concreta.
+- El buscador queda recogido y se despliega solo cuando el usuario lo necesita.
+- No requiere cambios en Supabase ni SQL.

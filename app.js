@@ -5441,3 +5441,171 @@ document.addEventListener('DOMContentLoaded',init);
   else setTimeout(applyV37,1000);
   document.addEventListener('change',e=>{ if(e.target && e.target.id==='languageSelect') setTimeout(applyV37,250); });
 })();
+
+
+/* ITINERA v0.37.1 · portada máis clara, intuitiva e guiada */
+(function(){
+  const STAGES_V371 = [
+    {id:'no-sei', title:'Non sei que quero estudar', tag:'Comezar desde cero', intro:'Se entras sen ideas claras, o primeiro é explorar intereses, habilidades e formas de aprender, non memorizar nomes de estudos.', next:['Abrir LUMEN-V para coñecer vocación e intereses.','Ver perfís amplos e sectores antes de escoller un título.','Comparar dúas ou tres rutas posibles sen pechar decisión.'], checks:['Que actividades toleras mellor no día a día.','Se prefires unha ruta práctica, académica, curta, longa ou flexible.','Se necesitas unha vía gradual, modular ou con máis apoio.']},
+    {id:'eso', title:'Estou en ESO', tag:'Primeira gran decisión', intro:'Desde a ESO convén entender con calma que cambia se continúas a Bacharelato, a FP ou outras vías adaptadas ao teu momento.', next:['Comparar Bacharelato e FP de grao medio.','Revisar se precisas título de ESO ou vía alternativa.','Simular unha ruta desde a túa situación actual.'], checks:['Que materias levas mellor.','Se queres manter aberta a opción universitaria.','Se precisas apoio educativo, NEAE ou unha ruta máis sostible.']},
+    {id:'bach', title:'Estou en Bacharelato', tag:'Materias, ABAU e meta', intro:'Aquí importan modalidade, materias, ponderacións, notas e tamén a opción de acceder despois a FP superior.', next:['Consultar que materias che convén escoller.','Mirar a nota e a ponderación como referencia.','Comparar grao universitario e FP superior se tes dúbidas.'], checks:['Que estudos requiren certas materias.','Se o grao precisa máster habilitante.','Se tes un plan alternativo realista.']},
+    {id:'fp', title:'Quero facer FP', tag:'Familias, ciclos e centros', intro:'Na FP o importante é mirar familia profesional, ciclo, modalidade, centro, continuidade e saídas reais.', next:['Escoller unha familia profesional.','Buscar ciclos por orde alfabética dentro desa familia.','Ver se che encaixa un ciclo medio, superior ou modular.'], checks:['Requisitos de acceso.','Oferta real por centro e modalidade.','Se despois queres traballar, continuar ou especializarte.']},
+    {id:'uni', title:'Quero ir á universidade', tag:'Graos e acceso', intro:'Non elixas só polo nome do grao. Mira oficialidade, campus, saídas, continuidade e requisitos de admisión.', next:['Buscar graos e campus.','Consultar notas de corte e ponderacións.','Ver se existe ruta alternativa desde FP superior.'], checks:['Se o grao é oficial e onde se imparte.','Se a profesión require pasos posteriores.','Se a ruta é viable academicamente e economicamente.']},
+    {id:'adultos', title:'Son persoa adulta', tag:'Volver estudar con flexibilidade', intro:'Para persoas adultas importan sobre todo tempo, carga asumible, estudos previos, experiencia e obxectivo realista.', next:['Ver vías flexibles: modular, distancia, probas ou maiores de 25/40/45.','Simular unha ruta compatible con traballo ou coidados.','Consultar becas e axudas.'], checks:['Prazos e requisitos exactos.','Carga semanal asumible.','Se hai convalidacións ou acreditación de experiencia.']},
+    {id:'becas', title:'Necesito becas ou axudas', tag:'Financiamento e apoio', intro:'As becas non se miran ao final. Deben revisarse antes de escoller centro, modalidade, residencia ou carga lectiva.', next:['Ver beca xeral, NEAE e axudas específicas.','Comprobar prazo e documentación.','Preguntar por un caso concreto en ItineraBot.'], checks:['Requisitos económicos e académicos.','Prazos oficiais.','Documentación familiar e académica.']}
+  ];
+
+  function e371(v){ return escapeHTML(String(v ?? '')); }
+  function getStage371(){ return STAGES_V371.find(s=>s.id===localStorage.getItem('itinera_v371_stage')) || STAGES_V371[0]; }
+
+  function openFinder371(){
+    const panel=document.querySelector('.search-panel');
+    if(panel){ panel.classList.remove('v371-hidden'); panel.scrollIntoView({behavior:'smooth', block:'start'}); }
+  }
+
+  function renderHero371(){
+    const copy=document.querySelector('.v27-hero-copy');
+    const right=document.querySelector('.v27-cover-card');
+    if(copy){
+      copy.classList.add('v371-hero-copy');
+      copy.innerHTML=`
+        <div class="v371-brandline">
+          <img src="assets/itinera-logo-mark.png" alt="ITINERA" class="v371-logo">
+          <div>
+            <p class="v371-overline">ITINERA</p>
+            <h1 class="v371-title">Orientación académica guiada, clara e paso a paso.</h1>
+          </div>
+        </div>
+        <p class="v371-lead">Se non sabes por onde empezar, ITINERA sitúate, explícache só o necesario e axúdache a pasar da dúbida á ruta concreta.</p>
+        <div class="v371-hero-links">
+          <button type="button" data-v371-open="guide">Comezar guía</button>
+          <button type="button" data-v371-open="finder">Buscar un estudo</button>
+          <button type="button" data-v371-open="sim">Simular itinerario</button>
+          <button type="button" data-v371-open="bot">Preguntar a ItineraBot</button>
+        </div>`;
+    }
+    if(right){
+      right.classList.add('v371-hero-panel');
+      right.innerHTML=`
+        <div class="v371-panel-inner">
+          <p class="v37-kicker">Como funciona</p>
+          <h2>Primeiro oriéntate, despois decide.</h2>
+          <div class="v371-step-list">
+            <article><span>01</span><div><strong>Sitúate</strong><small>Escolle en que momento estás.</small></div></article>
+            <article><span>02</span><div><strong>Comprende</strong><small>Recibe só a información necesaria.</small></div></article>
+            <article><span>03</span><div><strong>Consulta</strong><small>Busca estudos, becas ou conceptos concretos.</small></div></article>
+            <article><span>04</span><div><strong>Simula</strong><small>Xera unha ruta visual e verificable.</small></div></article>
+          </div>
+          <a href="#v371GuidedExperience" class="v371-panel-cta">Escoller o meu perfil</a>
+        </div>`;
+    }
+  }
+
+  function renderGuided371(){
+    const inicio=document.getElementById('inicio');
+    if(!inicio) return;
+    const old=document.getElementById('v37GuidedExperience');
+    let panel=document.getElementById('v371GuidedExperience');
+    if(!panel){
+      panel=document.createElement('section');
+      panel.id='v371GuidedExperience';
+      panel.className='panel v371-guide';
+      if(old) old.insertAdjacentElement('beforebegin', panel);
+      else inicio.appendChild(panel);
+    }
+    if(old) old.style.display='none';
+
+    const stage=getStage371();
+    panel.innerHTML=`
+      <div class="v371-guide-head">
+        <p class="v37-kicker">Experiencia guiada</p>
+        <h2>En que momento estás agora?</h2>
+        <p>Escolle un perfil. ITINERA organiza a orientación para ese caso e deixa a información máis concreta para o momento no que a necesites.</p>
+      </div>
+      <div class="v371-guide-layout">
+        <aside class="v371-profile-picker">
+          <p class="v371-small-label">Paso 1 · Escolle perfil</p>
+          <div class="v371-profile-list">
+            ${STAGES_V371.map(s=>`<button type="button" class="${s.id===stage.id?'active':''}" data-v371-stage="${e371(s.id)}"><strong>${e371(s.title)}</strong><small>${e371(s.tag)}</small></button>`).join('')}
+          </div>
+        </aside>
+        <section class="v371-stage-card">
+          <p class="v371-small-label">Paso 2 · O que necesitas agora</p>
+          <h3>${e371(stage.title)}</h3>
+          <p class="v371-stage-intro">${e371(stage.intro)}</p>
+          <details open>
+            <summary>Seguinte paso lóxico</summary>
+            <ul>${stage.next.map(x=>`<li>${e371(x)}</li>`).join('')}</ul>
+          </details>
+          <details>
+            <summary>Que debes comprobar</summary>
+            <ul>${stage.checks.map(x=>`<li>${e371(x)}</li>`).join('')}</ul>
+          </details>
+          <div class="v371-stage-actions">
+            <button type="button" data-v371-open="lumen">Coñecer vocación con LUMEN-V</button>
+            <button type="button" data-v371-open="finder">Buscar estudos</button>
+            <button type="button" data-v371-open="sim">Simular ruta</button>
+            <button type="button" data-v371-open="bot">Resolver dúbidas</button>
+          </div>
+        </section>
+      </div>
+      <div class="v371-quick-row">
+        <article>
+          <strong>Se xa buscas algo concreto</strong>
+          <p>Abre o buscador só cando xa teñas unha idea de estudo, profesión, familia profesional ou área.</p>
+          <button type="button" data-v371-open="finder">Abrir buscador</button>
+        </article>
+        <article>
+          <strong>Se precisas comparar rutas</strong>
+          <p>O simulador é útil cando xa tes unha meta e queres ver pasos, materias, acceso e alternativas.</p>
+          <button type="button" data-v371-open="sim">Abrir simulador</button>
+        </article>
+        <article>
+          <strong>Se o problema é entender conceptos</strong>
+          <p>ItineraBot pode explicar en linguaxe sinxela graos, másteres, doutoramentos, becas e procedementos.</p>
+          <button type="button" data-v371-open="bot">Abrir ItineraBot</button>
+        </article>
+      </div>`;
+
+    panel.querySelectorAll('[data-v371-stage]').forEach(btn=>btn.onclick=()=>{
+      localStorage.setItem('itinera_v371_stage', btn.dataset.v371Stage);
+      renderGuided371();
+    });
+    panel.querySelectorAll('[data-v371-open]').forEach(btn=>btn.onclick=()=>{
+      const a=btn.dataset.v371Open;
+      if(a==='guide') panel.scrollIntoView({behavior:'smooth', block:'start'});
+      if(a==='finder') openFinder371();
+      if(a==='sim') routeTo('aventura');
+      if(a==='bot') routeTo('asistente');
+      if(a==='lumen') window.open(window.ITINERA_LUMEN_URL || 'https://aulatribeca.github.io/lumen-v/','_blank','noopener');
+    });
+  }
+
+  function setupSearchPanel371(){
+    const panel=document.querySelector('.search-panel');
+    if(!panel || panel.classList.contains('v371-ready')) return;
+    panel.classList.add('v371-ready','v371-hidden');
+    const heading=panel.querySelector('.section-heading');
+    if(heading){
+      const opener=document.createElement('div');
+      opener.className='v371-search-opener';
+      opener.innerHTML=`<p class="v37-kicker">Consulta concreta</p><h2>Buscas xa un estudo específico?</h2><p>O buscador segue dispoñible, pero queda recollido para non saturar a portada. Ábreo cando xa queiras localizar un título, familia profesional ou profesión.</p><button type="button" id="v371RevealFinder">Mostrar buscador</button>`;
+      panel.parentNode.insertBefore(opener,panel);
+      const btn=opener.querySelector('#v371RevealFinder');
+      if(btn) btn.onclick=()=>openFinder371();
+    }
+  }
+
+  function applyV371(){
+    document.body.classList.add('v371');
+    renderHero371();
+    renderGuided371();
+    setupSearchPanel371();
+  }
+
+  const prevInitV371 = init;
+  init = function(){ prevInitV371(); setTimeout(applyV371, 2600); };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(applyV371,2800),{once:true});
+  else setTimeout(applyV371,1600);
+  document.addEventListener('change',e=>{ if(e.target && e.target.id==='languageSelect') setTimeout(applyV371,300); });
+})();

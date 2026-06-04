@@ -1,6 +1,6 @@
 {
   "name": "itinera-v0-25",
-  "version": "0.37-experiencia-guiada",
+  "version": "0.37.1-portada-guiada",
   "private": true,
   "type": "module",
   "description": "ITINERA: GitHub Pages + Supabase official catalog + ItineraBot documental.",
