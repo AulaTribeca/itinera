@@ -5,7 +5,7 @@ const VERSION = '0.37.5-redeseño-radical-buscador-itinerario';
 const I18N = {
   gl: {
     language:'Idioma', navSearch:'Buscar estudos', navRoute:'Comezar itinerario', navFaq:'Preguntas', navSources:'Fontes',
-    homeKicker:'Orientación académica guiada', homeSearchTitle:'Buscador de estudos', homeSearchLead:'Consulta ciclos, graos, másteres e vías formativas por nivel, familia, rama ou profesión.', homeRouteTitle:'Deseñar itinerario', homeRouteLead:'Parte da túa situación actual e constrúe unha ruta clara ata unha meta académica ou profesional.',
+    homeKicker:'Orientación académica guiada', homeSearchTitle:'Buscar estudos', homeSearchLead:'Consulta ciclos, graos, másteres e vías formativas por nivel, familia, rama ou profesión.', homeRouteTitle:'Comezar itinerario', homeRouteLead:'Parte da túa situación actual e constrúe unha ruta clara ata unha meta académica ou profesional.',
     searchEyebrow:'Buscador de estudos', searchTitle:'Busca completa e ordenada', searchLead:'Escribe polo menos tres letras ou explora por nivel, familia e rama. Ao abrir unha ficha verás accesos, itinerarios posibles, saídas profesionais, centros ou lugares de consulta e fontes oficiais.', searchInputLabel:'Que estudo, profesión ou ámbito buscas?', levelFilter:'Nivel', familyFilter:'Familia ou rama', sortFilter:'Ordenar', officialShortcuts:'Comprobación oficial rápida', downloadList:'Descargar selección en PDF',
     routeEyebrow:'Guía por pasos', routeTitle:'Comeza onde estás e chega onde queres', routeLead:'ITINERA non presupón que xa coñezas o sistema educativo. Primeiro identifica o teu punto de partida, despois a meta e finalmente debuxa unha ruta con pasos concretos, explicacións sinxelas e información ampliable.', stepStart:'Punto de partida', stepGoal:'Meta', stepPlan:'Plan', startQuestion:'Cal é a túa situación actual?', startHelp:'Escolle a opción máis parecida. Se non o tes claro, escolle “Non o sei” e a ferramenta ofrecerá rutas prudentes.', goalQuestion:'Cal é a túa meta?', goalHelp:'Busca un estudo, unha familia profesional ou unha profesión. As coincidencias aparecerán de forma visible a partir de tres letras.', planQuestion:'Axusta a ruta', planHelp:'Indica como queres estudar para que o itinerario sexa máis realista.', paceLabel:'Ritmo preferido', placeLabel:'Lugar', modeLabel:'Modalidade', buildRoute:'Deseñar o meu itinerario', back:'Volver', next:'Seguinte paso', emptyRouteTitle:'O teu itinerario aparecerá aquí', emptyRouteLead:'Ao completar os pasos, verás unha liña de tempo clara con cada decisión, cada requisito e os enlaces oficiais necesarios.',
     faqEyebrow:'Preguntas frecuentes', faqTitle:'Dúbidas explicadas con fontes oficiais', faqLead:'Busca unha pregunta ou abre os bloques por tema. As respostas son orientativas e enlazan co lugar oficial que debes comprobar antes de tomar unha decisión definitiva.', downloadFaq:'Descargar FAQ en PDF',
@@ -13,7 +13,7 @@ const I18N = {
   },
   es: {
     language:'Idioma', navSearch:'Buscar estudios', navRoute:'Comenzar itinerario', navFaq:'Preguntas', navSources:'Fuentes',
-    homeKicker:'Orientación académica guiada', homeSearchTitle:'Buscador de estudios', homeSearchLead:'Consulta ciclos, grados, másteres y vías formativas por nivel, familia, rama o profesión.', homeRouteTitle:'Diseñar itinerario', homeRouteLead:'Parte de tu situación actual y construye una ruta clara hasta una meta académica o profesional.',
+    homeKicker:'Orientación académica guiada', homeSearchTitle:'Buscar estudios', homeSearchLead:'Consulta ciclos, grados, másteres y vías formativas por nivel, familia, rama o profesión.', homeRouteTitle:'Comenzar itinerario', homeRouteLead:'Parte de tu situación actual y construye una ruta clara hasta una meta académica o profesional.',
     searchEyebrow:'Buscador de estudios', searchTitle:'Búsqueda completa y ordenada', searchLead:'Escribe al menos tres letras o explora por nivel, familia y rama. Al abrir una ficha verás accesos, itinerarios posibles, salidas profesionales, centros o lugares de consulta y fuentes oficiales.', searchInputLabel:'¿Qué estudio, profesión o ámbito buscas?', levelFilter:'Nivel', familyFilter:'Familia o rama', sortFilter:'Ordenar', officialShortcuts:'Comprobación oficial rápida', downloadList:'Descargar selección en PDF',
     routeEyebrow:'Guía por pasos', routeTitle:'Empieza donde estás y llega donde quieres', routeLead:'ITINERA no presupone que ya conozcas el sistema educativo. Primero identifica tu punto de partida, después la meta y finalmente dibuja una ruta con pasos concretos, explicaciones sencillas e información ampliable.', stepStart:'Punto de partida', stepGoal:'Meta', stepPlan:'Plan', startQuestion:'¿Cuál es tu situación actual?', startHelp:'Elige la opción más parecida. Si no lo tienes claro, elige “No lo sé” y la herramienta ofrecerá rutas prudentes.', goalQuestion:'¿Cuál es tu meta?', goalHelp:'Busca un estudio, una familia profesional o una profesión. Las coincidencias aparecerán de forma visible a partir de tres letras.', planQuestion:'Ajusta la ruta', planHelp:'Indica cómo quieres estudiar para que el itinerario sea más realista.', paceLabel:'Ritmo preferido', placeLabel:'Lugar', modeLabel:'Modalidad', buildRoute:'Diseñar mi itinerario', back:'Volver', next:'Siguiente paso', emptyRouteTitle:'Tu itinerario aparecerá aquí', emptyRouteLead:'Al completar los pasos, verás una línea de tiempo clara con cada decisión, cada requisito y los enlaces oficiales necesarios.',
     faqEyebrow:'Preguntas frecuentes', faqTitle:'Dudas explicadas con fuentes oficiales', faqLead:'Busca una pregunta o abre los bloques por tema. Las respuestas son orientativas y enlazan con el lugar oficial que debes comprobar antes de tomar una decisión definitiva.', downloadFaq:'Descargar FAQ en PDF',
@@ -696,10 +696,14 @@ document.addEventListener('DOMContentLoaded', init);
         </div>
       </div>
       <div class="v41-map-grid">
-        <div class="v41-galicia-map" aria-label="Mapa de Galicia por concellos con marcadores de estudos">
-          <div class="v41-map-sheen" aria-hidden="true"></div>
+        <div class="v41-galicia-map" aria-label="Mapa de Galicia con marcadores de estudos">
+          <svg class="v41-galicia-outline" viewBox="0 0 100 100" aria-hidden="true">
+            <path d="M19 19 L33 10 L55 10 L78 16 L88 34 L84 54 L91 71 L76 88 L55 91 L36 82 L17 78 L9 61 L13 44 L7 31 Z"></path>
+            <path class="v41-road" d="M22 25 C35 39 41 48 56 54 C69 59 73 72 78 86"></path>
+            <path class="v41-road v41-road-b" d="M15 65 C31 60 38 54 44 45 C53 32 67 24 82 20"></path>
+            <path class="v41-road v41-road-c" d="M31 15 C41 31 51 41 65 49 C74 55 82 62 89 72"></path>
+          </svg>
           <div class="v41-map-watermark">ITINERA · Galicia</div>
-          <div class="v41-map-caption">Mapa por concellos · visual adaptado á estética de ITINERA</div>
           ${cities.map(markerHTMLV41).join('')}
         </div>
         <aside class="v41-map-side">
@@ -710,7 +714,14 @@ document.addEventListener('DOMContentLoaded', init);
           ${renderMapSideV41(selected)}
         </aside>
       </div>
-      <p class="v41-map-note">Nota: o mapa serve para orientación e consulta rápida. A lenda orixinal do mapa foi retirada para integralo mellor na interface de ITINERA. A oferta exacta por centro, campus, modalidade, prazas e curso debe verificarse sempre nas fontes oficiais indicadas na ficha.</p>
+      <div class="v41-map-legend">
+        <span style="--dot:${colourV41('fp')}"><i></i>FP</span>
+        <span style="--dot:${colourV41('grado')}"><i></i>Graos</span>
+        <span style="--dot:${colourV41('master')}"><i></i>Másteres</span>
+        <span style="--dot:${colourV41('doctorado')}"><i></i>Doutoramentos</span>
+        <span style="--dot:${colourV41('especializacion')}"><i></i>Especialización FP</span>
+      </div>
+      <p class="v41-map-note">Nota: o mapa serve para orientación e consulta rápida. A oferta exacta por centro, campus, modalidade, prazas e curso debe verificarse sempre nas fontes oficiais indicadas na ficha.</p>
     </section>`;
     host.querySelectorAll('[data-v41-type]').forEach(btn => btn.addEventListener('click', () => {
       activeMapTypeV41 = btn.dataset.v41Type;
@@ -753,5 +764,470 @@ document.addEventListener('DOMContentLoaded', init);
 
   document.addEventListener('hashchange', () => {
     if((location.hash || '').replace('#','') === 'buscar') setTimeout(ensureStudyMapV41, 250);
+  });
+})();
+
+/* ITINERA v48 · buscador inmersivo, mapa actualizado e catálogo por localidades */
+(function(){
+  const MAP_COORDS_V48 = {
+    'Ferrol': { x: 41.9, y: 13.8 },
+    'A Coruña': { x: 33.3, y: 26.0 },
+    'Arteixo': { x: 24.7, y: 35.3 },
+    'Arzúa': { x: 42.8, y: 45.3 },
+    'Ames': { x: 34.1, y: 50.7 },
+    'Santiago de Compostela': { x: 34.6, y: 47.9 },
+    'Pontevedra': { x: 24.7, y: 68.2 },
+    'Marín': { x: 33.7, y: 73.6 },
+    'Vigo': { x: 27.6, y: 80.8 },
+    'Ourense': { x: 54.4, y: 75.6 },
+    'Lugo': { x: 63.4, y: 40.9 },
+    'Ribadeo': { x: 74.4, y: 19.0 }
+  };
+  const TYPE_LABEL_V48 = {
+    fpb: 'FP básica',
+    fpgm: 'FP de grao medio',
+    fpgs: 'FP de grao superior',
+    grado: 'Grao',
+    master: 'Máster',
+    doctorado: 'Doutoramento'
+  };
+  const TYPE_COLOUR_V48 = {
+    fpb: '#2db84d',
+    fpgm: '#2db84d',
+    fpgs: '#2db84d',
+    grado: '#1670e4',
+    master: '#f39c12',
+    doctorado: '#e53935'
+  };
+  const TYPE_ORDER_V48 = { fpb: 1, fpgm: 2, fpgs: 3, grado: 4, master: 5, doctorado: 6 };
+
+  let offerCatalogV48 = { records: [], locations: [] };
+  let offerLocationIndexV48 = new Map();
+  let offerStudyIndexV48 = new Map();
+  let activeMapLocationV48 = null;
+  let v48Initialised = false;
+
+  function normV48(v = '') { return norm(String(v || '')); }
+  function levelFilterToOfferTypesV48(level){
+    const map = {
+      all: ['fpb','fpgm','fpgs','grado','master','doctorado'],
+      fpb: ['fpb'],
+      fpgm: ['fpgm'],
+      fpgs: ['fpgs'],
+      grado: ['grado'],
+      master: ['master'],
+      doctorado: ['doctorado']
+    };
+    return map[level || 'all'] || map.all;
+  }
+  function bestStudyMatchV48(text=''){
+    const q = normV48(text);
+    if(!q) return null;
+    let best = null;
+    let bestScore = -1;
+    (studies || []).forEach(st => {
+      const name = normV48(st.name);
+      let score = 0;
+      if(name === q) score = 100;
+      else if(name.includes(q) || q.includes(name)) score = 80;
+      else if(st.searchText?.includes(q)) score = 50;
+      if(score > bestScore){ best = st; bestScore = score; }
+    });
+    return best;
+  }
+  function indexOfferCatalogV48(){
+    offerLocationIndexV48 = new Map();
+    offerStudyIndexV48 = new Map();
+    (offerCatalogV48.locations || []).forEach(loc => offerLocationIndexV48.set(loc.name, loc));
+    (offerCatalogV48.records || []).forEach(rec => {
+      const keys = new Set([normV48(rec.study_name)]);
+      const slash = String(rec.study_name || '').split('/').map(s => normV48(s)).filter(Boolean);
+      slash.forEach(s => keys.add(s));
+      keys.forEach(key => {
+        if(!offerStudyIndexV48.has(key)) offerStudyIndexV48.set(key, []);
+        offerStudyIndexV48.get(key).push(rec);
+      });
+    });
+  }
+  async function loadOfferCatalogV48(){
+    try{
+      const res = await fetch('data/itinera-offer-catalog-v48.json');
+      if(!res.ok) throw new Error('Non foi posible cargar o catálogo por localidades.');
+      offerCatalogV48 = await res.json();
+      indexOfferCatalogV48();
+      populateOfferFiltersV48();
+      renderMapPanelV48();
+      renderSearch();
+    }catch(err){
+      console.warn('[v48] erro ao cargar catálogo de localizacións', err);
+    }
+  }
+
+  function updateBodyRouteV48(){
+    const route = state?.route || (location.hash || '').replace('#','') || 'inicio';
+    document.body.setAttribute('data-route', route);
+    const immersive = route === 'buscar' || route === 'itinerario';
+    document.body.classList.toggle('v48-immersive-route', immersive);
+  }
+  function enhanceHomeV48(){
+    const home = document.querySelector('.v40-home');
+    if(home) home.classList.add('v48-home-ready');
+    const choices = document.querySelectorAll('.v40-choice');
+    if(choices[0]){
+      choices[0].setAttribute('target','_blank');
+      choices[0].setAttribute('rel','noopener noreferrer');
+      choices[0].innerHTML = '<span>BUSCADOR DE</span><strong>ESTUDOS</strong>';
+      choices[0].addEventListener('click', (ev) => {
+        ev.preventDefault();
+        window.open(`${window.location.pathname}#buscar`, '_blank', 'noopener');
+      });
+    }
+    if(choices[1]){
+      choices[1].setAttribute('target','_blank');
+      choices[1].setAttribute('rel','noopener noreferrer');
+      choices[1].innerHTML = '<span>DESEÑAR</span><strong>ITINERARIO</strong>';
+      choices[1].addEventListener('click', (ev) => {
+        ev.preventDefault();
+        window.open(`${window.location.pathname}#itinerario`, '_blank', 'noopener');
+      });
+    }
+  }
+  function ensureSearchUiV48(){
+    const searchView = document.getElementById('buscar');
+    if(!searchView) return;
+
+    const label = searchView.querySelector('[for="studySearch"]');
+    if(label) label.textContent = 'Busca por estudo, centro, cidade ou palabra clave';
+    const input = document.getElementById('studySearch');
+    if(input) input.placeholder = 'Psicoloxía, CIFP, A Coruña, enxeñaría, enfermaría…';
+
+    const heroH1 = searchView.querySelector('.section-hero h1');
+    if(heroH1) heroH1.textContent = 'Buscador de estudos';
+    const heroLead = searchView.querySelector('.section-hero p:not(.eyebrow)');
+    if(heroLead) heroLead.textContent = 'Filtra por localidade, centro, estudo e nivel. O mapa tamén permite consultar a oferta dispoñible por cidade ou localidade.';
+
+    let stack = searchView.querySelector('.filter-stack');
+    if(stack && !document.getElementById('localityFilter')){
+      stack.insertAdjacentHTML('beforeend', `
+        <label><span>Localidade / cidade</span><select id="localityFilter"><option value="all">Todas</option></select></label>
+        <label><span>Centro / sede</span><select id="centerFilter"><option value="all">Todos</option></select></label>
+      `);
+    }
+    const toolbar = searchView.querySelector('.results-toolbar');
+    if(toolbar && !document.getElementById('v48OfferHint')){
+      const hint = document.createElement('p');
+      hint.id = 'v48OfferHint';
+      hint.className = 'v48-offer-hint';
+      toolbar.insertAdjacentElement('afterend', hint);
+    }
+    const resultsCard = searchView.querySelector('.results-card');
+    if(resultsCard && !document.getElementById('v48OfferResults')){
+      const box = document.createElement('div');
+      box.id = 'v48OfferResults';
+      box.className = 'v48-offer-results';
+      resultsCard.insertBefore(box, document.getElementById('studyResults'));
+    }
+    if(!document.getElementById('v48MapPanel')){
+      const mapPanel = document.createElement('section');
+      mapPanel.id = 'v48MapPanel';
+      mapPanel.className = 'v48-map-panel';
+      mapPanel.innerHTML = `
+        <div class="v48-map-copy">
+          <div>
+            <p class="eyebrow">Mapa interactivo</p>
+            <h2>Oferta de estudos por localidade</h2>
+            <p>Pasa o cursor polos puntos dispoñibles para ver unha síntese da oferta. Ao facer clic nunha localidade aplicarase o filtro correspondente no buscador.</p>
+          </div>
+          <button type="button" class="plain-button" id="v48MapReset">Limpar filtro de localidade</button>
+        </div>
+        <div class="v48-map-grid">
+          <div class="v48-map-stage">
+            <img src="assets/galicia-studies-map-v48.png" alt="Mapa da oferta de estudos en Galicia" class="v48-map-image">
+            <div class="v48-map-overlay" id="v48MapOverlay"></div>
+            <div class="v48-map-tooltip" id="v48MapTooltip" hidden></div>
+          </div>
+          <aside class="v48-map-side" id="v48MapSide">
+            <div class="v48-map-empty">
+              <strong>Selecciona unha localidade</strong>
+              <p>Ao situar o cursor sobre un punto ou facer clic nel verás aquí os estudos asociados, ordenados por niveis e áreas.</p>
+            </div>
+          </aside>
+        </div>
+        <div class="v48-map-legend">
+          <span><i style="background:#2db84d"></i>FP</span>
+          <span><i style="background:#1670e4"></i>Grao</span>
+          <span><i style="background:#f39c12"></i>Máster</span>
+          <span><i style="background:#e53935"></i>Doutoramento</span>
+        </div>`;
+      const layout = searchView.querySelector('.search-layout');
+      if(layout) layout.insertAdjacentElement('beforebegin', mapPanel);
+      else searchView.appendChild(mapPanel);
+      document.getElementById('v48MapReset')?.addEventListener('click', () => {
+        const loc = document.getElementById('localityFilter');
+        if(loc) loc.value = 'all';
+        activeMapLocationV48 = null;
+        populateOfferFiltersV48();
+        renderMapPanelV48();
+        renderSearch();
+      });
+    }
+  }
+
+  function populateOfferFiltersV48(){
+    const localityEl = document.getElementById('localityFilter');
+    const centerEl = document.getElementById('centerFilter');
+    if(!localityEl || !centerEl) return;
+
+    const currentLocality = localityEl.value || 'all';
+    const localities = (offerCatalogV48.locations || [])
+      .map(loc => loc.name)
+      .filter(Boolean)
+      .sort((a,b) => a.localeCompare(b,'gl'));
+    localityEl.innerHTML = '<option value="all">Todas</option>' + localities.map(loc => `<option value="${html(loc)}">${html(loc)}</option>`).join('');
+    localityEl.value = localities.includes(currentLocality) ? currentLocality : 'all';
+
+    const selectedLocality = localityEl.value;
+    let centers = (offerCatalogV48.records || [])
+      .filter(rec => selectedLocality === 'all' || rec.locality === selectedLocality)
+      .map(rec => rec.center)
+      .filter(Boolean);
+    centers = Array.from(new Set(centers)).sort((a,b)=>a.localeCompare(b,'gl'));
+    const currentCenter = centerEl.value || 'all';
+    centerEl.innerHTML = '<option value="all">Todos</option>' + centers.map(c => `<option value="${html(c)}">${html(c)}</option>`).join('');
+    centerEl.value = centers.includes(currentCenter) ? currentCenter : 'all';
+  }
+
+  function offerRecordsFilteredV48(){
+    const q = normV48(document.getElementById('studySearch')?.value || '');
+    const level = document.getElementById('levelFilter')?.value || 'all';
+    const family = document.getElementById('familyFilter')?.value || 'all';
+    const locality = document.getElementById('localityFilter')?.value || 'all';
+    const center = document.getElementById('centerFilter')?.value || 'all';
+    const allowedTypes = levelFilterToOfferTypesV48(level);
+
+    return (offerCatalogV48.records || []).filter(rec => {
+      const qText = normV48([rec.study_name, rec.locality, rec.center, rec.family_area, rec.university, rec.campus].join(' '));
+      const qOk = q.length < 2 || qText.includes(q);
+      const levelOk = level === 'all' || allowedTypes.includes(rec.type);
+      const localityOk = locality === 'all' || rec.locality === locality;
+      const centerOk = center === 'all' || rec.center === center;
+      const familyOk = family === 'all' || normV48(rec.family_area).includes(normV48(family)) || normV48(rec.level_label).includes(normV48(family));
+      return qOk && levelOk && localityOk && centerOk && familyOk;
+    }).sort((a,b) => (TYPE_ORDER_V48[a.type]||99) - (TYPE_ORDER_V48[b.type]||99) || a.locality.localeCompare(b.locality,'gl') || a.study_name.localeCompare(b.study_name,'gl'));
+  }
+
+  function locationRecordsForStudyV48(st){
+    if(!st) return [];
+    const name = normV48(st.name);
+    let matches = [];
+    offerStudyIndexV48.forEach((records,key) => {
+      if(key && (key === name || key.includes(name) || name.includes(key))) matches = matches.concat(records);
+    });
+    const unique = new Map();
+    matches.forEach(rec => unique.set(`${rec.type}|${rec.study_name}|${rec.locality}|${rec.center}`, rec));
+    return Array.from(unique.values()).sort((a,b)=>(TYPE_ORDER_V48[a.type]||99)-(TYPE_ORDER_V48[b.type]||99) || a.locality.localeCompare(b.locality,'gl') || a.study_name.localeCompare(b.study_name,'gl'));
+  }
+
+  function studyMatchesOfferFiltersV48(st){
+    const locality = document.getElementById('localityFilter')?.value || 'all';
+    const center = document.getElementById('centerFilter')?.value || 'all';
+    if(locality === 'all' && center === 'all') return true;
+    const offers = locationRecordsForStudyV48(st);
+    return offers.some(rec => (locality === 'all' || rec.locality === locality) && (center === 'all' || rec.center === center));
+  }
+
+  const prevGetStudiesFilteredV48 = getStudiesFiltered;
+  getStudiesFiltered = function(source='search'){
+    const list = prevGetStudiesFilteredV48(source) || [];
+    if(source !== 'search') return list;
+    return list.filter(st => studyMatchesOfferFiltersV48(st));
+  };
+
+  function renderOfferResultsV48(){
+    const host = document.getElementById('v48OfferResults');
+    const hint = document.getElementById('v48OfferHint');
+    if(!host || !hint) return;
+    const records = offerRecordsFilteredV48();
+    hint.textContent = records.length ? `${records.length} rexistros con localidade/centro identificados neste catálogo contextual.` : 'Non hai rexistros detallados de localidade/centro para os filtros actuais.';
+    if(!records.length){ host.innerHTML = ''; return; }
+    const groups = groupBy(records.slice(0, 80), rec => rec.locality);
+    host.innerHTML = Object.entries(groups).map(([loc,items]) => `
+      <section class="v48-offer-group">
+        <h3>${html(loc)}</h3>
+        <div class="v48-offer-grid">
+          ${items.map(rec => `
+            <article class="v48-offer-card">
+              <div class="v48-offer-meta"><span class="pill dark">${html(rec.level_label || TYPE_LABEL_V48[rec.type] || rec.type)}</span>${rec.center ? `<span class="pill">${html(rec.center)}</span>` : ''}</div>
+              <strong>${html(rec.study_name)}</strong>
+              <p>${html(rec.family_area || rec.university || 'Oferta localizada no catálogo.')}</p>
+              <div class="v48-offer-actions">
+                <button type="button" class="plain-button" data-v48-use-study="${html(rec.study_name)}">Usar este estudo</button>
+                ${rec.source_url ? `<a class="secondary-link" href="${html(rec.source_url)}" target="_blank" rel="noopener noreferrer">Fonte</a>` : ''}
+              </div>
+            </article>`).join('')}
+        </div>
+      </section>`).join('');
+    host.querySelectorAll('[data-v48-use-study]').forEach(btn => btn.addEventListener('click', () => {
+      const studyName = btn.getAttribute('data-v48-use-study') || '';
+      const input = document.getElementById('studySearch');
+      if(input) input.value = studyName;
+      const matched = bestStudyMatchV48(studyName);
+      if(matched) openStudy(matched.id);
+      else renderSearch();
+    }));
+  }
+
+  locationHTML = function(st){
+    const records = locationRecordsForStudyV48(st);
+    if(records.length){
+      const grouped = groupBy(records, rec => rec.locality);
+      return Object.entries(grouped).map(([loc, rows]) => {
+        const levelGroups = groupBy(rows, rec => rec.level_label || TYPE_LABEL_V48[rec.type] || rec.type);
+        return `<details open><summary>${html(loc)}</summary>${Object.entries(levelGroups).map(([lvl, items]) => `<div class="v48-location-block"><strong>${html(lvl)}</strong><ul>${items.slice(0, 24).map(rec => `<li>${html(rec.study_name)}${rec.center ? ` · ${html(rec.center)}` : ''}</li>`).join('')}</ul></div>`).join('')}</details>`;
+      }).join('');
+    }
+    const av = st.availability_by_province || {};
+    const entries = Object.entries(av);
+    if(!entries.length) return '<p>Consulta QEDU, RUCT ou a oferta oficial de FP segundo o tipo de estudo.</p>';
+    return entries.map(([place, vals]) => `<details><summary>${html(place)}</summary>${Array.isArray(vals) ? listHTML(vals.map(v => typeof v === 'string' ? v : `${v.city || ''} · ${v.center || ''} ${v.note ? '('+v.note+')' : ''}`)) : `<p>${html(vals)}</p>`}</details>`).join('');
+  };
+
+  function locationSummaryCardV48(locationName){
+    const loc = offerLocationIndexV48.get(locationName);
+    const side = document.getElementById('v48MapSide');
+    if(!loc || !side) return;
+    activeMapLocationV48 = locationName;
+    const grouped = groupBy(loc.studies || [], s => s.level_label || TYPE_LABEL_V48[s.type] || s.type);
+    side.innerHTML = `
+      <div class="v48-map-summary-card">
+        <div class="v48-map-summary-head">
+          <div><p class="eyebrow">Localidade</p><h3>${html(loc.name)}</h3></div>
+          <button type="button" class="plain-button" id="v48ApplyLocation">Filtrar esta localidade</button>
+        </div>
+        <p class="v48-map-summary-lead">${loc.count} estudos ou rexistros identificados nesta localidade no catálogo cargado.</p>
+        ${Object.entries(grouped).sort((a,b)=>(TYPE_ORDER_V48[(a[1][0]||{}).type]||99)-(TYPE_ORDER_V48[(b[1][0]||{}).type]||99)).map(([lvl, items]) => `
+          <section class="v48-map-summary-block">
+            <strong>${html(lvl)}</strong>
+            <ul>${items.slice(0, 18).map(item => `<li>${html(item.study_name)}${item.center ? ` · ${html(item.center)}` : ''}</li>`).join('')}</ul>
+          </section>`).join('')}
+      </div>`;
+    document.getElementById('v48ApplyLocation')?.addEventListener('click', () => {
+      const locality = document.getElementById('localityFilter');
+      if(locality){ locality.value = locationName; populateOfferFiltersV48(); renderSearch(); renderMapPanelV48(); }
+    });
+    document.querySelectorAll('.v48-map-marker').forEach(el => el.classList.toggle('active', el.dataset.location === locationName));
+  }
+
+  function showTooltipV48(event, htmlContent){
+    const tooltip = document.getElementById('v48MapTooltip');
+    const stage = document.querySelector('.v48-map-stage');
+    if(!tooltip || !stage) return;
+    tooltip.hidden = false;
+    tooltip.innerHTML = htmlContent;
+    const rect = stage.getBoundingClientRect();
+    const x = Math.min(rect.width - 240, Math.max(12, event.clientX - rect.left + 12));
+    const y = Math.min(rect.height - 120, Math.max(12, event.clientY - rect.top + 12));
+    tooltip.style.left = `${x}px`;
+    tooltip.style.top = `${y}px`;
+  }
+  function hideTooltipV48(){
+    const tooltip = document.getElementById('v48MapTooltip');
+    if(tooltip) tooltip.hidden = true;
+  }
+
+  function renderMapPanelV48(){
+    const overlay = document.getElementById('v48MapOverlay');
+    if(!overlay) return;
+    const level = document.getElementById('levelFilter')?.value || 'all';
+    const allowedTypes = new Set(levelFilterToOfferTypesV48(level));
+    const visibleLocations = (offerCatalogV48.locations || []).filter(loc => {
+      const present = (loc.types || []).some(type => allowedTypes.has(type));
+      return present && MAP_COORDS_V48[loc.name];
+    });
+    overlay.innerHTML = visibleLocations.map(loc => {
+      const coords = MAP_COORDS_V48[loc.name];
+      const types = (loc.types || []).filter(type => allowedTypes.has(type));
+      return `<button type="button" class="v48-map-marker ${activeMapLocationV48 === loc.name ? 'active' : ''}" data-location="${html(loc.name)}" style="left:${coords.x}%;top:${coords.y}%" aria-label="${html(loc.name)}">${types.map(type => `<i style="background:${TYPE_COLOUR_V48[type]}"></i>`).join('')}</button>`;
+    }).join('');
+    overlay.querySelectorAll('.v48-map-marker').forEach(btn => {
+      const locName = btn.dataset.location;
+      const loc = offerLocationIndexV48.get(locName);
+      if(!loc) return;
+      btn.addEventListener('mouseenter', ev => {
+        const summary = Object.entries(loc.levels || {}).map(([lvl,count]) => `<span>${html(lvl)}: ${count}</span>`).join(' · ');
+        showTooltipV48(ev, `<strong>${html(loc.name)}</strong><small>${summary}</small>`);
+        locationSummaryCardV48(loc.name);
+      });
+      btn.addEventListener('mousemove', ev => {
+        const tooltip = document.getElementById('v48MapTooltip');
+        if(tooltip && !tooltip.hidden){ showTooltipV48(ev, tooltip.innerHTML); }
+      });
+      btn.addEventListener('mouseleave', hideTooltipV48);
+      btn.addEventListener('click', () => locationSummaryCardV48(loc.name));
+    });
+    if(activeMapLocationV48 && offerLocationIndexV48.has(activeMapLocationV48)) locationSummaryCardV48(activeMapLocationV48);
+  }
+
+  const prevRenderSearchV48 = renderSearch;
+  renderSearch = function(){
+    ensureSearchUiV48();
+    populateOfferFiltersV48();
+    prevRenderSearchV48();
+    renderOfferResultsV48();
+    renderMapPanelV48();
+  };
+
+  function bindOfferEventsV48(){
+    const locality = document.getElementById('localityFilter');
+    const center = document.getElementById('centerFilter');
+    if(locality && !locality.dataset.v48bound){
+      locality.dataset.v48bound = '1';
+      locality.addEventListener('change', () => {
+        activeMapLocationV48 = locality.value !== 'all' ? locality.value : null;
+        populateOfferFiltersV48();
+        renderSearch();
+      });
+    }
+    if(center && !center.dataset.v48bound){
+      center.dataset.v48bound = '1';
+      center.addEventListener('change', renderSearch);
+    }
+  }
+
+  const prevInitV48 = init;
+  init = async function(){
+    await prevInitV48();
+    if(v48Initialised) return;
+    v48Initialised = true;
+    enhanceHomeV48();
+    ensureSearchUiV48();
+    bindOfferEventsV48();
+    updateBodyRouteV48();
+    loadOfferCatalogV48();
+  };
+
+  const prevRouteFromHashV48 = routeFromHash;
+  routeFromHash = function(){
+    prevRouteFromHashV48();
+    updateBodyRouteV48();
+    bindOfferEventsV48();
+    if(state.route === 'buscar') setTimeout(() => renderMapPanelV48(), 120);
+  };
+
+  document.addEventListener('hashchange', () => setTimeout(updateBodyRouteV48, 0));
+  window.addEventListener('hashchange', () => {
+    setTimeout(() => {
+      updateBodyRouteV48();
+      bindOfferEventsV48();
+      if(state.route === 'buscar') renderMapPanelV48();
+    }, 30);
+  });
+  window.addEventListener('load', () => {
+    enhanceHomeV48();
+    ensureSearchUiV48();
+    bindOfferEventsV48();
+    updateBodyRouteV48();
+    loadOfferCatalogV48();
+    setTimeout(renderMapPanelV48, 250);
   });
 })();

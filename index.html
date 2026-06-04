@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ITINERA | Orientación académica guiada</title>
+  <title>ITINERA | Mapa interactivo de estudos en Galicia</title>
   <meta name="theme-color" content="#073b3a">
   <meta name="description" content="ITINERA: buscador de estudos e deseñador de itinerarios académicos guiados.">
-  <link rel="icon" type="image/png" sizes="512x512" href="assets/favicon-itinera.png?v=0.47">
-  <link rel="icon" type="image/x-icon" href="assets/favicon.ico?v=0.47">
-  <link rel="apple-touch-icon" href="assets/favicon-itinera.png?v=0.47">
-  <link rel="stylesheet" href="styles.css?v=0.47">
+  <link rel="icon" type="image/png" sizes="512x512" href="assets/favicon-itinera.png?v=0.41">
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico?v=0.41">
+  <link rel="apple-touch-icon" href="assets/favicon-itinera.png?v=0.41">
+  <link rel="stylesheet" href="styles.css?v=0.48">
 </head>
 <body>
   <a class="skip-link" href="#main">Saltar ao contido principal</a>
@@ -24,15 +24,20 @@
   <main id="main">
     <section class="view home-view active v40-home" id="inicio" tabindex="-1">
       <div class="v40-map-bg" aria-hidden="true">
-        <span class="v40-soft-path v40-soft-path-a"></span>
-        <span class="v40-soft-path v40-soft-path-b"></span>
+        <span class="v40-route v40-route-a"></span>
+        <span class="v40-route v40-route-b"></span>
+        <span class="v40-pulse v40-pulse-1"></span>
+        <span class="v40-pulse v40-pulse-2"></span>
+        <span class="v40-pulse v40-pulse-3"></span>
       </div>
       <div class="v40-home-center" aria-label="Entrada principal de ITINERA">
-        <a class="v40-choice" href="#buscar" target="_blank" rel="noopener">
-          <strong>Buscador de estudos</strong>
+        <a class="v40-choice" href="#itinerario" data-route="itinerario">
+          <span>EU QUERO</span>
+          <strong>SER...</strong>
         </a>
-        <a class="v40-choice" href="#itinerario" target="_blank" rel="noopener">
-          <strong>Deseñar itinerario</strong>
+        <a class="v40-choice" href="#buscar" data-route="buscar">
+          <span>EU QUERO</span>
+          <strong>ESTUDAR...</strong>
         </a>
       </div>
     </section>
@@ -155,6 +160,6 @@
     </div>
   </footer>
 
-  <script src="app.js?v=0.47"></script>
+  <script src="app.js?v=0.48"></script>
 </body>
 </html>
