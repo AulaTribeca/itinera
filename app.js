@@ -95,6 +95,7 @@ function normaliseType(type=''){
   if(['fpb','fpgb','basica','grao basico','grado basico'].includes(t)) return 'fpb';
   if(t.includes('medio') || t === 'fpgm') return 'fpgm';
   if(t.includes('superior') || t === 'fpgs') return 'fpgs';
+  if(t.includes('especializacion')) return 'especializacion';
   if(t.includes('master')) return 'master';
   if(t.includes('doctor')) return 'doctorado';
   if(t.includes('grado') || t.includes('grao')) return 'grado';
@@ -338,16 +339,36 @@ function renderRoute(){
   const st = state.goal;
   const steps = buildSteps(state.start, st);
   const pref = getPrefs();
+  const startLabel = START_OPTIONS.find(o=>o.id===state.start)?.title || 'Punto de partida';
+  const outputs = (st.career_outputs || []).slice(0,25);
+  const accessText = accessTextForStudy(st, state.start);
+  const placeText = pref.place ? `Referencia territorial indicada: ${pref.place}. Debes revisar centros, campus, sedes ou modalidades que realmente estean dispoñibles nesta zona ou arredor.` : 'Se queres priorizar unha zona concreta, escribe un lugar no paso 3 para adaptar mellor a procura e a comprobación posterior.';
   $('#routeOutput').innerHTML = `
     <article class="route-summary">
-      <div class="route-top"><div><p class="eyebrow">Itinerario personalizado</p><h2>${html(st.name)}</h2><div class="study-meta"><span class="pill dark">${html(START_OPTIONS.find(o=>o.id===state.start)?.title || 'Punto de partida')}</span><span class="pill">${html(levelLabel(st.type))}</span><span class="pill">${html(pref.modeText)}</span></div></div><div class="route-actions"><button class="secondary-button" id="routePdf" type="button">Descargar itinerario en PDF</button><button class="plain-button" id="restartRoute" type="button">Comezar de novo</button></div></div>
-      <p>${html(routeIntro(state.start, st, pref))}</p>
+      <div class="route-top"><div><p class="eyebrow">Itinerario personalizado</p><h2>${html(st.name)}</h2><div class="study-meta"><span class="pill dark">${html(startLabel)}</span><span class="pill">${html(levelLabel(st.type))}</span><span class="pill">${html(pref.modeText)}</span></div></div><div class="route-actions"><button class="secondary-button" id="routePdf" type="button">Descargar itinerario en PDF</button><button class="plain-button" id="restartRoute" type="button">Comezar de novo</button></div></div>
+      <div class="route-overview">
+        <article class="overview-card"><span>Punto de partida</span><strong>${html(startLabel)}</strong><small>Esta é a situación desde a que ITINERA constrúe a ruta.</small></article>
+        <article class="overview-card"><span>Meta</span><strong>${html(st.name)}</strong><small>${html(levelLabel(st.type))} · ${html(st.family || 'Sen familia ou rama asignada')}</small></article>
+        <article class="overview-card"><span>Modalidade e ritmo</span><strong>${html(pref.modeText)}</strong><small>${html(paceLabel(pref.pace))}</small></article>
+        <article class="overview-card"><span>Información práctica</span><strong>${steps.length} pasos guiados</strong><small>${html(placeText)}</small></article>
+      </div>
+      <p class="route-intro">${html(routeIntro(state.start, st, pref))}</p>
       <div class="timeline">${steps.map((s,i)=>routeCard(s,i)).join('')}</div>
-      <section class="detail-block full"><h3>Saídas profesionais relacionadas</h3>${listHTML((st.career_outputs || []).slice(0,25))}</section>
-      <section class="detail-block full"><h3>Fontes oficiais para revisar antes de decidir</h3><div class="source-links">${sourceHTML(st.sources || [])}</div></section>
+      <div class="route-info-grid">
+        <section class="detail-block"><h3>Acceso explicado de forma sinxela</h3><p>${html(accessText)}</p></section>
+        <section class="detail-block"><h3>Materias ou preparación útil</h3>${listHTML(st.subjects || st.ponderation_subjects?.map(x=>x.subject) || [])}</section>
+        <section class="detail-block full"><h3>Saídas profesionais relacionadas</h3><p>Estas saídas son orientativas e poden variar segundo a especialización, a experiencia, o territorio, a convocatoria e o posto concreto. Cando a propia profesión require máster habilitante, colexiación, oposición, licenza ou outro requisito, debes comprobalo antes de tomar unha decisión.</p>${listHTML(outputs)}</section>
+        <section class="detail-block"><h3>Másteres, habilitacións ou requisitos posteriores</h3><p>${html(st.regulated || 'Comproba sempre se a profesión require máster habilitante, colexiación, oposición, especialidade, acreditación ou licenza adicional.')}</p></section>
+        <section class="detail-block"><h3>Onde cursalo ou onde consultalo</h3>${locationHTML(st)}</section>
+        <section class="detail-block"><h3>Fontes oficiais para revisar antes de decidir</h3><div class="source-links">${sourceHTML(st.sources || [])}</div></section>
+      </div>
     </article>`;
   $('#routePdf').addEventListener('click', () => printRoute(st, steps));
   $('#restartRoute').addEventListener('click', () => { state.start=null; state.goal=null; state.step=1; $('#goalSearch').value=''; populateStartOptions(); updateStep(); $('#routeOutput').innerHTML = `<div class="empty-route"><img src="assets/itinera-logo-mark.png" alt="" aria-hidden="true"><h2>${t('emptyRouteTitle')}</h2><p>${t('emptyRouteLead')}</p></div>`; });
+}
+function paceLabel(pace){
+  const map = {normal:'Ritmo normal',fast:'Ruta máis rápida posible',slow:'Pouco a pouco',work:'Compatible con traballo'};
+  return map[pace] || 'Ritmo non indicado';
 }
 function getPrefs(){
   const pace = $('#paceSelect').value; const mode = $('#modeSelect').value; const place = $('#placeInput').value.trim();
@@ -355,9 +376,9 @@ function getPrefs(){
   return {pace, mode, place, modeText: modeMap[mode] || mode};
 }
 function routeIntro(start, st, pref){
-  if(start === 'career-change') return `Esta ruta está pensada para cambio profesional. Compara unha vía rápida, unha vía oficial completa e os requisitos posteriores para ${st.name}.`;
-  if(start === 'retake') return `Esta ruta prioriza retomar estudos con seguridade, sen dar pasos innecesarios, ata chegar a ${st.name}.`;
-  return `Ruta orientativa desde “${START_OPTIONS.find(o=>o.id===start)?.title || 'punto de partida'}” ata “${st.name}”, con modalidade preferida ${pref.modeText}${pref.place ? ' e referencia territorial en '+pref.place : ''}.`;
+  if(start === 'career-change') return `Esta ruta está pensada para un cambio profesional e ordena os pasos máis lóxicos para chegar a ${st.name}. Inclúe vías posibles, saídas profesionais e comprobación de requisitos posteriores.`;
+  if(start === 'retake') return `Esta ruta prioriza retomar estudos con seguridade, sen dar pasos innecesarios, ata chegar a ${st.name}. A guía presenta o proceso de forma clara, gradual e fácil de ampliar.`;
+  return `Ruta orientativa desde “${START_OPTIONS.find(o=>o.id===start)?.title || 'punto de partida'}” ata “${st.name}”, con modalidade preferida ${pref.modeText}, ${paceLabel(pref.pace).toLowerCase()}${pref.place ? ' e referencia territorial en '+pref.place : ''}.`;
 }
 function buildSteps(start, st){
   const type = st.type;
@@ -434,11 +455,12 @@ function printTemplate(title, body){
   setTimeout(() => w.print(), 350);
 }
 function printStudy(st){
-  const body = `<h2>${html(st.name)}</h2><p><strong>${html(levelLabel(st.type))}</strong> · ${html(st.family||'')}</p><div class="block"><h3>Acceso</h3><p>${html(accessTextForStudy(st, 'eso-title'))}</p></div><div class="block"><h3>Saídas profesionais</h3>${listHTML((st.career_outputs||[]).slice(0,25))}</div><div class="block"><h3>Fontes</h3>${sourceHTML(st.sources||[])}</div>`;
+  const body = `<h2>${html(st.name)}</h2><p><strong>${html(levelLabel(st.type))}</strong> · ${html(st.family||'')}</p><div class="block"><h3>Que é</h3><p>${html(st.demand || st.route || 'Ficha orientativa xerada por ITINERA.')}</p></div><div class="block"><h3>Acceso</h3><p>${html(accessTextForStudy(st, 'eso-title'))}</p></div><div class="block"><h3>Materias ou preparación útil</h3>${listHTML(st.subjects || st.ponderation_subjects?.map(x=>x.subject) || [])}</div><div class="block"><h3>Saídas profesionais</h3>${listHTML((st.career_outputs||[]).slice(0,25))}</div><div class="block"><h3>Habilitacións ou requisitos posteriores</h3><p>${html(st.regulated || 'Comprobar requisitos profesionais específicos segundo a profesión.')}</p></div><div class="block"><h3>Onde consultar ou onde cursar</h3>${locationHTML(st)}</div><div class="block"><h3>Fontes</h3>${sourceHTML(st.sources||[])}</div>`;
   printTemplate(`ITINERA · Ficha de estudo`, body);
 }
 function printRoute(st, steps){
-  const body = `<h2>${html(st.name)}</h2><p>${html(routeIntro(state.start, st, getPrefs()))}</p>${steps.map((s,i)=>`<div class="block"><h3>${i+1}. ${html(s.title)}</h3><p>${html(s.text)}</p>${s.more?.length ? listHTML(s.more) : ''}</div>`).join('')}<div class="block"><h3>Saídas profesionais</h3>${listHTML((st.career_outputs||[]).slice(0,25))}</div>`;
+  const pref = getPrefs();
+  const body = `<h2>${html(st.name)}</h2><p>${html(routeIntro(state.start, st, pref))}</p><div class="block"><h3>Resumo da ruta</h3><ul><li><strong>Punto de partida:</strong> ${html(START_OPTIONS.find(o=>o.id===state.start)?.title || 'Non indicado')}</li><li><strong>Modalidade preferida:</strong> ${html(pref.modeText)}</li><li><strong>Ritmo:</strong> ${html(paceLabel(pref.pace))}</li><li><strong>Referencia territorial:</strong> ${html(pref.place || 'Non indicada')}</li></ul></div>${steps.map((s,i)=>`<div class="block"><h3>${i+1}. ${html(s.title)}</h3><p>${html(s.text)}</p>${s.more?.length ? listHTML(s.more) : ''}</div>`).join('')}<div class="block"><h3>Materias ou preparación útil</h3>${listHTML(st.subjects || st.ponderation_subjects?.map(x=>x.subject) || [])}</div><div class="block"><h3>Saídas profesionais</h3>${listHTML((st.career_outputs||[]).slice(0,25))}</div><div class="block"><h3>Habilitacións ou requisitos posteriores</h3><p>${html(st.regulated || 'Comprobar requisitos profesionais específicos segundo a profesión.')}</p></div><div class="block"><h3>Onde consultar ou onde cursar</h3>${locationHTML(st)}</div><div class="block"><h3>Fontes oficiais</h3>${sourceHTML(st.sources||[])}</div>`;
   printTemplate('ITINERA · Itinerario personalizado', body);
 }
 function printSelection(){
