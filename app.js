@@ -473,3 +473,264 @@ function printFAQ(){
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+/* ITINERA v0.38 · Galego integral, filtros dependentes e catálogo universitario Supabase */
+(function(){
+  const V38 = { loadedSupabase:false };
+  const GL_REPLACEMENTS = [
+    [/\bGrado en\b/g,'Grao en'],[/\bGrado universitario\b/g,'Grao universitario'],[/\bgrado universitario\b/g,'grao universitario'],[/\bgrado\b/g,'grao'],[/\bGrado\b/g,'Grao'],
+    [/\bBachillerato\b/g,'Bacharelato'],[/\bbachillerato\b/g,'bacharelato'],[/\bUniversidad\b/g,'Universidade'],[/\buniversidad\b/g,'universidade'],
+    [/Ciclo formativo de grado básico/g,'Ciclo formativo de grao básico'],[/Ciclo formativo de grado medio/g,'Ciclo formativo de grao medio'],[/Ciclo formativo de grado superior/g,'Ciclo formativo de grao superior'],[/grado medio/g,'grao medio'],[/grado superior/g,'grao superior'],
+    [/Formación Profesional/g,'Formación Profesional'],[/Educación Secundaria Obligatoria/g,'Educación Secundaria Obrigatoria'],[/título de ESO/g,'título de ESO'],
+    [/Ciencias de la Salud/g,'Ciencias da Saúde'],[/Ciencias Sociales y Jurídicas/g,'Ciencias Sociais e Xurídicas'],[/Artes y Humanidades/g,'Artes e Humanidades'],[/Ingeniería y Arquitectura/g,'Enxeñaría e Arquitectura'],
+    [/Electricidad y Electrónica/g,'Electricidade e Electrónica'],[/Electricidad/g,'Electricidade'],[/Madera, Mueble y Corcho/g,'Madeira, Moble e Cortiza'],[/Madera/g,'Madeira'],[/Mueble/g,'Moble'],[/Corcho/g,'Cortiza'],
+    [/Instalaciones Eléctricas y Automáticas/g,'Instalacións Eléctricas e Automáticas'],[/Sistemas Electrotécnicos y Automatizados/g,'Sistemas Electrotécnicos e Automatizados'],[/Automatización y Robótica Industrial/g,'Automatización e Robótica Industrial'],
+    [/Soldadura y Calderería/g,'Soldadura e Caldeiraría'],[/Carpintería y Mueble/g,'Carpintaría e Moble'],[/Administración y Gestión/g,'Administración e Xestión'],[/Comercio y Marketing/g,'Comercio e Márketing'],
+    [/Hostelería y Turismo/g,'Hostalaría e Turismo'],[/Imagen y Sonido/g,'Imaxe e Son'],[/Imagen Personal/g,'Imaxe Persoal'],[/Informática y Comunicaciones/g,'Informática e Comunicacións'],
+    [/Instalación y Mantenimiento/g,'Instalación e Mantemento'],[/Servicios Socioculturales y a la Comunidad/g,'Servizos Socioculturais e á Comunidade'],[/Transporte y Mantenimiento de Vehículos/g,'Transporte e Mantemento de Vehículos'],
+    [/Fabricación Mecánica/g,'Fabricación Mecánica'],[/Industrias Alimentarias/g,'Industrias Alimentarias'],[/Industrias Extractivas/g,'Industrias Extractivas'],[/Seguridad y Medio Ambiente/g,'Seguridade e Medio Ambiente'],
+    [/Diseño/g,'Deseño'],[/Gestión/g,'Xestión'],[/Dirección/g,'Dirección'],[/Derecho/g,'Dereito'],[/Psicología/g,'Psicoloxía'],[/Enfermería/g,'Enfermaría'],[/Medicina/g,'Medicina'],
+    [/Tecnología/g,'Tecnoloxía'],[/Matemáticas/g,'Matemáticas'],[/Dibujo técnico/g,'Debuxo técnico'],[/Física/g,'Física'],[/Química/g,'Química'],[/Biología/g,'Bioloxía'],
+    [/Instalaciones/g,'Instalacións'],[/instalaciones/g,'instalacións'],[/Automóviles/g,'Automóbiles'],[/automóviles/g,'automóbiles'],[/Vehículos/g,'Vehículos'],[/vehículos/g,'vehículos'],
+    [/modalidad/g,'modalidade'],[/Modalidad/g,'Modalidade'],[/régimen/g,'réxime'],[/Régimen/g,'Réxime'],[/plazas/g,'prazas'],[/Plazas/g,'Prazas'],[/localidad/g,'localidade'],[/Localidad/g,'Localidade'],
+    [/enseñanzas/g,'ensinanzas'],[/Enseñanzas/g,'Ensinanzas'],[/prueba de acceso/g,'proba de acceso'],[/Prueba de acceso/g,'Proba de acceso'],[/oposición/g,'oposición'],[/colegiación/g,'colexiación'],[/licencia/g,'licenza'],
+    [/empleo/g,'emprego'],[/Empleo/g,'Emprego'],[/salida laboral/g,'saída laboral'],[/salidas profesionales/g,'saídas profesionais'],[/fuentes oficiales/g,'fontes oficiais'],[/Fuentes oficiales/g,'Fontes oficiais'],
+    [/\by\b/g,'e'],[/\bo\b/g,'ou']
+  ];
+  function glText(value){
+    if(value == null) return value;
+    if(typeof value !== 'string') return value;
+    let out = value;
+    GL_REPLACEMENTS.forEach(([rx, repl]) => { out = out.replace(rx, repl); });
+    out = out.replace(/\s+e\s+e\s+/g,' e ').replace(/\s+/g,' ').trim();
+    return out;
+  }
+  function glArray(arr){ return Array.isArray(arr) ? arr.map(v => typeof v === 'object' && v ? glObject(v) : glText(v)) : arr; }
+  function glObject(obj){
+    if(!obj || typeof obj !== 'object' || Array.isArray(obj)) return obj;
+    const out = {...obj};
+    Object.keys(out).forEach(k => {
+      if(['url','source_url','id','source_id'].includes(k)) return;
+      if(typeof out[k] === 'string') out[k] = glText(out[k]);
+      else if(Array.isArray(out[k])) out[k] = glArray(out[k]);
+      else if(out[k] && typeof out[k] === 'object') out[k] = glObject(out[k]);
+    });
+    return out;
+  }
+  function galeguizarStudy(st){
+    if(!st || st.__v38gl) return st;
+    ['name','level','family','route','demand','labour','regulated','official_note'].forEach(k => { if(st[k]) st[k] = glText(st[k]); });
+    ['keywords','subjects','career_outputs','jobs'].forEach(k => { if(Array.isArray(st[k])) st[k] = glArray(st[k]); });
+    if(Array.isArray(st.route_options)) st.route_options = st.route_options.map(glObject);
+    if(Array.isArray(st.ponderation_subjects)) st.ponderation_subjects = st.ponderation_subjects.map(glObject);
+    if(st.availability_by_province) st.availability_by_province = glObject(st.availability_by_province);
+    st.searchText = computeSearchText(st);
+    st.__v38gl = true;
+    return st;
+  }
+  const originalRegisterStudy38 = registerStudy;
+  registerStudy = function(raw){ return originalRegisterStudy38(glObject(raw)); };
+  function galeguizarAll38(){ studies.forEach(galeguizarStudy); }
+
+  levelLabel = function(type){
+    const label = (LEVELS.find(x => x[0] === type) || [type, type])[1];
+    return glText(label);
+  };
+
+  function selectedFilters38(){
+    return {
+      q: norm($('#studySearch')?.value || ''),
+      level: $('#levelFilter')?.value || 'all',
+      family: $('#familyFilter')?.value || 'all',
+      sort: $('#sortFilter')?.value || 'smart'
+    };
+  }
+  function listForFilters38({q='', level='all', family='all'}={}){
+    return studies.filter(st => {
+      const qOk = q.length < 3 || st.searchText.includes(q);
+      const levelOk = level === 'all' || st.type === level;
+      const famOk = family === 'all' || st.family === family;
+      return qOk && levelOk && famOk;
+    });
+  }
+  populateFilters = function(){
+    const levelEl = $('#levelFilter');
+    const familyEl = $('#familyFilter');
+    const sortEl = $('#sortFilter');
+    const prevLevel = levelEl?.value || 'all';
+    const prevFamily = familyEl?.value || 'all';
+    const q = norm($('#studySearch')?.value || '');
+    if(levelEl){
+      const levelsAvailable = new Set(listForFilters38({q, level:'all', family:prevFamily}).map(st => st.type));
+      const levelOptions = LEVELS.filter(([v]) => v === 'all' || levelsAvailable.has(v));
+      levelEl.innerHTML = levelOptions.map(([v,l]) => `<option value="${html(v)}">${html(glText(l))}</option>`).join('');
+      levelEl.value = levelOptions.some(([v]) => v === prevLevel) ? prevLevel : 'all';
+    }
+    const effectiveLevel = levelEl?.value || 'all';
+    if(familyEl){
+      const fams = Array.from(new Set(listForFilters38({q, level:effectiveLevel, family:'all'}).map(s => s.family).filter(Boolean))).sort((a,b)=>a.localeCompare(b,'gl'));
+      familyEl.innerHTML = `<option value="all">Todas as familias e ramas dispoñibles</option>` + fams.map(f => `<option value="${html(f)}">${html(glText(f))}</option>`).join('');
+      familyEl.value = fams.includes(prevFamily) ? prevFamily : 'all';
+    }
+    if(sortEl && !sortEl.dataset.v38gl){
+      sortEl.innerHTML = SORTS.map(([v,l]) => `<option value="${v}">${html(glText(l))}</option>`).join('');
+      sortEl.dataset.v38gl = '1';
+    }
+  };
+  getStudiesFiltered = function(source='search'){
+    const q = norm(source === 'goal' ? $('#goalSearch').value : $('#studySearch').value);
+    const level = $('#levelFilter')?.value || 'all';
+    const fam = $('#familyFilter')?.value || 'all';
+    let list = studies.filter(st => {
+      const qOk = q.length < 3 || st.searchText.includes(q);
+      const levelOk = level === 'all' || st.type === level;
+      const famOk = fam === 'all' || st.family === fam;
+      return qOk && levelOk && famOk;
+    });
+    const sort = $('#sortFilter')?.value || 'smart';
+    list.sort((a,b) => {
+      if(sort === 'name') return glText(a.name).localeCompare(glText(b.name),'gl');
+      if(sort === 'family') return glText(a.family||'').localeCompare(glText(b.family||''),'gl') || glText(a.name).localeCompare(glText(b.name),'gl');
+      return (LEVEL_ORDER[a.type]||99)-(LEVEL_ORDER[b.type]||99) || glText(a.family||'').localeCompare(glText(b.family||''),'gl') || glText(a.name).localeCompare(glText(b.name),'gl');
+    });
+    return list;
+  };
+  studyCard = function(st){
+    galeguizarStudy(st);
+    return `<article class="study-card"><button type="button" data-study-open="${st.id}"><h3>${html(glText(st.name))}</h3><div class="study-meta"><span class="pill dark">${html(levelLabel(st.type))}</span><span class="pill">${html(glText(st.family||''))}</span></div><p>${html(glText(st.route || st.labour || 'Ficha orientativa con información ampliable.'))}</p></button></article>`;
+  };
+  listHTML = function(items){
+    return items && items.length ? `<ul>${items.map(x => `<li>${html(glText(x.subject || x))}</li>`).join('')}</ul>` : '<p>Non hai datos específicos nesta ficha. Consulta a fonte oficial correspondente.</p>';
+  };
+  locationHTML = function(st){
+    const av = st.availability_by_province || {};
+    const entries = Object.entries(av);
+    if(!entries.length) return '<p>Consulta QEDU, RUCT ou a oferta oficial de FP segundo o tipo de estudo.</p>';
+    return entries.map(([place, vals]) => `<details><summary>${html(glText(place))}</summary>${Array.isArray(vals) ? listHTML(vals.map(v => typeof v === 'string' ? glText(v) : `${glText(v.city || '')} · ${glText(v.center || '')} ${v.note ? '('+glText(v.note)+')' : ''}`)) : `<p>${html(glText(vals))}</p>`}</details>`).join('');
+  };
+  renderSearch = function(){
+    galeguizarAll38();
+    populateFilters();
+    const list = getStudiesFiltered('search');
+    state.currentResults = list;
+    const suffix = V38.loadedSupabase ? ' · catálogo ampliado conectado' : (state.catalogsLoaded ? '' : ' · cargando catálogo ampliado…');
+    $('#resultsCount').textContent = `${list.length} estudos ou vías atopadas${suffix}`;
+    const container = $('#studyResults');
+    if(!list.length){ container.innerHTML = `<p class="empty-note">Non hai coincidencias cos filtros actuais. Proba a quitar un filtro ou escribir tres letras doutra palabra.</p>`; return; }
+    const groups = groupBy(list, st => `${levelLabel(st.type)} · ${glText(st.family || 'Sen familia')}`);
+    container.innerHTML = Object.entries(groups).map(([label, items]) => `
+      <div class="study-group"><h2>${html(label)}</h2>${items.map(studyCard).join('')}</div>
+    `).join('');
+    $$('[data-study-open]', container).forEach(btn => btn.addEventListener('click', () => openStudy(btn.dataset.studyOpen)));
+  };
+  renderGoalSuggestions = function(){
+    galeguizarAll38();
+    const q = norm($('#goalSearch').value);
+    const box = $('#goalSuggestions');
+    if(q.length < 3){ box.innerHTML = '<p class="empty-note">Escribe polo menos tres letras para ver coincidencias visibles.</p>'; return; }
+    const list = studies.filter(st => st.searchText.includes(q)).sort((a,b)=>(LEVEL_ORDER[a.type]||99)-(LEVEL_ORDER[b.type]||99) || glText(a.name).localeCompare(glText(b.name),'gl')).slice(0,24);
+    if(!list.length){ box.innerHTML = '<p class="empty-note">Non hai coincidencias. Proba cunha familia, rama ou profesión relacionada.</p>'; return; }
+    box.innerHTML = list.map(st => `<button type="button" class="suggestion-card" data-goal="${st.id}"><strong>${html(glText(st.name))}</strong><small>${html(levelLabel(st.type))} · ${html(glText(st.family||''))}</small></button>`).join('');
+    $$('[data-goal]', box).forEach(btn => btn.addEventListener('click', () => { state.goal = studyById.get(btn.dataset.goal); galeguizarStudy(state.goal); $('#goalSearch').value = glText(state.goal.name); box.innerHTML = `<div class="suggestion-card active"><strong>${html(glText(state.goal.name))}</strong><small>${html(levelLabel(state.goal.type))} · ${html(glText(state.goal.family||''))}</small></div>`; state.step = 3; updateStep(); }));
+  };
+
+  async function supabaseFetch38(path){
+    const cfg = window.ITINERA_CONFIG || {};
+    if(!cfg.SUPABASE_URL || !cfg.SUPABASE_ANON_KEY) return null;
+    const url = cfg.SUPABASE_URL.replace(/\/$/,'') + '/rest/v1/' + path;
+    const res = await fetch(url, {headers:{apikey:cfg.SUPABASE_ANON_KEY, authorization:`Bearer ${cfg.SUPABASE_ANON_KEY}`, accept:'application/json'}});
+    if(!res.ok) throw new Error(`Supabase ${res.status} ${path}`);
+    return res.json();
+  }
+  function mapSupabaseStudy38(row){
+    if(!row || !row.name) return null;
+    return glObject({
+      id: row.id || `${row.type||'estudo'}-${slug(row.name)}`,
+      name: row.name,
+      type: normaliseType(row.type || row.level || 'outro'),
+      level: row.level || levelLabel(normaliseType(row.type || row.level || 'outro')),
+      family: row.family || row.branch || row.jurisdiction || 'Universidade',
+      route: row.route || 'Consulta requisitos, prazas, campus, modalidade e fonte oficial antes de decidir.',
+      subjects: row.subjects || [],
+      ponderation_subjects: row.ponderation_subjects || [],
+      route_options: row.route_options || [],
+      availability_by_province: row.availability_by_province || {Galicia:['Consultar campus, centro e oferta oficial vixente.']},
+      sources: row.sources || [row.source_id || 'qedu','ruct'],
+      source_url: row.source_url,
+      source_id: row.source_id,
+      raw: row.raw || {},
+      demand: row.demand || row.raw?.learned || '',
+      regulated: row.regulated || 'Comprobar se a profesión require máster habilitante, colexiación, oposición, especialidade ou outro requisito posterior.',
+      career_outputs: row.career_outputs || row.jobs || []
+    });
+  }
+  function mapUniversityOffer38(row){
+    const levelRaw = row.level || row.title || '';
+    const type = normaliseType(levelRaw);
+    let name = row.title || '';
+    if(!name || /^(grado|grao|máster|master|doctorado|doutoramento)\s*·/i.test(name)){
+      const prefix = type === 'grado' ? 'Grao' : type === 'master' ? 'Máster universitario' : type === 'doctorado' ? 'Doutoramento' : glText(levelRaw || 'Estudo universitario');
+      const branch = row.branch || row.field || row.center || 'área universitaria';
+      name = `${prefix} · ${row.university || 'Universidade'} · ${branch}${row.credits ? ' · '+row.credits+' ECTS' : ''}`;
+    }
+    return glObject({
+      id: `univ-supabase-${slug(row.id || name)}`,
+      name,
+      type,
+      level: row.level || levelLabel(type),
+      family: [row.university, row.branch || row.field].filter(Boolean).join(' · ') || 'Universidade galega',
+      route: 'Estudo universitario procedente do catálogo oficial cargado en Supabase. Comproba centro, campus, prazas, nota, modalidade e oficialidade na universidade, QEDU e RUCT.',
+      subjects: ['Consultar plan de estudos, materias de acceso e ponderacións oficiais cando proceda.'],
+      ponderation_subjects: [{subject:'Consultar CIUG se se accede por ABAU', weight:'fonte oficial'}],
+      availability_by_province: {Galicia:[[row.university,row.center,row.province,row.modality].filter(Boolean).join(' · ') || 'Consultar universidade responsable.']},
+      sources: ['qedu','ruct','ciug-admision'],
+      source_url: row.source_url,
+      source_id: row.source_id || 'catalogo-universitario-supabase',
+      raw: row,
+      data_quality: row.data_status || 'supabase_university_catalog'
+    });
+  }
+  async function loadSupabaseCatalog38(){
+    const cfg = window.ITINERA_CONFIG || {};
+    if(!cfg.SUPABASE_URL || !cfg.SUPABASE_ANON_KEY || V38.loadedSupabase) return;
+    try{
+      const rows = await supabaseFetch38('itinera_studies?select=id,name,type,level,family,route,subjects,ponderation_subjects,route_options,availability_by_province,sources,source_url,source_id,raw,data_quality&limit=10000');
+      (rows || []).map(mapSupabaseStudy38).filter(Boolean).forEach(registerStudy);
+      V38.loadedSupabase = true;
+    }catch(err){ console.warn('Non se puido cargar itinera_studies desde Supabase', err); }
+    try{
+      const uniRows = await supabaseFetch38('itinera_university_catalog_clean?select=id,title,level,university,center,province,community,branch,field,credits,modality,cut_off_note,places,source_id,source_url,data_status,metadata&community=eq.Galicia&limit=10000');
+      (uniRows || []).map(mapUniversityOffer38).filter(Boolean).forEach(registerStudy);
+      V38.loadedSupabase = true;
+    }catch(err){ console.warn('Non se puido cargar catálogo universitario limpo desde Supabase', err); }
+    galeguizarAll38();
+    populateFilters();
+    renderSearch();
+    renderGoalSuggestions();
+  }
+  const previousLoadAdditional38 = loadAdditionalCatalogs;
+  loadAdditionalCatalogs = async function(){
+    await previousLoadAdditional38();
+    galeguizarAll38();
+    populateFilters();
+    renderSearch();
+    renderGoalSuggestions();
+    await loadSupabaseCatalog38();
+  };
+  function setupHome38(){
+    document.body.classList.add('v38');
+    const home = $('.home-view');
+    if(home){
+      const intro = $('.home-intro-block');
+      if(intro){
+        intro.innerHTML = `<p class="home-kicker">Orientación académica guiada</p><h1>ITINERA</h1><p>Unha guía sinxela e completa para atopar información académica, comprender opcións e deseñar unha ruta segundo o teu momento vital.</p>`;
+      }
+      $$('.home-choice strong').forEach(el => { el.textContent = glText(el.textContent).replace(/^Abrir\s+/i,''); });
+      $$('.home-choice small').forEach(el => { el.textContent = glText(el.textContent).replace(/^Abre\s+/i,'').replace(/^Abrir\s+/i,''); });
+    }
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    setupHome38();
+    setTimeout(() => { galeguizarAll38(); populateFilters(); renderSearch(); }, 500);
+  });
+})();

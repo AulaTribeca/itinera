@@ -420,3 +420,12 @@ ITINERA v0.37.1
 - La portada pasa a ser una entrada guiada: perfil -> información necesaria -> acción concreta.
 - El buscador queda recogido y se despliega solo cuando el usuario lo necesita.
 - No requiere cambios en Supabase ni SQL.
+
+
+ITINERA v0.38
+- Portada sen logo grande.
+- Botóns principais sen fondo, só con bordo e esquinas suavizadas.
+- Textos visibles normalizados a galego.
+- Filtros do buscador dependentes e excluíntes.
+- Carga dinámica desde Supabase para ampliar catálogo, incluído catálogo universitario cando está dispoñible.
+- Engadido diagnóstico SQL para comprobar cobertura de graos, másteres e doutoramentos das universidades galegas.
