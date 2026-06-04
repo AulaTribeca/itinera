@@ -4,192 +4,179 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ITINERA | Orientación académica guiada</title>
-  <meta name="theme-color" content="#103d2f">
-  <link rel="icon" type="image/png" sizes="512x512" href="assets/favicon-itinera.png?v=0.37.4">
-  <link rel="icon" type="image/x-icon" href="assets/favicon.ico?v=0.37.4">
-  <link rel="shortcut icon" href="assets/favicon.ico?v=0.37.4">
-  <link rel="apple-touch-icon" href="assets/favicon-itinera.png?v=0.37.4">
-  <meta name="description" content="Ferramenta de orientación académica guiada con deseño de itinerarios personalizados, preguntas frecuentes oficiais, buscador e fontes verificables.">
-  <link rel="stylesheet" href="styles.css">
+  <meta name="theme-color" content="#073b3a">
+  <meta name="description" content="ITINERA: buscador de estudos e deseñador de itinerarios académicos guiados.">
+  <link rel="icon" type="image/png" sizes="512x512" href="assets/favicon-itinera.png?v=0.37.5">
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico?v=0.37.5">
+  <link rel="apple-touch-icon" href="assets/favicon-itinera.png?v=0.37.5">
+  <link rel="stylesheet" href="styles.css?v=0.37.5">
 </head>
 <body>
-  <a class="skip-link" href="#contenido">Saltar ao contido principal</a>
+  <a class="skip-link" href="#main">Saltar ao contido principal</a>
 
-  <header class="site-header">
-    <div class="shell topbar">
-      <a class="brand" href="#inicio" data-route="inicio" aria-label="Ir ao inicio de ITINERA">
-        <img src="assets/itinera-logo-mark.png" alt="ITINERA" class="brand-mark brand-logo-mark">
-        <div class="brand-copy"><strong>ITINERA</strong><small id="brandSubtitle"></small></div>
-      </a>
-      <div class="header-actions">
-        <a href="#fuentes" data-route="fuentes" class="top-link" id="headerSourcesBtn"></a>
-        <a href="#faq" data-route="faq" class="top-link" id="headerFaqBtn"></a>
-        <a href="#aventura" data-route="aventura" class="premium-btn sim" id="headerSimulatorBtn"></a>
-        <span class="update-pill" id="updateBadge"></span>
-        <label class="compact-select" for="languageSelect"><span id="languageLabel"></span><select id="languageSelect"></select></label>
-        <label class="compact-select" for="fontSelect"><span id="fontLabel"></span><select id="fontSelect"></select></label>
-        <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="mainNav">Menú</button>
-      </div>
-    </div>
-    <nav id="mainNav" class="main-nav shell" aria-label="Navegación principal">
-      <a href="#inicio" data-route="inicio" class="active nav-home" id="navInicio"></a>
-      <details class="official-dropdown" id="officialDropdown">
-        <summary id="officialLinksSummary">Enlaces oficiais</summary>
-        <div class="official-menu">
-          <a href="#itinerarios" data-route="itinerarios" id="navItinerarios"></a>
-          <a href="#bachillerato" data-route="bachillerato" id="navBach"></a>
-          <a href="#ponderaciones" data-route="ponderaciones" id="navPonderaciones"></a>
-          <a href="#fp" data-route="fp" id="navFP"></a>
-          <a href="#estudios" data-route="estudios" id="navEstudios">Todos os estudos</a>
-          <a href="#pruebas" data-route="pruebas" id="navPruebas">Probas de acceso</a>
-          <a href="#universidad" data-route="universidad" id="navUniversidad"></a>
-          <a href="#becas" data-route="becas" id="navBecas"></a>
-          <a href="#cupos" data-route="cupos" id="navCupos"></a>
-          <a href="#convalidaciones" data-route="convalidaciones" id="navConvalidaciones">Convalidaciones</a>
-        </div>
-      </details>
+  <header class="app-header" id="appHeader">
+    <a class="brand" href="#inicio" data-route="inicio" aria-label="Ir ao inicio de ITINERA">
+      <img src="assets/itinera-logo-mark.png" alt="" class="brand-symbol">
+      <span class="brand-word">ITINERA</span>
+    </a>
+    <nav class="header-nav" aria-label="Navegación principal">
+      <a href="#buscar" data-route="buscar" data-i18n="navSearch">Buscar estudos</a>
+      <a href="#itinerario" data-route="itinerario" data-i18n="navRoute">Comezar itinerario</a>
+      <a href="#faq" data-route="faq" data-i18n="navFaq">Preguntas</a>
+      <a href="#fontes" data-route="fontes" data-i18n="navSources">Fontes</a>
     </nav>
+    <label class="language-switch"><span data-i18n="language">Idioma</span><select id="languageSelect" aria-label="Idioma"></select></label>
+    <button class="menu-button" id="menuButton" type="button" aria-expanded="false" aria-controls="mobileMenu">Menú</button>
   </header>
 
-  <main id="contenido" class="shell">
-    <section id="inicio" class="view active-view" tabindex="-1">
-      <div class="hero-grid v27-hero-grid">
-        <article class="hero-card green-card v27-hero-copy">
-          <p class="eyebrow" id="heroEyebrow"></p>
-          <div class="v34-portada-brand"><img src="assets/itinera-logo-mark.png" alt="ITINERA" class="v29-hero-logo v30-hero-mark"><strong class="v34-portada-name">ITINERA</strong></div>
-          <h1 id="heroTitle"></h1>
-          <p class="lead" id="heroLead"></p>
-          <div class="hero-actions v27-hero-actions">
-            <a href="#inicio" data-route="inicio" class="v27-text-link">Buscador guiado</a>
-            <a href="#aventura" data-route="aventura" class="v27-text-link" id="heroSimulatorCta"></a>
-          </div>
-        </article>
-        <article class="v27-cover-card" aria-label="Ferramentas principais de ITINERA">
-          <p class="v27-cover-kicker">Ferramentas propias</p>
-          <h2>Orientación clara, rutas verificables.</h2>
-          <p>ITINERA organiza a decisión académica en tres xestos: buscar, simular e comprobar fontes oficiais.</p>
-          <div class="v27-cover-tools">
-            <a href="#inicio" data-route="inicio"><span>01</span><strong>Buscador de estudos</strong><small>Busca por nome, familia ou profesión.</small></a>
-            <a href="#aventura" data-route="aventura"><span>02</span><strong>Simulador de itinerarios</strong><small>Compara rutas curtas e alternativas.</small></a>
-            <a href="#faq" data-route="faq"><span>03</span><strong>Preguntas frecuentes</strong><small>Dúbidas explicadas con fontes oficiais.</small></a>
-          </div>
-        </article>
-      </div>
+  <nav class="mobile-menu" id="mobileMenu" hidden>
+    <a href="#buscar" data-route="buscar" data-i18n="navSearch">Buscar estudos</a>
+    <a href="#itinerario" data-route="itinerario" data-i18n="navRoute">Comezar itinerario</a>
+    <a href="#faq" data-route="faq" data-i18n="navFaq">Preguntas</a>
+    <a href="#fontes" data-route="fontes" data-i18n="navSources">Fontes</a>
+  </nav>
 
-      <section class="panel search-panel">
-        <div class="section-heading compact"><p class="eyebrow" id="finderEyebrow"></p><h2 id="finderTitle"></h2><p id="finderDescription"></p></div>
-        <div class="finder">
-          <label for="studySearch" id="finderLabel"></label>
-          <div class="search-row"><input id="studySearch" type="search" autocomplete="off"><button id="studySearchBtn" class="button primary"></button></div>
-          <div class="search-filters">
-            <label><span id="typeFilterLabel"></span><select id="studyTypeFilter"></select></label>
-            <label><span id="familyFilterLabel"></span><select id="familyFilter"></select></label>
-            <label><span id="residenceFilterLabel"></span><input id="residenceFilter" type="text"></label>
-          </div>
-          <div class="quick-tags" id="quickTags"></div>
-          <div id="studyResults" class="results" aria-live="polite"></div>
+  <main id="main">
+    <section class="view home-view active" id="inicio" tabindex="-1">
+      <div class="home-background" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="home-content">
+        <div class="home-logo-block">
+          <img src="assets/itinera-logo-mark.png" alt="ITINERA" class="home-logo">
+          <p class="home-kicker" data-i18n="homeKicker">Orientación académica guiada</p>
         </div>
-      </section>
-
-      <section class="panel cards-panel"><div class="section-heading compact"><p class="eyebrow" id="homeQuestionsEyebrow"></p><h2 id="homeQuestionsTitle"></h2></div><div id="homeQuestions" class="grid three"></div></section>
-    </section>
-
-
-    <section id="estudios" class="view" tabindex="-1">
-      <div class="section-heading wide">
-        <p class="eyebrow" id="studiesEyebrow"></p>
-        <h1 id="studiesTitle"></h1>
-        <p id="studiesDescription"></p>
-      </div>
-      <div class="panel studies-browser-panel">
-        <div class="study-browser-toolbar">
-          <label for="allStudiesSearch" id="allStudiesSearchLabel"></label>
-          <input id="allStudiesSearch" type="search" autocomplete="off">
-          <label for="allStudiesType" id="allStudiesTypeLabel"></label>
-          <select id="allStudiesType"></select>
-          <label for="allStudiesFamily" id="allStudiesFamilyLabel"></label>
-          <select id="allStudiesFamily"></select>
-          <button type="button" class="button primary studies-search-btn" id="allStudiesSearchBtn">Buscar coincidencias</button>
+        <div class="home-choice-grid" aria-label="Opcións principais">
+          <a class="home-choice" href="#buscar" data-route="buscar">
+            <span class="choice-index">01</span>
+            <strong data-i18n="homeSearchTitle">Buscar estudos</strong>
+            <small data-i18n="homeSearchLead">Consulta ciclos, graos, másteres e vías formativas por nivel, familia, rama ou profesión.</small>
+          </a>
+          <a class="home-choice" href="#itinerario" data-route="itinerario">
+            <span class="choice-index">02</span>
+            <strong data-i18n="homeRouteTitle">Comezar itinerario</strong>
+            <small data-i18n="homeRouteLead">Parte da túa situación actual e constrúe unha ruta clara ata unha meta académica ou profesional.</small>
+          </a>
         </div>
-        <div class="warning-box small" id="allStudiesNote"></div>
-        <div id="allStudiesList" class="all-studies-list"></div>
       </div>
     </section>
 
-    <section id="itinerarios" class="view" tabindex="-1"><div class="section-heading wide"><p class="eyebrow" id="routesEyebrow"></p><h1 id="routesTitle"></h1><p id="routesDescription"></p></div><div id="routeCards" class="grid two source-oriented"></div></section>
-    <section id="bachillerato" class="view" tabindex="-1"><div class="section-heading wide"><p class="eyebrow" id="bachEyebrow"></p><h1 id="bachTitle"></h1><p id="bachDescription"></p></div><div id="bachCards" class="grid two source-oriented"></div><div class="warning-box" id="bachWarning"></div></section>
-    <section id="ponderaciones" class="view" tabindex="-1"><div class="section-heading wide"><p class="eyebrow" id="pondEyebrow"></p><h1 id="pondTitle"></h1><p id="pondDescription"></p></div><div class="grid two"><article class="content-card highlighted"><h2 id="ruleCardTitle"></h2><p id="ruleCardP1"></p><p id="ruleCardP2"></p></article><article class="content-card"><h2 id="pondSourceTitle"></h2><p id="pondSourceDescription"></p><div id="ponderationLinks" class="link-stack"></div></article></div><section class="panel"><div class="section-heading compact"><h2 id="areaPanelTitle"></h2><p id="areaPanelDescription"></p></div><div id="areaButtons" class="quick-tags"></div><div id="areaOutput" class="results"></div></section></section>
-    <section id="fp" class="view" tabindex="-1"><div class="section-heading wide"><p class="eyebrow" id="fpEyebrow"></p><h1 id="fpTitle"></h1><p id="fpDescription"></p></div><div id="fpCards" class="grid two source-oriented"></div></section>
-    <section id="universidad" class="view" tabindex="-1"><div class="section-heading wide"><p class="eyebrow" id="uniEyebrow"></p><h1 id="uniTitle"></h1><p id="uniDescription"></p></div><div id="universityCards" class="grid two source-oriented"></div><div class="section-heading compact extra-top"><h2 id="mastersTitle"></h2><p id="mastersDescription"></p></div><div id="masterCards" class="grid two"></div></section>
+    <section class="view content-view" id="buscar" tabindex="-1">
+      <div class="section-hero">
+        <p class="eyebrow" data-i18n="searchEyebrow">Buscador de estudos</p>
+        <h1 data-i18n="searchTitle">Busca completa e ordenada</h1>
+        <p data-i18n="searchLead">Escribe polo menos tres letras ou explora por nivel, familia e rama. Ao abrir unha ficha verás accesos, itinerarios posibles, saídas profesionais, centros ou lugares de consulta e fontes oficiais.</p>
+      </div>
 
-    <section id="aventura" class="view" tabindex="-1">
-      <div class="section-heading wide"><p class="eyebrow" id="adventureEyebrow"></p><h1 id="adventureTitle"></h1><p id="adventureDescription"></p></div>
-      <div class="simulator-shell">
-        <aside class="sim-wizard">
-          <div class="wizard-progress"><span id="stepDot1" class="active">1</span><span id="stepDot2">2</span><span id="stepDot3">3</span></div>
-          <section class="wizard-step active" id="wizardStep1"><h2 id="adventureStartTitle"></h2><div id="adventureStartOptions" class="adventure-options"></div></section>
-          <section class="wizard-step" id="wizardStep2"><h2 id="adventureGoalTitle"></h2><input id="adventureGoalSearch" class="adventure-target-input" type="search" autocomplete="off">
-              <div id="adventureSuggestions" class="adventure-suggestions" role="listbox" aria-label="Suxestións de estudos"></div><div id="adventureGoalOptions" class="adventure-options compact-options"></div><div id="adventureDisambiguation" class="disambiguation"></div></section>
-          <section class="wizard-step" id="wizardStep3"><h2 id="adventureQuestionsTitle"></h2><div id="adventureQuestions" class="adventure-questions"></div><button type="button" class="button pdf-button full-width" id="adventurePdfBtn"></button></section>
+      <div class="search-layout">
+        <aside class="filter-card" aria-label="Filtros do buscador">
+          <label for="studySearch" data-i18n="searchInputLabel">Que estudo, profesión ou ámbito buscas?</label>
+          <div class="large-search"><input id="studySearch" type="search" autocomplete="off" placeholder="Psicoloxía, electricidade, enfermaría…"><button type="button" id="clearSearch" aria-label="Limpar busca">×</button></div>
+          <div class="filter-stack">
+            <label><span data-i18n="levelFilter">Nivel</span><select id="levelFilter"></select></label>
+            <label><span data-i18n="familyFilter">Familia ou rama</span><select id="familyFilter"></select></label>
+            <label><span data-i18n="sortFilter">Ordenar</span><select id="sortFilter"></select></label>
+          </div>
+          <div class="official-shortcuts">
+            <p data-i18n="officialShortcuts">Comprobación oficial rápida</p>
+            <a href="https://www.edu.xunta.gal/fp/oferta-fp" target="_blank" rel="noopener noreferrer">Xunta FP · Oferta</a>
+            <a href="https://www.edu.xunta.gal/fp/ciclos" target="_blank" rel="noopener noreferrer">Xunta FP · Ciclos</a>
+            <a href="https://siiu.universidades.gob.es/QEDU/" target="_blank" rel="noopener noreferrer">QEDU · Universidade</a>
+            <a href="https://www.educacionfpydeportes.gob.es/servicios-al-ciudadano/catalogo/general/99/997950/ficha/997950.html" target="_blank" rel="noopener noreferrer">RUCT</a>
+          </div>
         </aside>
-        <section class="route-stage" id="adventureResult" aria-live="polite"></section>
+        <section class="results-card">
+          <div class="results-toolbar"><p id="resultsCount"></p><button class="secondary-button" id="downloadSearchPdf" type="button" data-i18n="downloadList">Descargar selección en PDF</button></div>
+          <div id="studyResults" class="study-results" aria-live="polite"></div>
+          <article id="studyDetail" class="study-detail" hidden></article>
+        </section>
       </div>
     </section>
 
-
-    <section id="pruebas" class="view" tabindex="-1">
-      <div class="section-heading wide">
-        <p class="eyebrow" id="accessEyebrow"></p>
-        <h1 id="accessTitle"></h1>
-        <p id="accessDescription"></p>
+    <section class="view content-view" id="itinerario" tabindex="-1">
+      <div class="section-hero">
+        <p class="eyebrow" data-i18n="routeEyebrow">Guía por pasos</p>
+        <h1 data-i18n="routeTitle">Comeza onde estás e chega onde queres</h1>
+        <p data-i18n="routeLead">ITINERA non presupón que xa coñezas o sistema educativo. Primeiro identifica o teu punto de partida, despois a meta e finalmente debuxa unha ruta con pasos concretos, explicacións sinxelas e información ampliable.</p>
       </div>
-      <div id="accessCards" class="grid two"></div>
+
+      <div class="route-builder">
+        <aside class="wizard-card">
+          <ol class="wizard-indicator" aria-label="Pasos do itinerario">
+            <li class="active" data-step-dot="1"><span>1</span><strong data-i18n="stepStart">Punto de partida</strong></li>
+            <li data-step-dot="2"><span>2</span><strong data-i18n="stepGoal">Meta</strong></li>
+            <li data-step-dot="3"><span>3</span><strong data-i18n="stepPlan">Plan</strong></li>
+          </ol>
+
+          <section class="wizard-step active" data-step="1">
+            <h2 data-i18n="startQuestion">Cal é a túa situación actual?</h2>
+            <p data-i18n="startHelp">Escolle a opción máis parecida. Se non o tes claro, escolle “Non o sei” e a ferramenta ofrecerá rutas prudentes.</p>
+            <div id="startOptions" class="option-list"></div>
+          </section>
+
+          <section class="wizard-step" data-step="2">
+            <h2 data-i18n="goalQuestion">Cal é a túa meta?</h2>
+            <p data-i18n="goalHelp">Busca un estudo, unha familia profesional ou unha profesión. As coincidencias aparecerán de forma visible a partir de tres letras.</p>
+            <input id="goalSearch" class="goal-search" type="search" autocomplete="off" placeholder="Medicina, soldadura, informática…">
+            <div id="goalSuggestions" class="goal-suggestions" aria-live="polite"></div>
+          </section>
+
+          <section class="wizard-step" data-step="3">
+            <h2 data-i18n="planQuestion">Axusta a ruta</h2>
+            <p data-i18n="planHelp">Indica como queres estudar para que o itinerario sexa máis realista.</p>
+            <div class="route-preferences">
+              <label><span data-i18n="paceLabel">Ritmo preferido</span><select id="paceSelect"></select></label>
+              <label><span data-i18n="placeLabel">Lugar</span><input id="placeInput" type="text" placeholder="A Coruña, Cee, Galicia…"></label>
+              <label><span data-i18n="modeLabel">Modalidade</span><select id="modeSelect"></select></label>
+            </div>
+            <div class="wizard-actions"><button class="primary-button" id="buildRoute" type="button" data-i18n="buildRoute">Deseñar o meu itinerario</button></div>
+          </section>
+
+          <div class="wizard-bottom-actions">
+            <button class="plain-button" id="prevStep" type="button" data-i18n="back">Volver</button>
+            <button class="primary-button" id="nextStep" type="button" data-i18n="next">Seguinte paso</button>
+          </div>
+        </aside>
+
+        <section class="route-output-card" id="routeOutput" aria-live="polite">
+          <div class="empty-route">
+            <img src="assets/itinera-logo-mark.png" alt="" aria-hidden="true">
+            <h2 data-i18n="emptyRouteTitle">O teu itinerario aparecerá aquí</h2>
+            <p data-i18n="emptyRouteLead">Ao completar os pasos, verás unha liña de tempo clara con cada decisión, cada requisito e os enlaces oficiais necesarios.</p>
+          </div>
+        </section>
+      </div>
     </section>
 
-    <section id="becas" class="view" tabindex="-1"><div class="section-heading wide"><p class="eyebrow" id="scholarshipEyebrow"></p><h1 id="scholarshipTitle"></h1><p id="scholarshipDescription"></p></div><div id="scholarshipCards" class="grid two"></div></section>
-    <section id="cupos" class="view" tabindex="-1"><div class="section-heading wide"><p class="eyebrow" id="reservedEyebrow"></p><h1 id="reservedTitle"></h1><p id="reservedDescription"></p></div><div id="reservedCards" class="grid two"></div></section>
-
-    <section id="convalidaciones" class="view" tabindex="-1">
-      <div class="section-heading wide">
-        <p class="eyebrow" id="convEyebrow"></p>
-        <h1 id="convTitle"></h1>
-        <p id="convDescription"></p>
+    <section class="view content-view" id="faq" tabindex="-1">
+      <div class="section-hero">
+        <p class="eyebrow" data-i18n="faqEyebrow">Preguntas frecuentes</p>
+        <h1 data-i18n="faqTitle">Dúbidas explicadas con fontes oficiais</h1>
+        <p data-i18n="faqLead">Busca unha pregunta ou abre os bloques por tema. As respostas son orientativas e enlazan co lugar oficial que debes comprobar antes de tomar unha decisión definitiva.</p>
       </div>
-      <div id="convalidationCards" class="grid three"></div>
+      <div class="faq-toolbar"><input id="faqSearch" type="search" placeholder="Buscar: acceso, becas, FP, universidade…"><button class="secondary-button" id="downloadFaqPdf" type="button" data-i18n="downloadFaq">Descargar FAQ en PDF</button></div>
+      <div id="faqList" class="faq-list"></div>
     </section>
 
-    <section id="faq" class="view" tabindex="-1"><div class="section-heading wide"><p class="eyebrow" id="faqEyebrow"></p><h1 id="faqTitle"></h1><p id="faqDescription"></p></div><input id="faqSearch" class="faq-search" type="search"><div id="faqList" class="faq-list"></div></section>
-
-    <section id="fuentes" class="view" tabindex="-1"><div class="section-heading wide"><p class="eyebrow" id="sourcesEyebrow"></p><h1 id="sourcesTitle"></h1><p id="sourcesDescription"></p></div><div class="license-box"><h2 id="licenseTitle"></h2><p id="licenseDescription"></p><a class="button ghost" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a></div><div id="sourceFilters" class="filters"></div><div id="sourceCards" class="grid two"></div></section>
-    <section id="asistente" class="view legacy-assistant-view" tabindex="-1" hidden aria-hidden="true">
-      <div class="section-heading wide"><p class="eyebrow" id="chatEyebrow"></p><h1 id="chatTitle"></h1><p id="chatDescription"></p></div>
-      <div class="chat-layout"><section class="chat-panel"><div id="chatLog" class="chat-log" aria-live="polite"></div><form id="chatForm" class="chat-form"><label for="chatInput" id="chatLabel"></label><div class="chat-row"><input id="chatInput" type="text"><button class="button action-bot" type="submit" id="chatSend"></button></div></form></section><aside class="chat-help"><h2 id="chatSuggestionsTitle"></h2><div id="questionChips"></div><div class="warning-box small" id="chatWarning"></div></aside></div>
+    <section class="view content-view" id="fontes" tabindex="-1">
+      <div class="section-hero">
+        <p class="eyebrow" data-i18n="sourcesEyebrow">Fontes</p>
+        <h1 data-i18n="sourcesTitle">Ligazóns oficiais de comprobación</h1>
+        <p data-i18n="sourcesLead">ITINERA é unha guía de orientación. Para matrícula, admisión, prazas, notas de corte, ponderacións, recoñecementos, becas ou habilitacións profesionais hai que verificar sempre a páxina oficial vixente.</p>
+      </div>
+      <div id="sourceList" class="source-grid"></div>
     </section>
   </main>
 
-  <footer class="site-footer"><div class="shell footer-inner"><div class="footer-brand"><img src="assets/tribeca-shield.png" alt="Tribeca Academia" class="footer-mark"><div><p class="footer-brand-name">Tribeca Academia</p><p class="footer-brand-sub" id="footerBrandSub"></p><p class="footer-address">Calle Rafael Juan, 33, 15130, Corcubión, A Coruña</p></div></div><div class="footer-description" id="footerDescription"></div><div class="footer-license"><strong>Creative Commons</strong><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a></div><div class="footer-links"><button type="button" class="footer-link-button" data-modal-open="aboutModal" id="footerAbout"></button><button type="button" class="footer-link-button" data-modal-open="legalModal" id="footerLegal"></button><button type="button" class="footer-link-button" data-modal-open="contactModal" id="footerContact"></button></div></div></footer>
-  <div class="modal-backdrop" id="modalBackdrop" hidden></div>
-  <section class="modal" id="aboutModal" hidden aria-modal="true" role="dialog"><div class="modal-header"><h2 id="aboutModalTopLabel"></h2><button type="button" class="modal-close" data-modal-close>×</button></div><div class="modal-body about-layout"><img src="assets/patricia-tribeca.png" alt="Retrato profesional" class="about-photo"><div><p class="modal-kicker" id="aboutKicker"></p><h3 id="aboutTitle"></h3><p id="aboutP1"></p><p id="aboutP2"></p><p id="aboutP3"></p></div></div></section>
-  <section class="modal" id="legalModal" hidden aria-modal="true" role="dialog"><div class="modal-header"><h2 id="legalModalTopLabel"></h2><button type="button" class="modal-close" data-modal-close>×</button></div><div class="modal-body"><h3 id="legalTitle"></h3><p id="legalP1"></p><p id="legalP2"></p><p id="legalP3"></p><p id="legalP4"></p></div></section>
-  <section class="modal" id="contactModal" hidden aria-modal="true" role="dialog"><div class="modal-header"><h2 id="contactModalTopLabel"></h2><button type="button" class="modal-close" data-modal-close>×</button></div><div class="modal-body"><h3 id="contactTitle"></h3><p id="contactP1"></p><p id="contactP2"></p><p id="contactP3"></p></div></section>
-
-  <section class="modal detail-modal" id="studyDetailModal" hidden aria-modal="true" role="dialog" aria-labelledby="studyDetailTitle">
-    <div class="modal-header">
-      <h2 id="studyDetailTopLabel">Ficha del estudio</h2>
-      <button type="button" class="modal-close" data-modal-close aria-label="Pechar">×</button>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="assets/tribeca-shield.png" alt="" class="footer-logo">
+        <div><strong>Tribeca Academia</strong><span>Ecosistema educativo Tribeca</span><small>Calle Rafael Juan, 33, 15130, Corcubión, A Coruña</small></div>
+      </div>
+      <p data-i18n="footerText">ITINERA acompaña a toma de decisións académicas con criterio pedagóxico, información verificable e rutas comprensibles.</p>
+      <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a>
     </div>
-    <div class="modal-body" id="studyDetailBody"></div>
-  </section>
+  </footer>
 
-  <section class="modal detail-modal route-link-modal" id="routeLinkModal" hidden aria-modal="true" role="dialog" aria-labelledby="routeLinkTitle">
-    <div class="modal-header">
-      <h2 id="routeLinkTitle">Información del enlace</h2>
-      <button type="button" class="modal-close" data-modal-close aria-label="Pechar">×</button>
-    </div>
-    <div class="modal-body" id="routeLinkBody"></div>
-  </section>
-
-  <script src="app-config.js?v=0.37.4"></script>
-  <script src="app.js?v=0.37.4"></script>
+  <script src="app.js?v=0.37.5"></script>
 </body>
 </html>

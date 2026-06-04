@@ -1,9 +1,9 @@
 {
   "name": "itinera-v0-25",
-  "version": "0.37.4-faq-desenador-guiado-sen-asistente",
+  "version": "0.37.5-redeseno-radical-buscador-itinerario",
   "private": true,
   "type": "module",
-  "description": "ITINERA: GitHub Pages + catálogo oficial, FAQ e deseñador de itinerarios.",
+  "description": "ITINERA: buscador de estudos e deseñador de itinerarios académicos guiados.",
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
     "ws": "^8.18.0",
