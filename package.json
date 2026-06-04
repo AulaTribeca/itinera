@@ -1,6 +1,6 @@
 {
   "name": "itinera-v0-25",
-  "version": "0.37.2-experiencia-guiada-faq-simulador",
+  "version": "0.37.3-simulador-literal-buscador-visible",
   "private": true,
   "type": "module",
   "description": "ITINERA: GitHub Pages + Supabase official catalog + ItineraBot documental.",
