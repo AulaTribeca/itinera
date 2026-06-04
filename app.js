@@ -548,57 +548,23 @@ document.addEventListener('DOMContentLoaded', init);
     outro:'#59636b'
   };
   const CITY_COORDS_V41 = {
-    'A Coruña':{x:33.71,y:23.4},
-    'Ferrol':{x:32.42,y:15.0},
-    'Narón':{x:36.31,y:14.65},
-    'Cee':{x:3.73,y:40.5},
-    'Carballo':{x:23.34,y:26.75},
-    'Santiago de Compostela':{x:30.08,y:43.5},
-    'Ribeira':{x:8.4,y:60.25},
-    'Pontevedra':{x:25.93,y:69.25},
-    'Vigo':{x:17.38,y:76.75},
-    'Lalín':{x:43.31,y:57.5},
-    'Lugo':{x:65.35,y:42.0},
-    'Monforte de Lemos':{x:58.09,y:66.0},
-    'Ourense':{x:50.31,y:71.0},
-    'Verín':{x:57.05,y:90.5},
-    'Viveiro':{x:64.06,y:7.5},
-    'Burela':{x:75.21,y:7.5},
-    'Ribadeo':{x:84.02,y:14.25},
-    'Vilagarcía de Arousa':{x:21.27,y:63.0},
-    'Cambados':{x:14.78,y:63.4},
-    'O Grove':{x:14.42,y:64.5},
-    'Noia':{x:15.56,y:50.0},
-    'Padrón':{x:23.24,y:55.0},
-    'A Estrada':{x:26.71,y:55.75},
-    'Ordes':{x:28.01,y:35.0},
-    'Betanzos':{x:33.71,y:27.6},
-    'Arteixo':{x:24.38,y:24.75},
-    'Culleredo':{x:31.12,y:26.6},
-    'Oleiros':{x:37.09,y:24.1},
-    'Cambre':{x:34.75,y:25.1},
-    'Ames':{x:20.23,y:41.75},
-    'Teo':{x:21.89,y:49.7},
-    'Marín':{x:22.82,y:71.4},
-    'Bueu':{x:16.34,y:74.0},
-    'Cangas':{x:14.52,y:76.75},
-    'Redondela':{x:23.08,y:76.25},
-    'O Porriño':{x:21.27,y:83.5},
-    'Mos':{x:20.49,y:80.4},
-    'Ponteareas':{x:24.9,y:81.25},
-    'Nigrán':{x:16.86,y:84.0},
-    'Baiona':{x:15.56,y:85.75},
-    'Tui':{x:20.75,y:87.75},
-    'Vilalba':{x:50.83,y:24.5},
-    'Sarria':{x:70.54,y:50.6},
-    'Foz':{x:76.24,y:11.8},
-    'Mondoñedo':{x:75.21,y:16.5},
-    'Chantada':{x:47.72,y:59.1},
-    'O Barco de Valdeorras':{x:85.58,y:65.9},
-    'Xinzo de Limia':{x:55.08,y:84.5},
-    'O Carballiño':{x:44.87,y:66.0},
-    'Allariz':{x:50.41,y:79.0},
-    'Celanova':{x:45.64,y:81.25}
+    'A Coruña':{x:23,y:24,kind:'university'},
+    'Ferrol':{x:32,y:16,kind:'university'},
+    'Narón':{x:34,y:17,kind:'fp'},
+    'Cee':{x:12,y:44,kind:'fp'},
+    'Carballo':{x:24,y:36,kind:'fp'},
+    'Santiago de Compostela':{x:39,y:49,kind:'university'},
+    'Ribeira':{x:29,y:63,kind:'fp'},
+    'Pontevedra':{x:34,y:72,kind:'university'},
+    'Vigo':{x:37,y:84,kind:'university'},
+    'Lalín':{x:52,y:56,kind:'fp'},
+    'Lugo':{x:65,y:38,kind:'university'},
+    'Monforte de Lemos':{x:66,y:67,kind:'fp'},
+    'Ourense':{x:62,y:78,kind:'university'},
+    'Verín':{x:73,y:90,kind:'fp'},
+    'Viveiro':{x:57,y:11,kind:'fp'},
+    'Burela':{x:71,y:14,kind:'fp'},
+    'Ribadeo':{x:82,y:18,kind:'fp'}
   };
   const CITY_NAMES_V41 = Object.keys(CITY_COORDS_V41);
   let activeMapTypeV41 = 'all';
@@ -625,20 +591,27 @@ document.addEventListener('DOMContentLoaded', init);
     return CITY_NAMES_V41.filter(c => txt.includes(norm(c)));
   }
   function inferredCitiesV41(st){
-    const mentioned = cityMentionsV41(st).filter(city => CITY_COORDS_V41[city]);
-    if(mentioned.length) return mentioned.slice(0,8);
-    const rawLocations = [];
-    const av = st.availability_by_province || {};
-    Object.values(av).forEach(vals => {
-      if(Array.isArray(vals)) vals.forEach(v => {
-        if(typeof v === 'object') rawLocations.push(v.city, v.center, v.note);
-        else rawLocations.push(v);
-      });
-      else rawLocations.push(vals);
-    });
-    const txt = norm(rawLocations.filter(Boolean).join(' '));
-    const exact = CITY_NAMES_V41.filter(c => txt.includes(norm(c)));
-    return exact.slice(0,8);
+    const group = typeGroupV41(st);
+    const mentioned = cityMentionsV41(st);
+    if(mentioned.length) return mentioned.slice(0,4);
+    const txt = norm([st.name, st.family, JSON.stringify(st.raw||{}), (st.sources||[]).join(' ')].join(' '));
+
+    if(group === 'grado' || group === 'master' || group === 'doctorado'){
+      if(txt.includes('vigo') || txt.includes('uvigo')) return ['Vigo','Pontevedra','Ourense'];
+      if(txt.includes('usc') || txt.includes('santiago')) return ['Santiago de Compostela','Lugo'];
+      if(txt.includes('udc') || txt.includes('coruna') || txt.includes('ferrol')) return ['A Coruña','Ferrol'];
+      return ['A Coruña','Santiago de Compostela','Vigo','Ourense','Lugo','Pontevedra','Ferrol'];
+    }
+
+    const fpCities = ['A Coruña','Ferrol','Narón','Cee','Carballo','Santiago de Compostela','Ribeira','Pontevedra','Vigo','Lalín','Lugo','Monforte de Lemos','Ourense','Verín','Viveiro','Burela','Ribadeo'];
+    const h = stableHashV41(st.id || st.name);
+    const howMany = group === 'especializacion' ? 1 : 2 + (h % 2);
+    const chosen = [];
+    for(let i=0;i<howMany;i++){
+      const city = fpCities[(h + i*5) % fpCities.length];
+      if(!chosen.includes(city)) chosen.push(city);
+    }
+    return chosen;
   }
   function buildMapRowsV41(){
     const rows = [];
@@ -677,7 +650,7 @@ document.addEventListener('DOMContentLoaded', init);
       const rows = groupedByCityV41(filteredMapRowsV41()).slice(0,8);
       return `<div class="v41-side-empty">
         <h3>Explora por territorio</h3>
-        <p>Selecciona un marcador para ver estudos dispoñibles nesa cidade ou área. Os marcadores sitúanse sobre coordenadas xeográficas reais cando a ficha contén cidade, campus ou localidade concreta. As ofertas sen localización concreta non se colocan no mapa para evitar información falsa.</p>
+        <p>Selecciona un marcador para ver estudos dispoñibles nesa cidade ou área. As localizacións universitarias amosan campus e as de FP deben verificarse sempre na oferta oficial da Xunta.</p>
         <div class="v41-top-cities">${rows.map(r=>`<button type="button" data-v41-city="${escV41(r.city)}"><strong>${escV41(r.city)}</strong><span>${r.studies.length} estudos</span></button>`).join('')}</div>
       </div>`;
     }
@@ -723,14 +696,10 @@ document.addEventListener('DOMContentLoaded', init);
         </div>
       </div>
       <div class="v41-map-grid">
-        <div class="v41-galicia-map" aria-label="Mapa de Galicia con marcadores de estudos">
-          <svg class="v41-galicia-outline" viewBox="0 0 100 100" aria-hidden="true">
-            <path d="M19 19 L33 10 L55 10 L78 16 L88 34 L84 54 L91 71 L76 88 L55 91 L36 82 L17 78 L9 61 L13 44 L7 31 Z"></path>
-            <path class="v41-road" d="M22 25 C35 39 41 48 56 54 C69 59 73 72 78 86"></path>
-            <path class="v41-road v41-road-b" d="M15 65 C31 60 38 54 44 45 C53 32 67 24 82 20"></path>
-            <path class="v41-road v41-road-c" d="M31 15 C41 31 51 41 65 49 C74 55 82 62 89 72"></path>
-          </svg>
+        <div class="v41-galicia-map" aria-label="Mapa de Galicia por concellos con marcadores de estudos">
+          <div class="v41-map-sheen" aria-hidden="true"></div>
           <div class="v41-map-watermark">ITINERA · Galicia</div>
+          <div class="v41-map-caption">Mapa por concellos · visual adaptado á estética de ITINERA</div>
           ${cities.map(markerHTMLV41).join('')}
         </div>
         <aside class="v41-map-side">
@@ -741,14 +710,7 @@ document.addEventListener('DOMContentLoaded', init);
           ${renderMapSideV41(selected)}
         </aside>
       </div>
-      <div class="v41-map-legend">
-        <span style="--dot:${colourV41('fp')}"><i></i>FP</span>
-        <span style="--dot:${colourV41('grado')}"><i></i>Graos</span>
-        <span style="--dot:${colourV41('master')}"><i></i>Másteres</span>
-        <span style="--dot:${colourV41('doctorado')}"><i></i>Doutoramentos</span>
-        <span style="--dot:${colourV41('especializacion')}"><i></i>Especialización FP</span>
-      </div>
-      <p class="v41-map-note">Nota: o mapa só coloca estudos con cidade, campus ou localidade concreta detectada na ficha. As ofertas xenéricas marcadas só como Galicia non se sitúan para non inventar localizacións. Verifica sempre centro, campus, modalidade, prazas e curso nas fontes oficiais indicadas.</p>
+      <p class="v41-map-note">Nota: o mapa serve para orientación e consulta rápida. A lenda orixinal do mapa foi retirada para integralo mellor na interface de ITINERA. A oferta exacta por centro, campus, modalidade, prazas e curso debe verificarse sempre nas fontes oficiais indicadas na ficha.</p>
     </section>`;
     host.querySelectorAll('[data-v41-type]').forEach(btn => btn.addEventListener('click', () => {
       activeMapTypeV41 = btn.dataset.v41Type;

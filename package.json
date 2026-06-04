@@ -1,6 +1,6 @@
 {
   "name": "itinera-v0-25",
-  "version": "0.43-mapa-concellos-localizacions",
+  "version": "0.44-mapa-itinera-sen-lenda",
   "private": true,
   "type": "module",
   "description": "ITINERA: buscador de estudos e deseñador de itinerarios académicos guiados.",
