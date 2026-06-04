@@ -69,7 +69,7 @@ body::before{
 }
 .home-background::before{
   inset:-4%;
-  background-image:url('assets/home-map-bg.png');
+  background-image:url("assets/home-map-bg.png");
   background-size:cover;
   background-position:center;
   filter:saturate(.92) contrast(1.02);
@@ -390,7 +390,7 @@ body::before{
 }
 .home-background::before{
   inset:-2%;
-  background-image:url('assets/home-map-bg.png');
+  background-image:url("assets/home-map-bg.png");
   background-size:cover;
   background-position:center center;
   filter:none;
@@ -1258,155 +1258,278 @@ body:has(.v40-home.active) .footer-inner p{max-width:48vw;}
   }
 }
 
-/* v0.44 · mapa por concellos adaptado á estética ITINERA */
-.v41-map-card{
-  border-radius:16px;
-  border:1px solid rgba(16,61,47,.12);
-  background:#fffdf9;
-  color:var(--ink);
-  box-shadow:0 18px 54px rgba(7,59,58,.08);
+
+/* =======================================================================
+   ITINERA v0.46 · BLOQUE DEFINITIVO DE PORTADA CLARA Y MAPA
+   Este bloque debe quedar al final del archivo para anular cualquier regla previa.
+   ======================================================================= */
+
+html body{
+  background:#fbfaf6 !important;
+  color:#0d332b !important;
 }
-.v41-map-head{
-  padding:20px 22px;
-  background:linear-gradient(180deg,#f8f4ec,#f2eee5);
-  border-bottom:1px solid rgba(16,61,47,.08);
+
+body .app-header,
+body .app-header.home-mode,
+body .app-header.is-solid,
+body .app-header:not(.home-mode){
+  background:linear-gradient(180deg,rgba(251,250,246,.98),rgba(251,250,246,.76) 72%,transparent) !important;
+  color:#0d332b !important;
+  box-shadow:none !important;
+  border-bottom:0 !important;
 }
-.v41-map-head .eyebrow{
-  color:var(--gold);
+
+body .app-header.is-solid,
+body .app-header:not(.home-mode){
+  background:rgba(251,250,246,.97) !important;
+  border-bottom:1px solid rgba(13,51,43,.12) !important;
 }
-.v41-map-head h2{
-  color:var(--ink);
+
+body .brand,
+body .brand-word,
+body .header-nav a,
+body .language-switch{
+  color:#0d332b !important;
 }
-.v41-map-head p{
-  color:#55635d;
+
+body .language-switch select{
+  background:#fffef9 !important;
+  color:#0d332b !important;
+  border:1px solid rgba(13,51,43,.16) !important;
 }
-.v41-map-tabs button{
-  border:1px solid rgba(16,61,47,.14);
-  background:#fffdf9;
-  color:var(--ink);
-  border-radius:8px;
-  padding:.55rem .72rem;
-}
-.v41-map-tabs button.active{
-  background:var(--forest);
-  border-color:var(--forest);
-  color:#fff;
-}
-.v41-map-grid{
-  grid-template-columns:minmax(0,1.15fr) minmax(320px,390px);
-  min-height:unset;
-}
-.v41-galicia-map{
-  position:relative;
-  min-height:720px;
-  background-color:#fbf9f3;
-  background-image:url('assets/galicia-concellos-itinera.jpg');
-  background-size:cover;
-  background-position:center;
-  background-repeat:no-repeat;
-  overflow:hidden;
-}
-.v41-galicia-map::before{
+
+body .view#inicio.home-view,
+body #inicio.home-view,
+body main #inicio{
+  min-height:100vh !important;
+  background:#fbfaf6 !important;
+  color:#0d332b !important;
   display:none;
+  place-items:center !important;
+  overflow:hidden !important;
 }
-.v41-map-sheen{
-  position:absolute;
-  inset:0;
+
+body .view#inicio.home-view.active,
+body #inicio.home-view.active,
+body main #inicio.active{
+  display:grid !important;
+}
+
+body #inicio .home-background{
+  position:absolute !important;
+  inset:0 !important;
+  background:#fbfaf6 !important;
+  overflow:hidden !important;
+}
+
+body #inicio .home-background::before{
+  content:"" !important;
+  position:absolute !important;
+  inset:-3% !important;
+  background-image:url("assets/home-map-bg.png") !important;
+  background-size:cover !important;
+  background-position:center center !important;
+  background-repeat:no-repeat !important;
+  opacity:1 !important;
+  filter:none !important;
+  transform:scale(1.04) translate3d(0,0,0) !important;
+  animation:itinera-v46-home-map 36s ease-in-out infinite alternate !important;
+}
+
+body #inicio .home-background::after{
+  content:"" !important;
+  position:absolute !important;
+  inset:0 !important;
   background:
-    linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.04) 42%,rgba(7,59,58,.04)),
-    radial-gradient(circle at 16% 18%, rgba(200,162,60,.10), transparent 24%),
-    radial-gradient(circle at 80% 74%, rgba(7,59,58,.06), transparent 28%);
-  pointer-events:none;
+    linear-gradient(180deg,rgba(251,250,246,.02),rgba(251,250,246,.48) 74%,rgba(251,250,246,.90)),
+    radial-gradient(circle at 50% 50%,rgba(255,255,255,.02),rgba(255,255,255,.40) 80%) !important;
+  opacity:1 !important;
+  filter:none !important;
+  animation:none !important;
 }
-.v41-galicia-outline,
-.v41-map-legend{
+
+body #inicio .home-background span{
   display:none !important;
 }
-.v41-map-watermark{
-  left:16px;
-  bottom:16px;
-  color:rgba(16,61,47,.16);
-  font-size:clamp(1.7rem,3.3vw,3rem);
-  letter-spacing:.05em;
+
+@keyframes itinera-v46-home-map{
+  0%{transform:scale(1.04) translate3d(-12px,-4px,0);}
+  50%{transform:scale(1.075) translate3d(8px,-10px,0);}
+  100%{transform:scale(1.05) translate3d(12px,6px,0);}
 }
-.v41-map-caption{
-  position:absolute;
-  right:16px;
-  bottom:16px;
-  background:rgba(255,253,249,.78);
-  backdrop-filter:blur(6px);
-  color:#4b5b54;
-  border:1px solid rgba(16,61,47,.10);
-  border-radius:8px;
-  padding:.45rem .65rem;
-  font-size:.78rem;
-  font-weight:800;
+
+body #inicio .home-content{
+  position:relative !important;
+  z-index:2 !important;
+  width:min(1120px,92vw) !important;
+  min-height:100vh !important;
+  display:grid !important;
+  place-items:center !important;
+  gap:2rem !important;
+  padding:7rem 0 5rem !important;
 }
-.v41-map-marker{
-  width:36px;
-  height:36px;
-  border:2px solid rgba(255,255,255,.98);
-  box-shadow:0 8px 22px rgba(20,36,30,.18);
+
+body #inicio .home-logo-block{
+  position:absolute !important;
+  top:clamp(5.1rem,8vw,7rem) !important;
+  left:0 !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:.8rem !important;
+  text-align:left !important;
+  background:rgba(255,254,249,.74) !important;
+  border:1px solid rgba(13,51,43,.12) !important;
+  border-radius:4px !important;
+  padding:.65rem .9rem !important;
+  box-shadow:0 16px 42px rgba(13,51,43,.08) !important;
+  backdrop-filter:blur(8px) !important;
 }
-.v41-map-marker::after{
-  inset:-7px;
+
+body #inicio .home-logo{
+  width:46px !important;
+  height:46px !important;
+  object-fit:contain !important;
+  filter:none !important;
 }
-.v41-map-marker span{
-  font-size:.78rem;
+
+body #inicio .home-kicker{
+  margin:0 !important;
+  color:#0d332b !important;
+  text-transform:uppercase !important;
+  letter-spacing:.18em !important;
+  font-weight:900 !important;
+  font-size:.84rem !important;
 }
-.v41-map-side{
-  background:#fffdf9;
-  color:var(--ink);
-  border-left:1px solid rgba(16,61,47,.08);
-  max-height:none;
+
+body #inicio .home-choice-grid{
+  width:min(740px,92vw) !important;
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(220px,1fr)) !important;
+  gap:1.6rem !important;
 }
-.v41-map-summary{
-  padding:18px 20px;
-  border-bottom:1px solid rgba(16,61,47,.08);
-  background:#f8f4ec;
+
+body #inicio .home-choice{
+  position:relative !important;
+  aspect-ratio:1 / 1 !important;
+  min-height:0 !important;
+  height:auto !important;
+  border:12px solid rgba(255,254,249,.96) !important;
+  border-radius:0 !important;
+  border-bottom-right-radius:54px !important;
+  background:rgba(13,51,43,.64) !important;
+  color:#fffef9 !important;
+  box-shadow:0 26px 70px rgba(13,51,43,.18) !important;
+  text-decoration:none !important;
+  padding:1.35rem !important;
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:center !important;
+  align-items:flex-start !important;
+  overflow:hidden !important;
+  backdrop-filter:blur(2px) !important;
 }
-.v41-map-summary strong,
-.v41-side-empty h3,
-.v41-city-panel h3,
-.v41-back-map,
-.v41-top-cities strong,
-.v41-city-studies summary{
-  color:var(--ink);
+
+body #inicio .home-choice:hover,
+body #inicio .home-choice:focus-visible{
+  transform:translateY(-7px) !important;
+  background:rgba(13,51,43,.78) !important;
+  outline:0 !important;
 }
-.v41-map-summary span,
-.v41-side-empty p,
-.v41-city-panel p,
-.v41-map-note,
-.v41-top-cities span,
-.v41-city-studies small{
-  color:#5d6b65;
+
+body #inicio .home-choice::before,
+body #inicio .home-choice::after,
+body #inicio .choice-index,
+body #inicio .home-choice small{
+  display:none !important;
+  content:none !important;
 }
-.v41-top-cities button,
-.v41-city-counts span,
-.v41-city-studies details,
-.v41-city-studies details button{
-  border-color:rgba(16,61,47,.10);
+
+body #inicio .home-choice strong{
+  display:block !important;
+  margin:0 !important;
+  text-transform:uppercase !important;
+  letter-spacing:.12em !important;
+  font-size:clamp(1.45rem,3vw,2.35rem) !important;
+  line-height:1.24 !important;
+  color:#fffef9 !important;
+  max-width:9ch !important;
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
 }
-.v41-top-cities button,
-.v41-city-counts span,
-.v41-city-studies summary{
-  background:#f8f4ec;
+
+/* Mapa por concellos: sin leyenda, usando la imagen tratada */
+body .v41-map-card{
+  border-radius:8px !important;
+  border:1px solid rgba(13,51,43,.12) !important;
+  background:#fffef9 !important;
+  color:#0d332b !important;
+  box-shadow:0 16px 46px rgba(13,51,43,.08) !important;
 }
-.v41-city-studies details button:hover{
-  background:#faf7ef;
+
+body .v41-map-head{
+  background:linear-gradient(180deg,#fffef9,#f6f3eb) !important;
+  color:#0d332b !important;
+  border-bottom:1px solid rgba(13,51,43,.10) !important;
 }
-.v41-map-note{
-  padding:14px 20px 18px;
-  background:#fffdf9;
-  border-top:1px solid rgba(16,61,47,.06);
+
+body .v41-map-head h2{color:#0d332b !important;}
+body .v41-map-head p{color:#56655f !important;}
+body .v41-map-head .eyebrow{color:#c8a23c !important;}
+
+body .v41-map-tabs button{
+  border:1px solid rgba(13,51,43,.16) !important;
+  background:#fffef9 !important;
+  color:#0d332b !important;
+  border-radius:4px !important;
 }
-@media(max-width:980px){
-  .v41-map-grid{grid-template-columns:1fr;}
-  .v41-galicia-map{min-height:540px;}
+
+body .v41-map-tabs button.active{
+  background:#0d332b !important;
+  color:#fffef9 !important;
 }
-@media(max-width:640px){
-  .v41-galicia-map{min-height:420px; background-size:contain;}
-  .v41-map-caption{display:none;}
-  .v41-map-marker{width:31px;height:31px;}
-  .v41-map-marker span{font-size:.69rem;}
+
+body .v41-galicia-map{
+  min-height:720px !important;
+  background-color:#fffef9 !important;
+  background-image:url("assets/galicia-concellos-itinera.jpg") !important;
+  background-size:cover !important;
+  background-position:center !important;
+  background-repeat:no-repeat !important;
+}
+
+body .v41-galicia-map::before{
+  display:none !important;
+}
+
+body .v41-galicia-outline,
+body .v41-map-legend{
+  display:none !important;
+}
+
+body .v41-map-sheen{
+  position:absolute !important;
+  inset:0 !important;
+  pointer-events:none !important;
+  background:
+    linear-gradient(180deg,rgba(255,254,249,.06),rgba(255,254,249,.02) 42%,rgba(13,51,43,.04)),
+    radial-gradient(circle at 16% 18%,rgba(200,162,60,.08),transparent 24%) !important;
+}
+
+body .v41-map-caption{
+  position:absolute !important;
+  right:14px !important;
+  bottom:14px !important;
+  background:rgba(255,254,249,.78) !important;
+  border:1px solid rgba(13,51,43,.10) !important;
+  border-radius:4px !important;
+  padding:.42rem .58rem !important;
+  color:#52615b !important;
+  font-size:.78rem !important;
+  font-weight:800 !important;
+}
+
+@media(max-width:760px){
+  body #inicio .home-choice-grid{grid-template-columns:1fr !important; width:min(360px,88vw) !important;}
+  body #inicio .home-logo-block{position:relative !important; top:auto !important; left:auto !important; margin-top:3.5rem !important;}
+  body #inicio .home-content{align-content:center !important;}
+  body .v41-galicia-map{min-height:460px !important; background-size:contain !important;}
 }
