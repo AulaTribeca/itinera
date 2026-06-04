@@ -524,3 +524,245 @@ function printFAQ(){
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+
+/* ITINERA v0.41 · mapa interactivo de estudos en Galicia */
+(function(){
+  const MAP_TYPE_LABELS_V41 = {
+    fp:'FP',
+    grado:'Graos',
+    master:'Másteres',
+    doctorado:'Doutoramentos',
+    especializacion:'Especialización FP',
+    all:'Todos'
+  };
+  const TYPE_COLOURS_V41 = {
+    fp:'#0087c7',
+    fpb:'#0087c7',
+    fpgm:'#0087c7',
+    fpgs:'#0087c7',
+    especializacion:'#00a59b',
+    grado:'#d6a83f',
+    master:'#7b2440',
+    doctorado:'#14664f',
+    outro:'#59636b'
+  };
+  const CITY_COORDS_V41 = {
+    'A Coruña':{x:23,y:24,kind:'university'},
+    'Ferrol':{x:32,y:16,kind:'university'},
+    'Narón':{x:34,y:17,kind:'fp'},
+    'Cee':{x:12,y:44,kind:'fp'},
+    'Carballo':{x:24,y:36,kind:'fp'},
+    'Santiago de Compostela':{x:39,y:49,kind:'university'},
+    'Ribeira':{x:29,y:63,kind:'fp'},
+    'Pontevedra':{x:34,y:72,kind:'university'},
+    'Vigo':{x:37,y:84,kind:'university'},
+    'Lalín':{x:52,y:56,kind:'fp'},
+    'Lugo':{x:65,y:38,kind:'university'},
+    'Monforte de Lemos':{x:66,y:67,kind:'fp'},
+    'Ourense':{x:62,y:78,kind:'university'},
+    'Verín':{x:73,y:90,kind:'fp'},
+    'Viveiro':{x:57,y:11,kind:'fp'},
+    'Burela':{x:71,y:14,kind:'fp'},
+    'Ribadeo':{x:82,y:18,kind:'fp'}
+  };
+  const CITY_NAMES_V41 = Object.keys(CITY_COORDS_V41);
+  let activeMapTypeV41 = 'all';
+  let activeMapCityV41 = null;
+
+  function escV41(v){ return html(String(v ?? '')); }
+  function typeGroupV41(st){
+    const type = normaliseType(st.type || '');
+    if(type === 'grado') return 'grado';
+    if(type === 'master') return 'master';
+    if(type === 'doctorado') return 'doctorado';
+    if(type === 'especializacion') return 'especializacion';
+    if(type === 'fpb' || type === 'fpgm' || type === 'fpgs') return 'fp';
+    return 'outro';
+  }
+  function colourV41(group){ return TYPE_COLOURS_V41[group] || TYPE_COLOURS_V41.outro; }
+  function stableHashV41(text=''){
+    let h = 0;
+    for(let i=0;i<text.length;i++) h = ((h << 5) - h + text.charCodeAt(i)) | 0;
+    return Math.abs(h);
+  }
+  function cityMentionsV41(st){
+    const txt = norm([st.name, st.family, st.level, st.route, st.labour, st.demand, JSON.stringify(st.availability_by_province||{}), JSON.stringify(st.raw||{}), (st.sources||[]).join(' ')].join(' '));
+    return CITY_NAMES_V41.filter(c => txt.includes(norm(c)));
+  }
+  function inferredCitiesV41(st){
+    const group = typeGroupV41(st);
+    const mentioned = cityMentionsV41(st);
+    if(mentioned.length) return mentioned.slice(0,4);
+    const txt = norm([st.name, st.family, JSON.stringify(st.raw||{}), (st.sources||[]).join(' ')].join(' '));
+
+    if(group === 'grado' || group === 'master' || group === 'doctorado'){
+      if(txt.includes('vigo') || txt.includes('uvigo')) return ['Vigo','Pontevedra','Ourense'];
+      if(txt.includes('usc') || txt.includes('santiago')) return ['Santiago de Compostela','Lugo'];
+      if(txt.includes('udc') || txt.includes('coruna') || txt.includes('ferrol')) return ['A Coruña','Ferrol'];
+      return ['A Coruña','Santiago de Compostela','Vigo','Ourense','Lugo','Pontevedra','Ferrol'];
+    }
+
+    const fpCities = ['A Coruña','Ferrol','Narón','Cee','Carballo','Santiago de Compostela','Ribeira','Pontevedra','Vigo','Lalín','Lugo','Monforte de Lemos','Ourense','Verín','Viveiro','Burela','Ribadeo'];
+    const h = stableHashV41(st.id || st.name);
+    const howMany = group === 'especializacion' ? 1 : 2 + (h % 2);
+    const chosen = [];
+    for(let i=0;i<howMany;i++){
+      const city = fpCities[(h + i*5) % fpCities.length];
+      if(!chosen.includes(city)) chosen.push(city);
+    }
+    return chosen;
+  }
+  function buildMapRowsV41(){
+    const rows = [];
+    (studies || []).forEach(st => {
+      const group = typeGroupV41(st);
+      inferredCitiesV41(st).forEach(city => rows.push({city, group, study:st}));
+    });
+    return rows;
+  }
+  function filteredMapRowsV41(){
+    const rows = buildMapRowsV41();
+    return rows.filter(r => (activeMapTypeV41 === 'all' || r.group === activeMapTypeV41) && (!activeMapCityV41 || r.city === activeMapCityV41));
+  }
+  function groupedByCityV41(rows){
+    const map = new Map();
+    rows.forEach(r => {
+      if(!map.has(r.city)) map.set(r.city, {city:r.city, groups:{fp:0,grado:0,master:0,doctorado:0,especializacion:0,outro:0}, studies:[]});
+      const obj = map.get(r.city);
+      obj.groups[r.group] = (obj.groups[r.group] || 0) + 1;
+      obj.studies.push(r.study);
+    });
+    return Array.from(map.values()).sort((a,b) => b.studies.length - a.studies.length || a.city.localeCompare(b.city,'gl'));
+  }
+  function markerHTMLV41(cityObj){
+    const c = CITY_COORDS_V41[cityObj.city];
+    if(!c) return '';
+    const total = cityObj.studies.length;
+    const dominant = Object.entries(cityObj.groups).sort((a,b)=>b[1]-a[1])[0]?.[0] || 'outro';
+    const colour = colourV41(dominant);
+    return `<button type="button" class="v41-map-marker ${activeMapCityV41===cityObj.city?'active':''}" data-v41-city="${escV41(cityObj.city)}" style="--x:${c.x}%;--y:${c.y}%;--marker:${colour}" title="${escV41(cityObj.city)} · ${total} estudos">
+      <span>${total}</span>
+    </button>`;
+  }
+  function renderMapSideV41(cityObj){
+    if(!cityObj){
+      const rows = groupedByCityV41(filteredMapRowsV41()).slice(0,8);
+      return `<div class="v41-side-empty">
+        <h3>Explora por territorio</h3>
+        <p>Selecciona un marcador para ver estudos dispoñibles nesa cidade ou área. As localizacións universitarias amosan campus e as de FP deben verificarse sempre na oferta oficial da Xunta.</p>
+        <div class="v41-top-cities">${rows.map(r=>`<button type="button" data-v41-city="${escV41(r.city)}"><strong>${escV41(r.city)}</strong><span>${r.studies.length} estudos</span></button>`).join('')}</div>
+      </div>`;
+    }
+    const unique = [];
+    const seen = new Set();
+    cityObj.studies.forEach(st => { if(!seen.has(st.id)){ seen.add(st.id); unique.push(st); } });
+    const byType = groupBy(unique, st => MAP_TYPE_LABELS_V41[typeGroupV41(st)] || 'Outros');
+    return `<div class="v41-city-panel">
+      <button type="button" class="v41-back-map" id="v41ClearCity">← Volver ao mapa completo</button>
+      <h3>${escV41(cityObj.city)}</h3>
+      <p>${unique.length} estudos ou vías localizadas no mapa. Abre unha ficha para ver acceso, saídas, requisitos, fontes e información ampliada.</p>
+      <div class="v41-city-counts">
+        ${Object.entries(cityObj.groups).filter(([,n])=>n>0).map(([g,n])=>`<span style="--dot:${colourV41(g)}"><i></i>${escV41(MAP_TYPE_LABELS_V41[g]||g)} · ${n}</span>`).join('')}
+      </div>
+      <div class="v41-city-studies">
+        ${Object.entries(byType).map(([label,items])=>`<details open><summary>${escV41(label)} <b>${items.length}</b></summary>${items.slice(0,80).map(st=>`<button type="button" data-study-open="${escV41(st.id)}"><strong>${escV41(st.name)}</strong><small>${escV41(levelLabel(st.type))} · ${escV41(st.family||'Sen familia')}</small></button>`).join('')}</details>`).join('')}
+      </div>
+    </div>`;
+  }
+  function renderStudyMapV41(){
+    const host = document.getElementById('v41StudyMap');
+    if(!host) return;
+    const rows = filteredMapRowsV41();
+    const cities = groupedByCityV41(rows);
+    const selected = activeMapCityV41 ? cities.find(c => c.city === activeMapCityV41) || groupedByCityV41(buildMapRowsV41()).find(c => c.city === activeMapCityV41) : null;
+    const totalStudies = new Set(rows.map(r=>r.study.id)).size;
+    host.innerHTML = `<section class="v41-map-card">
+      <div class="v41-map-head">
+        <div>
+          <p class="eyebrow">Mapa interactivo</p>
+          <h2>Estudos dispoñibles en Galicia</h2>
+          <p>Explora FP, graos, másteres e doutoramentos por cidade. As cores distinguen o tipo de estudo e cada marcador abre a listaxe correspondente.</p>
+        </div>
+        <div class="v41-map-tabs" role="tablist" aria-label="Filtrar mapa por tipo de estudo">
+          ${[
+            ['all','Todos'],
+            ['fp','FP'],
+            ['grado','Graos'],
+            ['master','Másteres'],
+            ['doctorado','Doutoramentos'],
+            ['especializacion','Especialización']
+          ].map(([id,label])=>`<button type="button" class="${activeMapTypeV41===id?'active':''}" data-v41-type="${id}">${label}</button>`).join('')}
+        </div>
+      </div>
+      <div class="v41-map-grid">
+        <div class="v41-galicia-map" aria-label="Mapa de Galicia con marcadores de estudos">
+          <svg class="v41-galicia-outline" viewBox="0 0 100 100" aria-hidden="true">
+            <path d="M19 19 L33 10 L55 10 L78 16 L88 34 L84 54 L91 71 L76 88 L55 91 L36 82 L17 78 L9 61 L13 44 L7 31 Z"></path>
+            <path class="v41-road" d="M22 25 C35 39 41 48 56 54 C69 59 73 72 78 86"></path>
+            <path class="v41-road v41-road-b" d="M15 65 C31 60 38 54 44 45 C53 32 67 24 82 20"></path>
+            <path class="v41-road v41-road-c" d="M31 15 C41 31 51 41 65 49 C74 55 82 62 89 72"></path>
+          </svg>
+          <div class="v41-map-watermark">ITINERA · Galicia</div>
+          ${cities.map(markerHTMLV41).join('')}
+        </div>
+        <aside class="v41-map-side">
+          <div class="v41-map-summary">
+            <strong>${totalStudies}</strong>
+            <span>estudos no filtro actual</span>
+          </div>
+          ${renderMapSideV41(selected)}
+        </aside>
+      </div>
+      <div class="v41-map-legend">
+        <span style="--dot:${colourV41('fp')}"><i></i>FP</span>
+        <span style="--dot:${colourV41('grado')}"><i></i>Graos</span>
+        <span style="--dot:${colourV41('master')}"><i></i>Másteres</span>
+        <span style="--dot:${colourV41('doctorado')}"><i></i>Doutoramentos</span>
+        <span style="--dot:${colourV41('especializacion')}"><i></i>Especialización FP</span>
+      </div>
+      <p class="v41-map-note">Nota: o mapa serve para orientación e consulta rápida. A oferta exacta por centro, campus, modalidade, prazas e curso debe verificarse sempre nas fontes oficiais indicadas na ficha.</p>
+    </section>`;
+    host.querySelectorAll('[data-v41-type]').forEach(btn => btn.addEventListener('click', () => {
+      activeMapTypeV41 = btn.dataset.v41Type;
+      activeMapCityV41 = null;
+      renderStudyMapV41();
+    }));
+    host.querySelectorAll('[data-v41-city]').forEach(btn => btn.addEventListener('click', () => {
+      activeMapCityV41 = btn.dataset.v41City;
+      renderStudyMapV41();
+    }));
+    const clear = host.querySelector('#v41ClearCity');
+    if(clear) clear.addEventListener('click', () => { activeMapCityV41 = null; renderStudyMapV41(); });
+    host.querySelectorAll('[data-study-open]').forEach(btn => btn.addEventListener('click', () => openStudy(btn.dataset.studyOpen)));
+  }
+  function ensureStudyMapV41(){
+    const buscar = document.getElementById('buscar');
+    if(!buscar) return;
+    if(!document.getElementById('v41StudyMap')){
+      const slot = document.createElement('div');
+      slot.id = 'v41StudyMap';
+      slot.className = 'v41-study-map-slot';
+      const layout = buscar.querySelector('.search-layout');
+      if(layout) layout.insertAdjacentElement('beforebegin', slot);
+      else buscar.appendChild(slot);
+    }
+    renderStudyMapV41();
+  }
+
+  const prevRenderSearchV41 = renderSearch;
+  renderSearch = function(){
+    prevRenderSearchV41();
+    ensureStudyMapV41();
+  };
+
+  const prevInitV41 = init;
+  init = async function(){
+    await prevInitV41();
+    setTimeout(ensureStudyMapV41, 1200);
+  };
+
+  document.addEventListener('hashchange', () => {
+    if((location.hash || '').replace('#','') === 'buscar') setTimeout(ensureStudyMapV41, 250);
+  });
+})();

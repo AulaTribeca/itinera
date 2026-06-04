@@ -432,3 +432,20 @@ ITINERA v0.39
 - Normalización al galego de textos visibles y de los datos cargados en las fichas.
 - Filtros del buscador dependientes y excluyentes.
 - No requiere SQL nuevo.
+
+
+ITINERA v0.40
+- Portada reducida a tres elementos: marca ITINERA arriba a la izquierda, dos botones centrales y pie de página pequeño.
+- Estética conectada inspirada en mapas de FP, sin copiar identidad institucional externa.
+- Botones centrales sin fondo, con bordes gruesos y forma cuadrada con esquina suavizada.
+- Los botones navegan en la misma ventana a buscador o simulador.
+- No requiere SQL nuevo.
+
+
+ITINERA v0.41
+- Añade un mapa interactivo de Galicia dentro de Buscar estudos.
+- Muestra FP, graos, másteres, doutoramentos y especializaciones con código de color.
+- Cada marcador abre un panel lateral con estudios por tipo.
+- Las fichas se abren desde el propio mapa.
+- Mantiene los filtros dependientes y el buscador textual.
+- No requiere SQL nuevo.
