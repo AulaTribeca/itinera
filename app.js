@@ -548,23 +548,57 @@ document.addEventListener('DOMContentLoaded', init);
     outro:'#59636b'
   };
   const CITY_COORDS_V41 = {
-    'A Coruña':{x:23,y:24,kind:'university'},
-    'Ferrol':{x:32,y:16,kind:'university'},
-    'Narón':{x:34,y:17,kind:'fp'},
-    'Cee':{x:12,y:44,kind:'fp'},
-    'Carballo':{x:24,y:36,kind:'fp'},
-    'Santiago de Compostela':{x:39,y:49,kind:'university'},
-    'Ribeira':{x:29,y:63,kind:'fp'},
-    'Pontevedra':{x:34,y:72,kind:'university'},
-    'Vigo':{x:37,y:84,kind:'university'},
-    'Lalín':{x:52,y:56,kind:'fp'},
-    'Lugo':{x:65,y:38,kind:'university'},
-    'Monforte de Lemos':{x:66,y:67,kind:'fp'},
-    'Ourense':{x:62,y:78,kind:'university'},
-    'Verín':{x:73,y:90,kind:'fp'},
-    'Viveiro':{x:57,y:11,kind:'fp'},
-    'Burela':{x:71,y:14,kind:'fp'},
-    'Ribadeo':{x:82,y:18,kind:'fp'}
+    'A Coruña':{x:36.47,y:30.53},
+    'Ferrol':{x:42.52,y:25.68},
+    'Narón':{x:43.42,y:25.22},
+    'Cee':{x:12.00,y:46.06},
+    'Carballo':{x:27.66,y:36.22},
+    'Santiago de Compostela':{x:32.24,y:48.89},
+    'Ribeira':{x:18.24,y:61.33},
+    'Pontevedra':{x:29.13,y:66.02},
+    'Vigo':{x:26.73,y:73.28},
+    'Lalín':{x:45.91,y:57.26},
+    'Lugo':{x:63.40,y:43.97},
+    'Monforte de Lemos':{x:64.75,y:62.56},
+    'Ourense':{x:53.73,y:69.65},
+    'Verín':{x:67.14,y:84.68},
+    'Viveiro':{x:62.25,y:19.13},
+    'Burela':{x:69.64,y:19.16},
+    'Ribadeo':{x:79.67,y:23.86},
+    'Vilagarcía de Arousa':{x:25.23,y:59.72},
+    'Cambados':{x:23.79,y:62.86},
+    'O Grove':{x:22.16,y:63.63},
+    'Noia':{x:21.48,y:52.50},
+    'Padrón':{x:28.64,y:54.30},
+    'A Estrada':{x:34.05,y:56.17},
+    'Ordes':{x:36.55,y:41.44},
+    'Betanzos':{x:42.67,y:33.64},
+    'Arteixo':{x:33.44,y:32.72},
+    'Culleredo':{x:37.19,y:33.36},
+    'Oleiros':{x:39.44,y:31.61},
+    'Cambre':{x:38.58,y:33.12},
+    'Ames':{x:28.79,y:47.99},
+    'Teo':{x:31.02,y:51.90},
+    'Marín':{x:27.33,y:67.53},
+    'Bueu':{x:24.70,y:70.09},
+    'Cangas':{x:24.73,y:72.35},
+    'Redondela':{x:30.22,y:71.63},
+    'O Porriño':{x:29.92,y:76.29},
+    'Mos':{x:28.82,y:74.98},
+    'Ponteareas':{x:33.52,y:75.78},
+    'Nigrán':{x:24.02,y:77.05},
+    'Baiona':{x:22.67,y:77.87},
+    'Tui':{x:29.13,y:80.65},
+    'Vilalba':{x:59.49,y:33.09},
+    'Sarria':{x:67.89,y:52.66},
+    'Foz':{x:72.93,y:22.64},
+    'Mondoñedo':{x:69.52,y:27.99},
+    'Chantada':{x:56.65,y:59.25},
+    'O Barco de Valdeorras':{x:81.24,y:66.57},
+    'Xinzo de Limia':{x:58.12,y:80.03},
+    'O Carballiño':{x:46.96,y:66.00},
+    'Allariz':{x:55.69,y:75.20},
+    'Celanova':{x:50.81,y:76.62}
   };
   const CITY_NAMES_V41 = Object.keys(CITY_COORDS_V41);
   let activeMapTypeV41 = 'all';
@@ -591,27 +625,20 @@ document.addEventListener('DOMContentLoaded', init);
     return CITY_NAMES_V41.filter(c => txt.includes(norm(c)));
   }
   function inferredCitiesV41(st){
-    const group = typeGroupV41(st);
-    const mentioned = cityMentionsV41(st);
-    if(mentioned.length) return mentioned.slice(0,4);
-    const txt = norm([st.name, st.family, JSON.stringify(st.raw||{}), (st.sources||[]).join(' ')].join(' '));
-
-    if(group === 'grado' || group === 'master' || group === 'doctorado'){
-      if(txt.includes('vigo') || txt.includes('uvigo')) return ['Vigo','Pontevedra','Ourense'];
-      if(txt.includes('usc') || txt.includes('santiago')) return ['Santiago de Compostela','Lugo'];
-      if(txt.includes('udc') || txt.includes('coruna') || txt.includes('ferrol')) return ['A Coruña','Ferrol'];
-      return ['A Coruña','Santiago de Compostela','Vigo','Ourense','Lugo','Pontevedra','Ferrol'];
-    }
-
-    const fpCities = ['A Coruña','Ferrol','Narón','Cee','Carballo','Santiago de Compostela','Ribeira','Pontevedra','Vigo','Lalín','Lugo','Monforte de Lemos','Ourense','Verín','Viveiro','Burela','Ribadeo'];
-    const h = stableHashV41(st.id || st.name);
-    const howMany = group === 'especializacion' ? 1 : 2 + (h % 2);
-    const chosen = [];
-    for(let i=0;i<howMany;i++){
-      const city = fpCities[(h + i*5) % fpCities.length];
-      if(!chosen.includes(city)) chosen.push(city);
-    }
-    return chosen;
+    const mentioned = cityMentionsV41(st).filter(city => CITY_COORDS_V41[city]);
+    if(mentioned.length) return mentioned.slice(0,8);
+    const rawLocations = [];
+    const av = st.availability_by_province || {};
+    Object.values(av).forEach(vals => {
+      if(Array.isArray(vals)) vals.forEach(v => {
+        if(typeof v === 'object') rawLocations.push(v.city, v.center, v.note);
+        else rawLocations.push(v);
+      });
+      else rawLocations.push(vals);
+    });
+    const txt = norm(rawLocations.filter(Boolean).join(' '));
+    const exact = CITY_NAMES_V41.filter(c => txt.includes(norm(c)));
+    return exact.slice(0,8);
   }
   function buildMapRowsV41(){
     const rows = [];
@@ -650,7 +677,7 @@ document.addEventListener('DOMContentLoaded', init);
       const rows = groupedByCityV41(filteredMapRowsV41()).slice(0,8);
       return `<div class="v41-side-empty">
         <h3>Explora por territorio</h3>
-        <p>Selecciona un marcador para ver estudos dispoñibles nesa cidade ou área. As localizacións universitarias amosan campus e as de FP deben verificarse sempre na oferta oficial da Xunta.</p>
+        <p>Selecciona un marcador para ver estudos dispoñibles nesa cidade ou área. Os marcadores sitúanse sobre coordenadas xeográficas reais cando a ficha contén cidade, campus ou localidade concreta. As ofertas sen localización concreta non se colocan no mapa para evitar información falsa.</p>
         <div class="v41-top-cities">${rows.map(r=>`<button type="button" data-v41-city="${escV41(r.city)}"><strong>${escV41(r.city)}</strong><span>${r.studies.length} estudos</span></button>`).join('')}</div>
       </div>`;
     }
@@ -721,7 +748,7 @@ document.addEventListener('DOMContentLoaded', init);
         <span style="--dot:${colourV41('doctorado')}"><i></i>Doutoramentos</span>
         <span style="--dot:${colourV41('especializacion')}"><i></i>Especialización FP</span>
       </div>
-      <p class="v41-map-note">Nota: o mapa serve para orientación e consulta rápida. A oferta exacta por centro, campus, modalidade, prazas e curso debe verificarse sempre nas fontes oficiais indicadas na ficha.</p>
+      <p class="v41-map-note">Nota: o mapa só coloca estudos con cidade, campus ou localidade concreta detectada na ficha. As ofertas xenéricas marcadas só como Galicia non se sitúan para non inventar localizacións. Verifica sempre centro, campus, modalidade, prazas e curso nas fontes oficiais indicadas.</p>
     </section>`;
     host.querySelectorAll('[data-v41-type]').forEach(btn => btn.addEventListener('click', () => {
       activeMapTypeV41 = btn.dataset.v41Type;
