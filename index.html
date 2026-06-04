@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ITINERA | Experiencia guiada de orientación académica</title>
+  <title>ITINERA | Orientación académica guiada</title>
   <meta name="theme-color" content="#103d2f">
-  <link rel="icon" type="image/png" sizes="512x512" href="assets/favicon-itinera.png?v=0.37.3">
-  <link rel="icon" type="image/x-icon" href="assets/favicon.ico?v=0.37.3">
-  <link rel="shortcut icon" href="assets/favicon.ico?v=0.37.3">
-  <link rel="apple-touch-icon" href="assets/favicon-itinera.png?v=0.37.3">
-  <meta name="description" content="Ferramenta de orientación académica e deseño de itinerarios personalizados con buscador, simulador, ItineraBot e fontes oficiais.">
+  <link rel="icon" type="image/png" sizes="512x512" href="assets/favicon-itinera.png?v=0.37.4">
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico?v=0.37.4">
+  <link rel="shortcut icon" href="assets/favicon.ico?v=0.37.4">
+  <link rel="apple-touch-icon" href="assets/favicon-itinera.png?v=0.37.4">
+  <meta name="description" content="Ferramenta de orientación académica guiada con deseño de itinerarios personalizados, preguntas frecuentes oficiais, buscador e fontes verificables.">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -25,7 +25,6 @@
         <a href="#fuentes" data-route="fuentes" class="top-link" id="headerSourcesBtn"></a>
         <a href="#faq" data-route="faq" class="top-link" id="headerFaqBtn"></a>
         <a href="#aventura" data-route="aventura" class="premium-btn sim" id="headerSimulatorBtn"></a>
-        <a href="#asistente" data-route="asistente" class="premium-btn bot" id="headerItinerabotBtn"></a>
         <span class="update-pill" id="updateBadge"></span>
         <label class="compact-select" for="languageSelect"><span id="languageLabel"></span><select id="languageSelect"></select></label>
         <label class="compact-select" for="fontSelect"><span id="fontLabel"></span><select id="fontSelect"></select></label>
@@ -63,7 +62,6 @@
           <div class="hero-actions v27-hero-actions">
             <a href="#inicio" data-route="inicio" class="v27-text-link">Buscador guiado</a>
             <a href="#aventura" data-route="aventura" class="v27-text-link" id="heroSimulatorCta"></a>
-            <a href="#asistente" data-route="asistente" class="v27-text-link" id="heroBotCta"></a>
           </div>
         </article>
         <article class="v27-cover-card" aria-label="Ferramentas principais de ITINERA">
@@ -73,7 +71,7 @@
           <div class="v27-cover-tools">
             <a href="#inicio" data-route="inicio"><span>01</span><strong>Buscador de estudos</strong><small>Busca por nome, familia ou profesión.</small></a>
             <a href="#aventura" data-route="aventura"><span>02</span><strong>Simulador de itinerarios</strong><small>Compara rutas curtas e alternativas.</small></a>
-            <a href="#asistente" data-route="asistente"><span>03</span><strong>ItineraBot</strong><small>Pregunta con apoio das fontes oficiais.</small></a>
+            <a href="#faq" data-route="faq"><span>03</span><strong>Preguntas frecuentes</strong><small>Dúbidas explicadas con fontes oficiais.</small></a>
           </div>
         </article>
       </div>
@@ -163,8 +161,10 @@
     <section id="faq" class="view" tabindex="-1"><div class="section-heading wide"><p class="eyebrow" id="faqEyebrow"></p><h1 id="faqTitle"></h1><p id="faqDescription"></p></div><input id="faqSearch" class="faq-search" type="search"><div id="faqList" class="faq-list"></div></section>
 
     <section id="fuentes" class="view" tabindex="-1"><div class="section-heading wide"><p class="eyebrow" id="sourcesEyebrow"></p><h1 id="sourcesTitle"></h1><p id="sourcesDescription"></p></div><div class="license-box"><h2 id="licenseTitle"></h2><p id="licenseDescription"></p><a class="button ghost" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a></div><div id="sourceFilters" class="filters"></div><div id="sourceCards" class="grid two"></div></section>
-
-    <section id="asistente" class="view" tabindex="-1"><div class="section-heading wide"><p class="eyebrow" id="chatEyebrow"></p><h1 id="chatTitle"></h1><p id="chatDescription"></p></div><div class="chat-layout"><section class="chat-panel"><div id="chatLog" class="chat-log" aria-live="polite"></div><form id="chatForm" class="chat-form"><label for="chatInput" id="chatLabel"></label><div class="chat-row"><input id="chatInput" type="text"><button class="button action-bot" type="submit" id="chatSend"></button></div></form></section><aside class="chat-help"><h2 id="chatSuggestionsTitle"></h2><div id="questionChips"></div><div class="warning-box small" id="chatWarning"></div></aside></div></section>
+    <section id="asistente" class="view legacy-assistant-view" tabindex="-1" hidden aria-hidden="true">
+      <div class="section-heading wide"><p class="eyebrow" id="chatEyebrow"></p><h1 id="chatTitle"></h1><p id="chatDescription"></p></div>
+      <div class="chat-layout"><section class="chat-panel"><div id="chatLog" class="chat-log" aria-live="polite"></div><form id="chatForm" class="chat-form"><label for="chatInput" id="chatLabel"></label><div class="chat-row"><input id="chatInput" type="text"><button class="button action-bot" type="submit" id="chatSend"></button></div></form></section><aside class="chat-help"><h2 id="chatSuggestionsTitle"></h2><div id="questionChips"></div><div class="warning-box small" id="chatWarning"></div></aside></div>
+    </section>
   </main>
 
   <footer class="site-footer"><div class="shell footer-inner"><div class="footer-brand"><img src="assets/tribeca-shield.png" alt="Tribeca Academia" class="footer-mark"><div><p class="footer-brand-name">Tribeca Academia</p><p class="footer-brand-sub" id="footerBrandSub"></p><p class="footer-address">Calle Rafael Juan, 33, 15130, Corcubión, A Coruña</p></div></div><div class="footer-description" id="footerDescription"></div><div class="footer-license"><strong>Creative Commons</strong><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a></div><div class="footer-links"><button type="button" class="footer-link-button" data-modal-open="aboutModal" id="footerAbout"></button><button type="button" class="footer-link-button" data-modal-open="legalModal" id="footerLegal"></button><button type="button" class="footer-link-button" data-modal-open="contactModal" id="footerContact"></button></div></div></footer>
@@ -189,7 +189,7 @@
     <div class="modal-body" id="routeLinkBody"></div>
   </section>
 
-  <script src="app-config.js?v=0.37.3"></script>
-  <script src="app.js?v=0.37.3"></script>
+  <script src="app-config.js?v=0.37.4"></script>
+  <script src="app.js?v=0.37.4"></script>
 </body>
 </html>
