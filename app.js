@@ -5892,10 +5892,10 @@ document.addEventListener('DOMContentLoaded',init);
       return base;
     }
     if(start==='retomar') add('Retomar estudos con vía flexible',['Revisión de estudos previos','Educación de persoas adultas, FP modular ou proba de acceso se procede','Admisión na etapa obxectivo',p.name,'Continuación, emprego ou especialización'], 'A ruta debe axustarse ao tempo dispoñible e á titulación previa.', ['educagob-adultos','xunta-ciclosadmision'].concat(p.sources||[]));
-    if(k==='fpgm') add('Acceso a FP de grao medio',[start==='eso_sin'?'Regularizar requisito ou proba de acceso':'ESO con título ou equivalente',p.name,'Formación en centro de traballo','Emprego ou continuidade a grao superior'], 'Vía profesional inicial con posibilidade de continuidade.', p.sources||['todofp-acceso-fp','xunta-fp-oferta-2025-2026']);
-    else if(k==='fpgs') add('Acceso a FP de grao superior',[start==='bach'?'Bacharelato actual':'ESO con título','Bacharelato ou FP de grao medio',p.name,'FCT ou proxecto','Emprego cualificado ou universidade'], 'Desde ESO non é salto directo ordinario: hai pasos intermedios.', p.sources||['todofp-acceso-fp','xunta-fp-oferta-2025-2026']);
+    if(k==='fpgm') add('Acceso a FP de grao medio',[start==='eso_sin'?'Regularizar o acceso ou obter o título de ESO':'Rematar ESO e obter o título ou acreditar equivalencia',p.name,'Formación en centro de traballo','Emprego ou continuidade a grao superior'], 'Vía profesional inicial con posibilidade de continuidade.', p.sources||['todofp-acceso-fp','xunta-fp-oferta-2025-2026']);
+    else if(k==='fpgs') add('Acceso a FP de grao superior',[start==='bach'?'Rematar Bacharelato actual':'Rematar ESO e obter o título como paso previo','Bacharelato ou FP de grao medio',p.name,'FCT ou proxecto','Emprego cualificado ou universidade'], 'Desde ESO non é salto directo ordinario: hai pasos intermedios.', p.sources||['todofp-acceso-fp','xunta-fp-oferta-2025-2026']);
     else if(k==='grado'){
-      add('Ruta universitaria ordinaria',[start==='bach'?'Bacharelato actual':'ESO con título','Bacharelato coherente coa rama','PAU/ABAU e admisión','Grao universitario: '+p.name,'Máster, oposición ou especialización se procede'], 'A nota de admisión depende de expediente, fase voluntaria e ponderacións.', p.sources||['ciug-admision','qedu','ruct']);
+      add('Ruta universitaria ordinaria',[start==='bach'?'Rematar Bacharelato actual':'Rematar ESO e obter o título como paso previo','Escoller a modalidade concreta de Bacharelato segundo o grao e as ponderacións CIUG','PAU/ABAU e admisión','Grao universitario: '+p.name,'Máster, oposición ou especialización se procede'], 'A nota de admisión depende de expediente, fase voluntaria e ponderacións.', p.sources||['ciug-admision','qedu','ruct']);
       add('Ruta alternativa desde FP superior',[start==='fpgs'?'FP superior actual':'FP de grao superior relacionado','Admisión universitaria desde FP','Fase voluntaria se precisas subir nota','Grao universitario: '+p.name], 'Pode ser unha boa vía se prefires unha base práctica ou xa estás en FP.', ['ciug-admision','qedu','ruct']);
     } else if(k==='master') add('Ruta de máster',['Grao universitario oficial compatible','Comprobar admisión e complementos formativos','Máster: '+p.name,'Especialización profesional ou doutoramento'], 'Se o máster é habilitante, a denominación e requisitos deben verificarse en RUCT.', p.sources||['ruct','qedu']);
     else if(k==='fp-acelerada' || k==='certificado') add('Ruta de recualificación',[p.name,'Comprobar convocatoria e requisitos','Matrícula ou inscrición','Formación e acreditación','Aplicación profesional'], 'Vía especialmente útil para cambio profesional ou actualización.', p.sources);
@@ -5979,4 +5979,328 @@ document.addEventListener('DOMContentLoaded',init);
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(apply372,3300),{once:true});
   else setTimeout(apply372,1900);
   document.addEventListener('change',e=>{ if(e.target && e.target.id==='languageSelect') setTimeout(apply372,350); });
+})();
+
+/* ITINERA v0.37.3 - simulador literal, buscador visible, saídas profesionais e máis información despregable */
+(function(){
+  const VERSION = '0.37.3';
+  const LEVEL_ORDER = {fpb:1, fpgm:2, fpgs:3, 'fp-acelerada':2.4, certificado:2.5, 'certificado-profesionalidade':2.5, 'curso-especializacion-fp':3.5, especializacion:3.5, grado:4, grao:4, master:5, doutoramento:6, doctorado:6};
+  const PROFILE_KEY = 'itinera_v372_profile';
+  const TRACK_KEY = 'itinera_v372_track';
+  const safe = (typeof escapeHTML === 'function') ? escapeHTML : (value)=>String(value ?? '').replace(/[&<>'"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  const norm = (typeof normalise === 'function') ? normalise : (value)=>String(value ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+  const links = (ids)=> typeof sourceLinks === 'function' ? sourceLinks(ids || []) : '';
+
+  const UI = {
+    gl:{
+      simTitle:'Deseña o teu itinerario',
+      simLead:'Un percorrido guiado: primeiro partimos da túa situación real, despois escollemos unha meta e finalmente xeramos unha liña de tempo clara, con pasos literais e información ampliable só cando a precises.',
+      start:'1. Punto de partida', goal:'2. Que queres estudar ou cara a onde queres ir?', routeMode:'3. Como queres ver a ruta?',
+      step1Help:'Escolle a situación que máis se parece á túa. ITINERA usaraa como base e non volverá pedíracha salvo que ti queiras cambiala.',
+      step2Help:'Escribe polo menos 3 letras. As coincidencias aparecerán debaixo do buscador, ordenadas por nivel educativo e familia ou rama.',
+      step3Help:'Este paso non decide por ti. Só escolle como se presenta a ruta: unha vía principal ou varias alternativas realistas.',
+      selectedStart:'Punto de partida seleccionado', changeStart:'Cambiar punto de partida', visibleResults:'Coincidencias visibles', typeGoal:'Escribe 3 letras: psicoloxía, soldadura, medicina, infantil, informática...',
+      noGoal:'Escolle un punto de partida e escribe unha meta. A ferramenta non xerará unha ruta xenérica: necesita saber desde onde partes e cara a onde queres ir.',
+      noMatch:'Non hai unha coincidencia suficientemente clara. Proba con outro nome, profesión, familia ou nivel, ou consulta as fontes oficiais enlazadas.',
+      suggestions:'Resultados ordenados por nivel e familia', choose:'Escoller este estudo', examples:'Exemplos para probar', direct:'Ruta principal explicada', directDesc:'Mostra a vía máis lóxica desde o teu punto de partida, con pasos concretos e sen información innecesaria.', all:'Ruta principal + alternativas', allDesc:'Engade rutas alternativas, por exemplo FP superior, acceso de persoas adultas ou recualificación, cando teñen sentido.',
+      timeline:'Liña de tempo personalizada', clickStep:'Preme nun paso para ver que significa, que debes comprobar e onde ampliar información.', stepInfo:'Información do paso', more:'Máis información', requirements:'Requisitos e pasos intermedios', subjects:'Materias concretas recomendables', ponderations:'Ponderacións, admisión e puntos críticos', availability:'Onde comprobar oferta, centros ou campus', jobs:'Saídas profesionais posibles', regulated:'Habilitacións, licenzas ou estudos adicionais', grants:'Becas, apoios e situacións específicas', pdf:'Descargar itinerario en PDF', pdfHelp:'O PDF recolle a liña de tempo, os pasos, as saídas profesionais, a información ampliable e as fontes oficiais.', officialNote:'Antes de matricularte, comproba sempre prazos, prazas, requisitos, ponderacións, centros e validez oficial na fonte vixente.',
+      selectedRoute:'Ruta xerada para', from:'Partindo de', changeProfession:'Quero cambiar de profesión', retake:'Quero retomar os meus estudos'
+    },
+    es:{
+      simTitle:'Diseña tu itinerario', simLead:'Un recorrido guiado: primero partimos de tu situación real, después escogemos una meta y finalmente generamos una línea de tiempo clara, con pasos literales e información ampliable solo cuando la necesites.', start:'1. Punto de partida', goal:'2. Qué quieres estudiar o hacia dónde quieres ir?', routeMode:'3. Cómo quieres ver la ruta?', step1Help:'Escoge la situación que más se parece a la tuya. ITINERA la usará como base y no volverá a pedírtela salvo que quieras cambiarla.', step2Help:'Escribe al menos 3 letras. Las coincidencias aparecerán debajo del buscador, ordenadas por nivel educativo y familia o rama.', step3Help:'Este paso no decide por ti. Solo escoge cómo se presenta la ruta: una vía principal o varias alternativas realistas.', selectedStart:'Punto de partida seleccionado', changeStart:'Cambiar punto de partida', visibleResults:'Coincidencias visibles', typeGoal:'Escribe 3 letras: psicología, soldadura, medicina, infantil, informática...', noGoal:'Escoge un punto de partida y escribe una meta. La herramienta no generará una ruta genérica: necesita saber desde dónde partes y hacia dónde quieres ir.', noMatch:'No hay una coincidencia suficientemente clara. Prueba con otro nombre, profesión, familia o nivel, o consulta las fuentes oficiales enlazadas.', suggestions:'Resultados ordenados por nivel y familia', choose:'Escoger este estudio', examples:'Ejemplos para probar', direct:'Ruta principal explicada', directDesc:'Muestra la vía más lógica desde tu punto de partida, con pasos concretos y sin información innecesaria.', all:'Ruta principal + alternativas', allDesc:'Añade rutas alternativas, por ejemplo FP superior, acceso de personas adultas o recualificación, cuando tienen sentido.', timeline:'Línea de tiempo personalizada', clickStep:'Pulsa en un paso para ver qué significa, qué debes comprobar y dónde ampliar información.', stepInfo:'Información del paso', more:'Más información', requirements:'Requisitos y pasos intermedios', subjects:'Materias concretas recomendables', ponderations:'Ponderaciones, admisión y puntos críticos', availability:'Dónde comprobar oferta, centros o campus', jobs:'Salidas profesionales posibles', regulated:'Habilitaciones, licencias o estudios adicionales', grants:'Becas, apoyos y situaciones específicas', pdf:'Descargar itinerario en PDF', pdfHelp:'El PDF recoge la línea de tiempo, los pasos, las salidas profesionales, la información ampliable y las fuentes oficiales.', officialNote:'Antes de matricularte, comprueba siempre plazos, plazas, requisitos, ponderaciones, centros y validez oficial en la fuente vigente.', selectedRoute:'Ruta generada para', from:'Partiendo de', changeProfession:'Quiero cambiar de profesión', retake:'Quiero retomar mis estudios'
+    },
+    en:{simTitle:'Design your pathway', simLead:'A guided path: starting situation, goal and a clear timeline with literal steps and expandable information.', start:'1. Starting point', goal:'2. What do you want to study or aim for?', routeMode:'3. How should the route be shown?', step1Help:'Choose your current situation. ITINERA will use it as the base unless you choose to change it.', step2Help:'Type at least 3 letters. Matches appear below, ordered by level and family.', step3Help:'Choose whether to show one main route or realistic alternatives.', selectedStart:'Selected starting point', changeStart:'Change starting point', visibleResults:'Visible matches', typeGoal:'Type 3 letters: psychology, welding, medicine, computing...', noGoal:'Choose a starting point and type a goal.', noMatch:'No clear match found. Try another term or use the official sources.', suggestions:'Results ordered by level and family', choose:'Choose this study', examples:'Examples', direct:'Explained main route', directDesc:'Shows the most logical route from your starting point.', all:'Main route + alternatives', allDesc:'Adds realistic alternatives when they make sense.', timeline:'Personalised timeline', clickStep:'Click a step to expand it.', stepInfo:'Step information', more:'More information', requirements:'Requirements and intermediate steps', subjects:'Recommended subjects', ponderations:'Admission and critical points', availability:'Where to check availability', jobs:'Possible careers', regulated:'Licences or additional studies', grants:'Grants and support', pdf:'Download pathway PDF', pdfHelp:'The PDF includes the timeline, steps, careers, expandable information and official sources.', officialNote:'Always check deadlines, places, requirements and official validity in current official sources.', selectedRoute:'Route generated for', from:'Starting from', changeProfession:'I want to change profession', retake:'I want to resume my studies'},
+    fr:{simTitle:'Concevoir votre itinéraire', simLead:'Parcours guidé avec point de départ, objectif et chronologie claire.', start:'1. Point de départ', goal:'2. Objectif', routeMode:'3. Mode de route', step1Help:'Choisissez votre situation actuelle.', step2Help:'Saisissez au moins 3 lettres.', step3Help:'Choisissez une route principale ou des alternatives.', selectedStart:'Point de départ choisi', changeStart:'Changer', visibleResults:'Résultats visibles', typeGoal:'Saisissez 3 lettres...', noGoal:'Choisissez un point de départ et un objectif.', noMatch:'Aucune correspondance claire.', suggestions:'Résultats par niveau et famille', choose:'Choisir', examples:'Exemples', direct:'Route principale', directDesc:'Affiche la voie la plus logique.', all:'Route + alternatives', allDesc:'Ajoute des alternatives réalistes.', timeline:'Chronologie personnalisée', clickStep:'Cliquez pour développer.', stepInfo:'Information', more:'Plus d’information', requirements:'Exigences', subjects:'Matières recommandées', ponderations:'Admission', availability:'Offre', jobs:'Débouchés', regulated:'Exigences supplémentaires', grants:'Bourses', pdf:'Télécharger le PDF', pdfHelp:'Le PDF inclut la chronologie.', officialNote:'Vérifiez toujours les sources officielles.', selectedRoute:'Route pour', from:'À partir de', changeProfession:'Changer de profession', retake:'Reprendre mes études'},
+    pl:{simTitle:'Zaprojektuj ścieżkę', simLead:'Ścieżka prowadzona z punktem wyjścia, celem i osią czasu.', start:'1. Punkt wyjścia', goal:'2. Cel', routeMode:'3. Tryb', step1Help:'Wybierz obecną sytuację.', step2Help:'Wpisz co najmniej 3 litery.', step3Help:'Wybierz trasę główną lub alternatywy.', selectedStart:'Wybrany punkt', changeStart:'Zmień', visibleResults:'Wyniki', typeGoal:'Wpisz 3 litery...', noGoal:'Wybierz punkt wyjścia i cel.', noMatch:'Brak jasnego wyniku.', suggestions:'Wyniki według poziomu i rodziny', choose:'Wybierz', examples:'Przykłady', direct:'Główna trasa', directDesc:'Najbardziej logiczna droga.', all:'Trasa + alternatywy', allDesc:'Dodaje realne alternatywy.', timeline:'Oś czasu', clickStep:'Kliknij krok.', stepInfo:'Informacje', more:'Więcej informacji', requirements:'Wymagania', subjects:'Zalecane przedmioty', ponderations:'Rekrutacja', availability:'Oferta', jobs:'Możliwe zawody', regulated:'Dodatkowe wymagania', grants:'Stypendia', pdf:'Pobierz PDF', pdfHelp:'PDF zawiera oś czasu.', officialNote:'Zawsze sprawdzaj oficjalne źródła.', selectedRoute:'Ścieżka dla', from:'Od', changeProfession:'Chcę zmienić zawód', retake:'Chcę wrócić do nauki'},
+    de:{simTitle:'Weg entwerfen', simLead:'Geführter Weg mit Ausgangspunkt, Ziel und klarer Zeitleiste.', start:'1. Ausgangspunkt', goal:'2. Ziel', routeMode:'3. Modus', step1Help:'Wähle deine aktuelle Situation.', step2Help:'Gib mindestens 3 Buchstaben ein.', step3Help:'Wähle Hauptweg oder Alternativen.', selectedStart:'Ausgangspunkt gewählt', changeStart:'Ändern', visibleResults:'Treffer', typeGoal:'3 Buchstaben eingeben...', noGoal:'Wähle Ausgangspunkt und Ziel.', noMatch:'Kein eindeutiger Treffer.', suggestions:'Treffer nach Niveau und Familie', choose:'Auswählen', examples:'Beispiele', direct:'Hauptweg', directDesc:'Logischster Weg.', all:'Weg + Alternativen', allDesc:'Fügt realistische Alternativen hinzu.', timeline:'Zeitleiste', clickStep:'Schritt anklicken.', stepInfo:'Information', more:'Mehr Information', requirements:'Anforderungen', subjects:'Empfohlene Fächer', ponderations:'Zulassung', availability:'Angebot', jobs:'Mögliche Berufe', regulated:'Zusätzliche Anforderungen', grants:'Stipendien', pdf:'PDF herunterladen', pdfHelp:'PDF enthält die Zeitleiste.', officialNote:'Amtliche Quellen immer prüfen.', selectedRoute:'Weg für', from:'Ausgehend von', changeProfession:'Beruf wechseln', retake:'Studium wieder aufnehmen'}
+  };
+  const T = (key)=> (UI[state?.lang] && UI[state.lang][key]) || UI.gl[key] || key;
+
+  const EXTRA_PROGRAMS = [
+    {id:'fp-acelerada', name:'FP acelerada', type:'fp-acelerada', level:'Formación profesional acelerada', family:'Recualificación profesional', keywords:['fp acelerada','formación acelerada','recualificación','cambiar profesión','cambio profesional'], sources:['xunta-fp-formacion-acelerada-2025-2026','xunta-ciclosadmision'], regulated:'Depende de convocatoria e oferta vixente. Non substitúe automaticamente un ciclo completo se a profesión require título oficial completo.', demand:'Vía breve para adquirir competencias prácticas e mellorar a empregabilidade.', labour:'Recualificación, actualización profesional, apoio á inserción laboral e cambio de sector.'},
+    {id:'certificado-profesionalidade', name:'Certificados de profesionalidade', type:'certificado-profesionalidade', level:'Certificado profesional', family:'Formación para o emprego', keywords:['certificado profesional','certificados de profesionalidade','certificado de profesionalidad','sepe','competencias profesionais'], sources:['sepe-catalogo-especialidades','sepe-ocupaciones'], regulated:'Acreditan competencias profesionais segundo nivel, familia e especialidade. Cómpre verificar requisitos de acceso, centro autorizado e prácticas.', demand:'Vía útil para acreditar unha competencia concreta ou mellorar a inserción laboral.', labour:'Ocupacións vinculadas ao certificado concreto, acreditación de competencias e mellora curricular.'},
+    {id:'grado-universitario-cambio', name:'Grao universitario para cambio profesional', type:'grado', level:'Grao universitario', family:'Universidade', keywords:['grao universitario','grado universitario','universidade','cambiar profesion','cambiar profesión','adultos universidade'], sources:['qedu','ruct','ciug-admision','becas-portada'], regulated:'A oficialidade debe verificarse en RUCT. Algunhas profesións requiren máster habilitante, oposición ou formación posterior.', demand:'Cambio profesional de medio ou longo prazo.', labour:'Dependerá do grao escollido, prácticas, especialización e requisitos profesionais.'},
+    {id:'master-cambio', name:'Máster diferente ao grao previo', type:'master', level:'Máster universitario', family:'Universidade', keywords:['master','máster','posgrao','postgrado','cambiar especialización','cambio profesional'], sources:['ruct','qedu','rd-822-2021'], regulated:'Debe comprobarse se o máster é oficial, se é habilitante e que graos previos admite.', demand:'Vía de especialización ou xiro profesional cando o perfil de acceso é admitido.', labour:'Especialización profesional, actualización técnica, investigación ou acceso a profesión regulada se o máster é habilitante.'}
+  ];
+
+  function typeOf(p){
+    const raw = norm([p?.type,p?.level,p?.name].filter(Boolean).join(' '));
+    if(raw.includes('fp acelerada')) return 'fp-acelerada';
+    if(raw.includes('certificado')) return 'certificado-profesionalidade';
+    if(raw.includes('grado superior') || raw.includes('grao superior')) return 'fpgs';
+    if(raw.includes('grado medio') || raw.includes('grao medio')) return 'fpgm';
+    if(raw.includes('basica') || raw.includes('básica')) return 'fpb';
+    if(raw.includes('master') || raw.includes('máster')) return 'master';
+    if(raw.includes('grado') || raw.includes('grao universitario')) return 'grado';
+    return p?.type || 'outro';
+  }
+  function levelRank(p){ return LEVEL_ORDER[typeOf(p)] || 99; }
+  function allPrograms373(query=''){
+    const q = norm(query);
+    const all = [...EXTRA_PROGRAMS, ...(state?.data?.studies || [])];
+    const seen = new Set();
+    return all.filter(p=>{
+      if(!p || seen.has(p.id)) return false;
+      seen.add(p.id);
+      if(!q) return true;
+      const hay = norm([p.name,p.level,p.family,p.type,p.route,p.labour,p.demand,(p.keywords||[]).join(' ')].filter(Boolean).join(' '));
+      return hay.includes(q) || q.split(/\s+/).every(token=>hay.includes(token));
+    }).map(p=>({p,score:scoreProgram(p,q)})).sort((a,b)=> a.p && b.p ? (levelRank(a.p)-levelRank(b.p)) || String(a.p.family||'').localeCompare(String(b.p.family||''),'gl') || (b.score-a.score) || String(a.p.name||'').localeCompare(String(b.p.name||''),'gl') : 0).map(x=>x.p);
+  }
+  function scoreProgram(p,q){
+    if(!q) return 0;
+    const n = norm(p.name||''), f=norm(p.family||''), k=norm((p.keywords||[]).join(' '));
+    let score=0;
+    if(n===q) score+=80;
+    if(n.startsWith(q)) score+=50;
+    if(n.includes(q)) score+=30;
+    if(f.includes(q)) score+=14;
+    if(k.includes(q)) score+=18;
+    return score;
+  }
+  function selectedProgram373(){
+    const id = state?.adventure?.selectedProgramId;
+    if(id){
+      const p = [...EXTRA_PROGRAMS, ...(state?.data?.studies||[])].find(x=>x.id===id);
+      if(p) return p;
+    }
+    return allPrograms373(state?.adventure?.goalText||'')[0] || null;
+  }
+  function startLabel(id){
+    const labels={
+      eso_cursando:'Estou cursando ESO', eso_titulo:'Xa teño o título de ESO', eso_sin:'Non teño o título de ESO', bach:'Estou en Bacharelato', fpgm:'Estou en FP de grao medio', fpgs:'Estou en FP de grao superior', grado:'Xa teño un grao universitario', retomar:T('retake'), cambio_profesion:T('changeProfession')
+    };
+    return labels[id] || 'Punto de partida sen concretar';
+  }
+  function profileToStart(profile){
+    return {eso:'eso_cursando', bach:'bach', fp:'fpgm', uni:'bach', retomar:'retomar', 'cambio-profesion':'cambio_profesion'}[profile] || '';
+  }
+  function syncStartFromGuided(){
+    const start = profileToStart(localStorage.getItem(PROFILE_KEY));
+    if(start && (!state.adventure.start || state.adventure.start === 'eso_cursando')) state.adventure.start = start;
+    const track = localStorage.getItem(TRACK_KEY);
+    if(start === 'cambio_profesion' && track){
+      const p = EXTRA_PROGRAMS.find(x=>x.id===track || (track==='grado-universitario' && x.id==='grado-universitario-cambio'));
+      if(p){ state.adventure.goalText = p.name; state.adventure.selectedProgramId = p.id; }
+    }
+  }
+
+  function field(p){ return norm([p?.family,p?.name,p?.keywords?.join(' ')].filter(Boolean).join(' ')); }
+  function bachAdvice(p){
+    const f = field(p);
+    if(typeOf(p) !== 'grado') return null;
+    if(f.includes('medicina') || f.includes('enfermer') || f.includes('saude') || f.includes('salud') || f.includes('biolog') || f.includes('farmacia') || f.includes('veterin')){
+      return {name:'Bacharelato de Ciencias e Tecnoloxía, orientado a Ciencias da Saúde', why:'É a vía máis coherente cando a meta está vinculada a saúde, bioloxía ou laboratorio.', subjects:['Bioloxía','Química','Matemáticas II','Física, se pondera ou fortalece a base científica','Revisión anual da táboa CIUG de ponderacións']};
+    }
+    if(f.includes('arquitect') || f.includes('enxeñ') || f.includes('ingenier') || f.includes('informat') || f.includes('robot') || f.includes('electric') || f.includes('industrial')){
+      return {name:'Bacharelato de Ciencias e Tecnoloxía, orientado a tecnoloxía e enxeñaría', why:'É a vía máis directa para graos técnicos, enxeñarías, arquitectura e perfís con forte base matemática.', subjects:['Matemáticas II','Física','Debuxo Técnico II se o grao o recomenda ou pondera','Tecnoloxía e Enxeñaría II cando exista','Revisión anual da táboa CIUG']};
+    }
+    if(f.includes('psicolog') || f.includes('educacion') || f.includes('educación') || f.includes('pedagog') || f.includes('social') || f.includes('derecho') || f.includes('dereito') || f.includes('empresa') || f.includes('econom') || f.includes('comercio')){
+      return {name:'Bacharelato de Humanidades e Ciencias Sociais, sen descartar Ciencias se pondera mellor no teu caso', why:'É unha vía habitual para graos sociais, educativos, xurídicos e económicos. En estudos como Psicoloxía convén comparar materias de Ciencias e de Ciencias Sociais porque as ponderacións poden cambiar.', subjects:['Matemáticas Aplicadas ás Ciencias Sociais II cando proceda','Bioloxía se a meta é Psicoloxía ou saúde e pondera ben','Empresa e Deseño de Modelos de Negocio, Xeografía ou Historia da Filosofía segundo grao','Revisión anual da táboa CIUG']};
+    }
+    if(f.includes('arte') || f.includes('deseño') || f.includes('diseno') || f.includes('musica') || f.includes('música')){
+      return {name:'Bacharelato de Artes, escollendo a vía máis próxima ao grao', why:'É a vía máis coherente para graos artísticos, deseño, conservación, música ou creación audiovisual.', subjects:['Debuxo Artístico','Fundamentos Artísticos','Deseño, Cultura Audiovisual ou materias específicas segundo oferta','Revisión anual da táboa CIUG']};
+    }
+    if(f.includes('filolog') || f.includes('historia') || f.includes('humanidades') || f.includes('filosof')){
+      return {name:'Bacharelato de Humanidades e Ciencias Sociais, orientado a Humanidades', why:'É a vía máis coherente para graos de linguas, historia, filosofía, humanidades ou estudos culturais.', subjects:['Latín II ou Grego II se proceden','Historia da Filosofía','Xeografía ou Historia da Arte segundo grao','Revisión anual da táboa CIUG']};
+    }
+    return {name:'Bacharelato da modalidade máis próxima á rama do grao', why:'Cómpre concretar co grao exacto e a táboa CIUG vixente para non escoller materias por intuición.', subjects:['Materia troncal propia da rama','Materias que ponderen mellor no grao elixido','Materia na que poidas obter boa cualificación realista','Revisión anual da táboa CIUG']};
+  }
+  function accessBase(start,p){
+    const k=typeOf(p), b=bachAdvice(p), steps=[];
+    if(start==='eso_sin') steps.push('Regularizar o acceso: rematar ESO pola vía ordinaria ou pola educación de persoas adultas, ou preparar unha proba de acceso se cumpres idade e requisitos.');
+    if(start==='eso_cursando') steps.push('Rematar ESO e obter o título, porque é a chave de acceso ordinaria a Bacharelato e FP de grao medio.');
+    if(start==='eso_titulo') steps.push('Confirmar que tes o título de ESO ou unha equivalencia académica recoñecida.');
+    if(start==='retomar') steps.push('Reunir certificados académicos anteriores e comprobar equivalencias, educación de persoas adultas, probas de acceso, FP modular ou distancia segundo a túa situación.');
+    if(start==='cambio_profesion') steps.push('Definir a profesión ou sector de destino e separar dúas cousas: a vía máis rápida posible e a vía máis segura oficialmente.');
+    if(start==='bach') steps.push('Rematar Bacharelato e revisar se a modalidade e materias encaixan coa meta elixida.');
+    if(start==='fpgm') steps.push('Rematar o ciclo de FP de grao medio e gardar a documentación académica para admisión, continuidade ou validacións.');
+    if(start==='fpgs') steps.push('Rematar o ciclo de FP de grao superior e comprobar se permite acceso directo á meta ou se convén fase voluntaria da ABAU.');
+    if(start==='grado') steps.push('Confirmar que o grao universitario previo é oficial e revisar se a nova meta admite ese perfil de entrada.');
+    if(k==='grado' && b && !['bach','fpgs','grado'].includes(start)) steps.push(`Escoller ${b.name}. ${b.why}`);
+    return steps;
+  }
+  function routeStepsFor373(p){
+    const k=typeOf(p), start=state.adventure.start || 'eso_cursando', b=bachAdvice(p), base=[];
+    const add=(title,steps,note,sources)=>base.push({title,steps:steps.filter(Boolean),note,sources:sources || p.sources || []});
+    if(start==='cambio_profesion'){
+      if(k==='fp-acelerada') add('Cambio de profesión por FP acelerada', ['Definir o sector no que queres traballar e comprobar se hai oferta acelerada dese ámbito.', 'Consultar a convocatoria e a oferta real de Formación Profesional acelerada.', 'Revisar requisitos, prazos, centro, duración e documentación antes de inscribirte.', 'Solicitar admisión ou inscrición seguindo a convocatoria.', 'Cursar a formación práctica e gardar certificados ou acreditacións obtidas.', 'Actualizar CV, buscar prácticas, bolsa de emprego ou ofertas vinculadas ao novo sector.'], 'É unha vía curta e práctica, pero depende totalmente da oferta vixente.', p.sources);
+      else if(k==='certificado-profesionalidade') add('Cambio de profesión por certificado profesional', ['Escoller unha ocupación concreta, por exemplo atención sociosanitaria, administración, almacén, informática ou outra familia.', 'Buscar no catálogo oficial o certificado ou especialidade formativa que acredita esa competencia.', 'Comprobar o nivel do certificado, requisitos de acceso, centro autorizado, modalidade e prácticas.', 'Inscribirse na oferta dispoñible na administración ou entidade autorizada.', 'Cursar módulos formativos e prácticas cando procedan.', 'Usar o certificado para acreditar competencias e presentarte a ofertas do sector.'], 'É útil cando a meta é unha competencia profesional concreta, non necesariamente unha titulación longa.', p.sources);
+      else if(k==='grado') add('Cambio de profesión por grao universitario', ['Identificar se a nova profesión require grao universitario concreto.', 'Verificar en RUCT que o grao é oficial e en QEDU onde se imparte.', 'Escoller vía de acceso: ABAU, FP superior, maiores de 25/40/45 ou titulación universitaria previa segundo caso.', b ? `Preparar a base recomendada: ${b.name}. Materias clave: ${b.subjects.join(', ')}.` : 'Preparar a vía de acceso e materias que mellor encaixen coa rama.', `Solicitar admisión no grao: ${p.name}.`, 'Planificar prácticas, especialización, oposición ou máster habilitante se a profesión o esixe.'], 'É unha ruta de cambio profundo. A súa duración adoita ser maior, pero dá acceso a profesións que esixen título universitario.', p.sources);
+      else if(k==='master') add('Cambio de profesión por máster', ['Partir dun grao universitario oficial xa rematado.', 'Ler os requisitos de admisión do máster, porque non todos aceptan calquera grao previo.', 'Comprobar se pide complementos formativos, experiencia, idioma, nota media ou entrevista.', `Solicitar admisión no máster: ${p.name}.`, 'Confirmar se é habilitante, profesionalizante, investigador ou de especialización.', 'Planificar saída profesional, prácticas, colexiación ou habilitación adicional se procede.'], 'Non todo máster permite cambiar de profesión. A clave é a admisión e os efectos profesionais reais.', p.sources);
+      else add('Cambio profesional con estudo obxectivo', ['Nomear a profesión de destino con precisión.', 'Comprobar se a profesión require título, máster, colexiación, oposición, carné profesional ou certificado.', `Deseñar a vía cara a ${p.name}.`, 'Comparar vía curta e vía segura.', 'Planificar matrícula, prácticas e inserción profesional.'], 'Evita decidir polo nome do estudo sen comprobar o requisito real da profesión.', p.sources);
+      return base;
+    }
+    if(k==='fpgm') add('Acceso a FP de grao medio', [...accessBase(start,p), `Escoller a familia profesional: ${p.family || 'familia correspondente'}.`, `Solicitar admisión no ciclo: ${p.name}.`, 'Cursar os módulos do ciclo e a formación en empresa ou FCT cando proceda.', 'Obter o título de Técnico ou Técnica.', 'Decidir a continuación: incorporarte ao emprego, pasar a FP de grao superior ou facer formación complementaria.'], 'Ruta profesional inicial con acceso a emprego técnico e continuidade formativa.', p.sources || ['todofp-acceso-fp','xunta-fp-oferta-2025-2026']);
+    else if(k==='fpgs') add('Acceso a FP de grao superior', [...accessBase(start,p), start==='fpgm' ? 'Usar o título de grao medio como vía de acceso a grao superior, revisando prioridade e baremo da convocatoria.' : (!['bach','fpgs'].includes(start) ? 'Facer Bacharelato ou un ciclo de grao medio antes de solicitar o grao superior, porque desde ESO non se salta directamente pola vía ordinaria.' : 'Usar a vía ordinaria de Bacharelato ou a titulación xa dispoñible.'), `Solicitar admisión no ciclo superior: ${p.name}.`, 'Cursar módulos profesionais, proxecto e formación en empresa ou FCT cando proceda.', 'Obter o título de Técnico Superior ou Técnica Superior.', 'Elixir saída: emprego cualificado, curso de especialización de FP ou acceso á universidade.'], 'A FP superior é unha vía práctica e tamén pode abrir acceso universitario.', p.sources || ['todofp-acceso-fp','xunta-fp-oferta-2025-2026']);
+    else if(k==='grado'){
+      add('Ruta universitaria ordinaria desde Bacharelato', [...accessBase(start,p), b ? `Concretar modalidade: ${b.name}.` : 'Concretar modalidade de Bacharelato segundo a rama do grao.', b ? `Priorizar materias: ${b.subjects.join(', ')}.` : 'Escoller materias que ponderen e que poidas preparar con solvencia.', 'Preparar ABAU: fase obrigatoria e fase voluntaria se necesitas subir nota.', 'Consultar CIUG: ponderacións, notas de corte orientativas, prazos e admisión.', `Solicitar admisión no grao universitario: ${p.name}.`, 'Ao longo do grao, revisar prácticas, mobilidade, especialización, oposicións ou máster habilitante se procede.'], 'Esta ruta concreta el Bacharelato recomendado en función da rama, non de forma xenérica.', p.sources || ['ciug-admision','ciug-ponderaciones-2026','qedu','ruct']);
+      add('Ruta alternativa desde FP superior', [start==='fpgs' ? 'Rematar o ciclo de FP superior que xa estás cursando.' : 'Escoller e rematar unha FP de grao superior relacionada ou estratexicamente útil.', 'Solicitar admisión universitaria desde a nota media do ciclo.', 'Preparar fase voluntaria da ABAU se a nota de admisión non chega ou se queres mellorar posición.', `Entrar no grao universitario: ${p.name}.`, 'Solicitar recoñecemento de créditos se a universidade contempla validacións para a túa FP.'], 'Pode ser unha boa vía cando queres unha base práctica ou necesitas mellorar a nota por outro camiño.', ['ciug-admision','qedu','ruct'].concat(p.sources||[]));
+      if(start==='retomar' || start==='eso_sin') add('Ruta para persoas adultas ou retorno aos estudos', ['Revisar idade, estudos previos e experiencia laboral.', 'Valorar ESO de persoas adultas, Bacharelato de persoas adultas, proba de acceso á universidade para maiores de 25, acceso por experiencia para maiores de 40 ou acceso para maiores de 45 segundo caso.', 'Preparar a vía elixida con calendario realista.', `Solicitar admisión no grao: ${p.name}.`, 'Revisar becas, conciliación, modalidade e carga de créditos asumible.'], 'Especialmente útil cando a persoa volve estudar tras anos sen itinerario académico continuo.', ['educagob-adultos','ciug-admision','qedu','ruct']);
+    } else if(k==='master') add('Ruta de máster universitario', [...accessBase(start,p), 'Ter rematado un grao universitario oficial ou equivalente recoñecido.', 'Ler requisitos de admisión do máster na universidade responsable.', 'Comprobar se pide grao previo concreto, complementos formativos, idioma, experiencia ou nota mínima.', `Solicitar admisión no máster: ${p.name}.`, 'Confirmar se é habilitante e que profesión permite exercer.', 'Planificar prácticas, traballo fin de máster, colexiación ou doutoramento se procede.'], 'Nos másteres a clave é a admisión específica, non só ter un grao.', p.sources || ['ruct','qedu']);
+    else if(k==='fp-acelerada' || k==='certificado-profesionalidade') add('Ruta de recualificación', [...accessBase(start,p), `Escoller vía: ${p.name}.`, 'Comprobar convocatoria, duración, centro, requisitos e prazos.', 'Inscribirse ou solicitar praza.', 'Cursar a formación e gardar acreditacións.', 'Aplicar a formación no emprego, prácticas ou bolsa de traballo.'], 'Vía útil para cambio profesional ou mellora de competencias.', p.sources || ['sepe-catalogo-especialidades','xunta-ciclosadmision']);
+    if(!base.length) add('Ruta orientativa concreta', [...accessBase(start,p), `Comprobar requisito oficial de acceso a ${p.name}.`, 'Localizar a oferta oficial e prazos.', 'Solicitar admisión ou matrícula.', 'Revisar prácticas, saídas e estudos posteriores.'], 'A ruta debe concretarse coa fonte oficial vixente.', p.sources || ['qedu','ruct','xunta-fp-oferta-2025-2026']);
+    if((state.adventure.adjustment || 'direct') !== 'all') return base.slice(0,1);
+    return base;
+  }
+
+  function stepExplanation(step,p){
+    const s = norm(step);
+    if(s.includes('eso')) return {title:step, body:'Significa pechar ou acreditar a Educación Secundaria Obrigatoria. Sen este requisito algunhas portas non se abren pola vía ordinaria, por iso convén comprobar equivalencias, educación de persoas adultas ou probas de acceso cando falte o título.', sources:['educagob-adultos','todofp-acceso-fp']};
+    if(s.includes('bacharelato') || s.includes('bachillerato')) return {title:step, body:'Aquí non abonda con “facer Bacharelato”. Cómpre escoller modalidade e materias pensando na meta: que pondera, que base necesitas e en que materias podes obter unha nota realista.', sources:['ciug-ponderaciones-2026','ciug-admision']};
+    if(s.includes('abau') || s.includes('pau') || s.includes('admision') || s.includes('admisión')) return {title:step, body:'Este paso require calendario: matrícula, probas, preinscrición, listaxes, reclamacións e matrícula final. As notas de corte orientan, pero non garanten entrada.', sources:['ciug-admision','ciug-ponderaciones-2026']};
+    if(s.includes('fp') || s.includes('ciclo')) return {title:step, body:'Na FP hai que comprobar grao, familia profesional, centro, réxime, modalidade, prazas, criterios de admisión e formación en empresa. A oferta pode cambiar por curso.', sources:['xunta-fp-oferta-2025-2026','todofp-familias','todofp-acceso-fp']};
+    if(s.includes('certificado')) return {title:step, body:'Nos certificados importa o nivel, a familia profesional, a competencia acreditada, o centro autorizado e se inclúe prácticas. Non todos serven para todas as ocupacións.', sources:['sepe-catalogo-especialidades','sepe-ocupaciones']};
+    if(s.includes('máster') || s.includes('master')) return {title:step, body:'Hai que distinguir máster oficial, máster habilitante e título propio. Se a profesión require habilitación, a denominación e os requisitos deben coincidir exactamente.', sources:['ruct','qedu','rd-822-2021']};
+    if(s.includes('grao universitario') || s.includes('grado universitario') || s.includes('universidade')) return {title:step, body:'Antes de escoller universidade, comproba oficialidade do título, campus, modalidade, prácticas, saídas, recoñecemento de créditos e requisitos posteriores para exercer.', sources:['qedu','ruct']};
+    return {title:step, body:'Este paso debe verificarse coa administración, centro ou universidade correspondente. Revisa requisito de acceso, prazos, prazas, documentos e efectos profesionais antes de decidir.', sources:p?.sources || ['qedu','ruct','xunta-fp-oferta-2025-2026']};
+  }
+  function routeTimelineHTML373(route,ri,p){
+    return `<article class="v373-route-card" style="--delay:${ri*80}ms"><header><span>${ri+1}</span><div><strong>${safe(route.title)}</strong>${route.note?`<p>${safe(route.note)}</p>`:''}</div></header><ol class="v373-timeline">${route.steps.map((s,i)=>`<li><button type="button" data-v373-step="${safe(s)}"><i>${i+1}</i><span>${safe(s)}</span><small>Ampliar</small></button></li>`).join('')}</ol>${links(route.sources||p?.sources||[])}</article>`;
+  }
+  function arrayFromAvailability(p){
+    const av = p?.availability_by_province || {};
+    if(!Object.keys(av).length) return ['Consulta a oferta oficial segundo o tipo de estudo: QEDU/RUCT para universidade, TodoFP e Xunta FP para ciclos, SEPE para certificados.'];
+    return Object.entries(av).flatMap(([area,items])=>{
+      const arr = Array.isArray(items) ? items : [items];
+      return arr.map(item=> typeof item === 'string' ? `${area}: ${item}` : `${area}: ${[item.city,item.center,item.note].filter(Boolean).join(' · ')}`);
+    });
+  }
+  function ponderationsFor(p){
+    const rows = (p?.ponderation_subjects || []).map(x=> typeof x === 'string' ? x : [x.subject||x.name, x.weight].filter(Boolean).join(' · '));
+    if(rows.length) return rows;
+    const b = bachAdvice(p);
+    if(b) return ['Consultar a táboa CIUG vixente antes de elixir materias.', ...b.subjects.map(x=>`${x}.`)];
+    return ['Comprobar criterios de admisión, baremo, prioridade e documentación na convocatoria correspondente.'];
+  }
+  function careerList(p){
+    const f = field(p), k=typeOf(p), name=norm(p?.name||'');
+    if(k==='certificado-profesionalidade') return ['Ocupacións directamente asociadas ao certificado elixido','Auxiliar ou persoal cualificado da familia profesional correspondente','Operario/a especializado/a cando o certificado sexa industrial','Administrativo/a ou auxiliar de xestión se a especialidade é administrativa','Atención sociosanitaria se o certificado pertence á área sociosanitaria','Persoal de almacén, loxística ou comercio se a especialidade corresponde','Técnico/a de apoio baixo supervisión segundo nivel','Emprendemento ou mellora de posto cando a normativa sectorial o permita'];
+    if(k==='fp-acelerada') return ['Postos técnicos iniciais ligados á familia profesional cursada','Auxiliar cualificado/a no sector de destino','Operario/a especializado/a','Axudante técnico/a','Persoal de mantemento básico','Persoal de apoio en produción ou servizos','Candidato/a a prácticas ou bolsa de emprego sectorial','Perfil de recualificación para mellora interna na empresa'];
+    if(name.includes('medicina')) return ['Médico/a, require grao en Medicina e colexiación','Médico/a especialista, require superar formación sanitaria especializada MIR','Médico/a de familia, require especialidade MIR','Pediatra, require especialidade MIR','Psiquiatra, require especialidade MIR','Cirurxián/á, require especialidade MIR','Anestesista, require especialidade MIR','Radiólogo/a, require especialidade MIR','Médico/a de urxencias segundo requisitos do sistema sanitario','Médico/a en saúde pública, pode requirir especialización ou oposición','Investigador/a biomédico/a, adoita requirir máster/doutoramento','Docente universitario/a, require carreira académica e doutoramento','Médico/a de empresa ou medicina do traballo, require especialidade correspondente'];
+    if(name.includes('psicolog')) return ['Psicólogo/a educativo/a ou orientador/a en contextos non sanitarios segundo posto e normativa','Psicólogo/a xeral sanitario/a, require Máster en Psicoloxía Xeral Sanitaria','Psicólogo/a clínico/a no SNS, require PIR ou vía oficialmente recoñecida','Psicólogo/a social','Psicólogo/a de recursos humanos','Técnico/a de selección de persoal','Técnico/a de formación','Psicólogo/a da intervención social','Psicólogo/a do deporte, con especialización recomendable','Psicólogo/a xurídico-forense, con especialización e requisitos do posto','Investigador/a en psicoloxía, adoita requirir máster e doutoramento','Docente universitario/a, require doutoramento e carreira académica','Técnico/a en prevención psicosocial, con formación específica','Orientación laboral e profesional','Neuropsicoloxía, require especialización avanzada'];
+    if(name.includes('educacion infantil') || name.includes('educación infantil')) return ['Mestre/a de Educación Infantil, require grao habilitante correspondente','Titor/a de aula en Educación Infantil','Docente en centros públicos mediante oposición cando proceda','Docente en centros privados ou concertados segundo requisitos do centro','Especialista de apoio educativo segundo formación adicional','Coordinación de ciclo de Infantil','Deseño de materiais educativos para primeira infancia','Proxectos de innovación educativa','Atención temperá, con especialización complementaria e requisitos do posto','Educación non formal infantil','Orientación a familias en contextos educativos, con formación adicional','Investigación educativa, con máster/doutoramento se procede'];
+    if(f.includes('enfermer')) return ['Enfermeiro/a asistencial, require grao en Enfermaría e colexiación','Enfermeiro/a especialista, require EIR para especialidades oficiais','Enfermaría familiar e comunitaria, require especialidade EIR','Enfermaría pediátrica, require especialidade EIR','Enfermaría obstétrico-xinecolóxica, matrona, require especialidade EIR','Enfermaría de saúde mental, require especialidade EIR','Enfermaría do traballo, require especialidade EIR','Enfermaría xeriátrica, require especialidade EIR','Enfermaría médico-cirúrxica segundo desenvolvemento normativo','Investigación en coidados, con máster/doutoramento recomendable','Docencia sanitaria, con formación pedagóxica segundo posto','Xestión sanitaria, con especialización recomendable'];
+    if(f.includes('derecho') || f.includes('dereito')) return ['Avogado/a, require Máster de Acceso á Avogacía e Procura e proba de acceso cando proceda','Procurador/a, require itinerario habilitante correspondente','Xuíz/a, require oposición','Fiscal, require oposición','Letrado/a da Administración de Xustiza, require oposición','Notario/a, require oposición','Rexistrador/a da propiedade, require oposición','Funcionario/a de corpos xurídicos, require oposición','Asesor/a xurídico/a de empresa','Consultor/a de protección de datos, con especialización recomendable','Técnico/a de compliance, con especialización recomendable','Mediador/a, require formación específica e rexistro cando proceda','Xestor/a administrativo/a, pode requirir requisitos profesionais específicos'];
+    if(f.includes('informat') || f.includes('program') || f.includes('sistemas')) return ['Desenvolvedor/a de software','Programador/a web','Programador/a de aplicacións móbiles','Técnico/a de sistemas','Administrador/a de sistemas','Técnico/a de redes','Técnico/a de ciberseguridade, con especialización recomendable','Analista de datos, con formación complementaria recomendable','Técnico/a de bases de datos','Técnico/a DevOps junior, con especialización recomendable','Soporte técnico avanzado','Consultor/a TIC','Tester ou QA','Administrador/a cloud, con certificacións recomendables','Técnico/a en intelixencia artificial, con especialización posterior'];
+    if(f.includes('electric') || f.includes('electro')) return ['Instalador/a electricista, pode requirir carné ou habilitación segundo instalación','Electricista de baixa tensión','Técnico/a de mantemento eléctrico','Montador/a de cadros eléctricos','Instalador/a de automatismos','Técnico/a de domótica','Técnico/a de enerxías renovables con especialización','Técnico/a de iluminación','Técnico/a de telecomunicacións básicas segundo título e normativa','Responsable de mantemento, con experiencia','Proxectista eléctrico en ciclos superiores','Supervisor/a de instalacións, con experiencia e normativa aplicable','Técnico/a de eficiencia enerxética con formación complementaria'];
+    if(f.includes('soldadura') || f.includes('caldeir') || f.includes('fabricacion mecanica')) return ['Soldador/a','Caldeireiro/a','Montador/a de estruturas metálicas','Tubero/a industrial con formación específica','Operario/a de fabricación mecánica','Técnico/a de mantemento industrial','Inspector/a básico/a de soldadura con certificación adicional','Carpinteiro/a metálico/a','Operario/a naval ou industrial segundo zona','Montador/a en obra metálica','Técnico/a de prevención en taller con formación complementaria','Responsable de equipo con experiencia'];
+    if(f.includes('madera') || f.includes('madeira') || f.includes('mueble') || f.includes('moble')) return ['Carpinteiro/a','Ebanista','Montador/a de mobles','Instalador/a de carpintaría','Operario/a de mecanizado de madeira','Deseñador/a técnico/a de mobiliario con formación complementaria','Restaurador/a de mobles con especialización','Responsable de taller con experiencia','Técnico/a de acabados','Instalador/a en reforma e obra','Comercial técnico/a de mobiliario','Emprendemento en taller propio'];
+    if(k==='fpgm' || k==='fpgs') return ['Técnico/a da familia profesional correspondente','Técnico/a de apoio especializado','Operario/a cualificado/a','Responsable de equipo con experiencia','Técnico/a de mantemento ou servizo segundo familia','Técnico/a comercial especializado/a','Persoal de control de calidade segundo sector','Técnico/a de prevención básica con formación complementaria','Emprendemento no sector','Acceso a FP superior, curso de especialización ou universidade segundo nivel'];
+    if(k==='grado') return ['Exercicio profesional vinculado ao grao cando non haxa profesión regulada adicional','Especialista mediante máster ou posgrao cando proceda','Investigación, con máster e doutoramento se se continúa carreira académica','Docencia universitaria, require doutoramento e acreditación segundo etapa','Oposicións relacionadas coa rama','Consultoría ou asesoramento no ámbito do grao','Xestión de proxectos da área','Técnico/a en administración pública cando a convocatoria admita o grao','Emprendemento profesional segundo normativa aplicable','Prácticas, bolsas e programas trainee como entrada ao sector'];
+    return String(p?.labour||p?.demand||'Saídas a concretar segundo a ficha oficial.').split(/[.;]/).map(x=>x.trim()).filter(Boolean).slice(0,25);
+  }
+  function detailSections373(p,routes){
+    const b=bachAdvice(p);
+    const subjects = [...new Set([...(b?.subjects || []), ...(p.subjects || [])])].filter(Boolean);
+    const careers = careerList(p).slice(0,25);
+    const reqSteps = [...new Set(routes.flatMap(r=>r.steps))].slice(0,18);
+    return `<section class="v373-detail-panels"><h3>${safe(T('more'))}</h3>
+      <details><summary>${safe(T('requirements'))}</summary><ul>${reqSteps.map(s=>`<li>${safe(s)}</li>`).join('')}</ul><p>${safe(p.regulated || 'Comproba os requisitos exactos na fonte oficial antes de matricularte.')}</p></details>
+      <details><summary>${safe(T('subjects'))}</summary>${b?`<p><strong>${safe(b.name)}.</strong> ${safe(b.why)}</p>`:''}<ul>${subjects.length?subjects.map(s=>`<li>${safe(s)}</li>`).join(''):'<li>Consulta as materias recomendadas no centro e as ponderacións oficiais se hai acceso universitario.</li>'}</ul></details>
+      <details><summary>${safe(T('ponderations'))}</summary><ul>${ponderationsFor(p).map(s=>`<li>${safe(s)}</li>`).join('')}</ul>${links(['ciug-ponderaciones-2026','ciug-admision'])}</details>
+      <details><summary>${safe(T('availability'))}</summary><ul>${arrayFromAvailability(p).map(s=>`<li>${safe(s)}</li>`).join('')}</ul></details>
+      <details><summary>${safe(T('jobs'))}</summary><p>Estas saídas son orientativas e deben cruzarse coa normativa profesional, ofertas reais e requisitos do posto. Cando se indica máster, oposición, colexiación, licenza ou especialización, non chega co título inicial.</p><ul>${careers.map(s=>`<li>${safe(s)}</li>`).join('')}</ul></details>
+      <details><summary>${safe(T('regulated'))}</summary><p>${safe(p.regulated || 'Non consta unha habilitación adicional na ficha incorporada, pero debes comprobar se a profesión concreta esixe máster habilitante, colexiación, oposición, carné profesional, certificado sanitario, habilitación autonómica ou experiencia acreditada.')}</p>${links(['ruct','qedu','sepe-ocupaciones'])}</details>
+      <details><summary>${safe(T('grants'))}</summary><p>Revisa beca xeral, axudas NEAE se proceden, prazas reservadas, adaptacións, transporte, residencia, matrícula parcial e axudas propias do centro ou universidade.</p>${links(['becas-portada','beca-neae-2026-2027','ciug-admision'])}</details>
+    </section>`;
+  }
+
+  function suggestionsHTML373(q){
+    const clean = String(q||'').trim();
+    if(clean.length < 3) return `<div class="v373-suggestions-panel"><p class="suggestion-help">${safe(T('typeGoal'))}</p></div>`;
+    const list = allPrograms373(clean).slice(0,30);
+    if(!list.length) return `<div class="v373-suggestions-panel"><p class="suggestion-help">${safe(T('noMatch'))}</p></div>`;
+    const grouped = {};
+    list.forEach(p=>{ const key = `${p.level || 'Outros estudos'}|${p.family || 'Sen familia'}`; (grouped[key] ||= []).push(p); });
+    return `<div class="v373-suggestions-panel"><div class="v373-suggestion-head"><strong>${safe(T('visibleResults'))}</strong><span>${list.length} resultados</span></div><p class="v372-suggestion-title">${safe(T('suggestions'))}</p>${Object.entries(grouped).map(([key,items])=>{ const [level,family]=key.split('|'); return `<section class="v372-suggestion-group v373-suggestion-group"><p>${safe(level)} · ${safe(family)}</p>${items.map(p=>`<button type="button" class="suggestion-item" data-v373-pid="${safe(p.id)}"><strong>${safe(p.name)}</strong><span>${safe([p.level,p.family].filter(Boolean).join(' · '))}</span><small>${safe(T('choose'))}</small></button>`).join('')}</section>`; }).join('')}</div>`;
+  }
+  function bindSuggestions373(){
+    const box = document.getElementById('adventureSuggestions');
+    if(!box) return;
+    box.querySelectorAll('[data-v373-pid]').forEach(btn=>btn.onclick=()=>{
+      const p = [...EXTRA_PROGRAMS, ...(state.data.studies||[])].find(x=>x.id === btn.dataset.v373Pid);
+      if(!p) return;
+      state.adventure.selectedProgramId = p.id;
+      state.adventure.goalText = p.name;
+      state.adventure.step = 3;
+      const input = document.getElementById('adventureGoalSearch');
+      if(input) input.value = p.name;
+      renderAdventure();
+      setTimeout(()=>document.getElementById('wizardStep3')?.scrollIntoView({behavior:'smooth',block:'nearest'}),80);
+    });
+  }
+  function startOptionsHTML373(){
+    const starts=[['eso_cursando','Estou cursando ESO'],['eso_titulo','Xa teño o título de ESO'],['eso_sin','Non teño o título de ESO'],['bach','Estou en Bacharelato'],['fpgm','Estou en FP de grao medio'],['fpgs','Estou en FP de grao superior'],['grado','Xa teño un grao universitario'],['retomar',T('retake')],['cambio_profesion',T('changeProfession')]];
+    return starts.map(([id,label])=>`<button type="button" class="${state.adventure.start===id?'active':''}" data-start="${safe(id)}"><strong>${safe(label)}</strong></button>`).join('');
+  }
+  function renderAdventure373(){
+    document.body.classList.add('v373');
+    const title=document.getElementById('adventureTitle'); if(title) title.textContent=T('simTitle');
+    const desc=document.getElementById('adventureDescription'); if(desc) desc.textContent=T('simLead');
+    const s1=document.getElementById('adventureStartTitle'); if(s1) s1.innerHTML=`${safe(T('start'))}<small>${safe(T('step1Help'))}</small>`;
+    const sb=document.getElementById('adventureStartOptions');
+    if(sb){ sb.innerHTML=startOptionsHTML373(); sb.querySelectorAll('[data-start]').forEach(b=>b.onclick=()=>{state.adventure.start=b.dataset.start; state.adventure.step=2; renderAdventure();}); }
+    const s2=document.getElementById('adventureGoalTitle'); if(s2) s2.innerHTML=`${safe(T('goal'))}<small>${safe(T('step2Help'))}</small>${state.adventure.start?`<span class="v373-selected-start">${safe(T('selectedStart'))}: <strong>${safe(startLabel(state.adventure.start))}</strong> <button type="button" data-v373-change-start>${safe(T('changeStart'))}</button></span>`:''}`;
+    document.querySelector('[data-v373-change-start]')?.addEventListener('click',()=>{state.adventure.step=1; renderAdventure();});
+    const input=document.getElementById('adventureGoalSearch');
+    if(input){
+      input.style.display='block';
+      input.placeholder=T('typeGoal');
+      if(document.activeElement !== input) input.value = state.adventure.goalText || '';
+      input.oninput=e=>{ state.adventure.goalText=e.target.value; state.adventure.selectedProgramId=null; const box=document.getElementById('adventureSuggestions'); if(box){box.innerHTML=suggestionsHTML373(state.adventure.goalText); box.classList.add('open'); bindSuggestions373();} renderAdventureResult(); };
+      input.onfocus=()=>{ const box=document.getElementById('adventureSuggestions'); if(box){box.innerHTML=suggestionsHTML373(input.value); box.classList.add('open'); bindSuggestions373();} };
+      input.onkeydown=e=>{ if(e.key==='Enter'){ e.preventDefault(); const p=allPrograms373(input.value)[0]; if(p){state.adventure.selectedProgramId=p.id; state.adventure.goalText=p.name; state.adventure.step=3; renderAdventure();} } };
+    }
+    const box=document.getElementById('adventureSuggestions'); if(box){ box.innerHTML=suggestionsHTML373(state.adventure.goalText); box.classList.add('open'); bindSuggestions373(); }
+    const examples=document.getElementById('adventureGoalOptions');
+    if(examples){ examples.innerHTML=`<p class="v251-example-label">${safe(T('examples'))}</p>`+['Psicoloxía','Medicina','Educación Infantil','Informática','Electricidade','Soldadura','Certificados de profesionalidade','FP acelerada','Máster habilitante'].map(x=>`<button type="button" data-goal="${safe(x)}">${safe(x)}</button>`).join(''); examples.querySelectorAll('[data-goal]').forEach(b=>b.onclick=()=>{state.adventure.goalText=b.dataset.goal; const p=allPrograms373(state.adventure.goalText)[0]; state.adventure.selectedProgramId=p?.id||null; state.adventure.step=3; renderAdventure();}); }
+    const dis=document.getElementById('adventureDisambiguation'); if(dis) dis.innerHTML='';
+    const qt=document.getElementById('adventureQuestionsTitle'); if(qt) qt.innerHTML=`${safe(T('routeMode'))}<small>${safe(T('step3Help'))}</small>${state.adventure.start?`<span class="v373-selected-start">${safe(T('from'))}: <strong>${safe(startLabel(state.adventure.start))}</strong></span>`:''}`;
+    const q=document.getElementById('adventureQuestions');
+    if(q){ const mode=state.adventure.adjustment||'direct'; q.innerHTML=[['direct',T('direct'),T('directDesc')],['all',T('all'),T('allDesc')]].map(([id,label,body])=>`<button type="button" class="v373-mode-card ${mode===id?'active':''}" data-adjust="${safe(id)}"><strong>${safe(label)}</strong><small>${safe(body)}</small></button>`).join(''); q.querySelectorAll('[data-adjust]').forEach(b=>b.onclick=()=>{state.adventure.adjustment=b.dataset.adjust; state.adventure.step=3; renderAdventure();}); }
+    const pdf=document.getElementById('adventurePdfBtn'); if(pdf) pdf.textContent=T('pdf');
+    document.querySelectorAll('.wizard-step').forEach((el,i)=>el.classList.toggle('active',i+1===Math.min(state.adventure.step||1,3)));
+    document.querySelectorAll('.wizard-progress span').forEach((el,i)=>{el.classList.toggle('active',i+1<=Math.min(state.adventure.step||1,3)); el.onclick=()=>{state.adventure.step=i+1; renderAdventure();};});
+    renderAdventureResult();
+  }
+  function renderAdventureResult373(){
+    const stage=document.getElementById('adventureResult'); if(!stage) return;
+    if(!state.adventure.start || !state.adventure.goalText){
+      stage.innerHTML=`<div class="v373-empty"><h2>${safe(T('simTitle'))}</h2><p>${safe(T('noGoal'))}</p>${links(['qedu','ruct','xunta-fp-oferta-2025-2026','ciug-admision','sepe-catalogo-especialidades'])}</div>`;
+      return;
+    }
+    const p=selectedProgram373();
+    if(!p){ stage.innerHTML=`<div class="v373-empty"><h2>${safe(T('simTitle'))}</h2><p>${safe(T('noMatch'))}</p>${links(['qedu','ruct','xunta-fp-oferta-2025-2026','ciug-admision','sepe-catalogo-especialidades'])}</div>`; return; }
+    const routes=routeStepsFor373(p);
+    const b=bachAdvice(p);
+    stage.innerHTML=`<article class="v373-result" id="journeyPrintable"><header class="v373-result-head"><p class="eyebrow">ITINERA · ${safe(T('simTitle'))}</p><h2>${safe(p.name)}</h2><p><strong>${safe(T('from'))}:</strong> ${safe(startLabel(state.adventure.start))}</p><p>${safe(T('selectedRoute'))} ${safe(p.name)}. ${safe(T('clickStep'))}</p></header>${b?`<section class="v373-bach-advice"><span>Recomendación concreta</span><strong>${safe(b.name)}</strong><p>${safe(b.why)}</p></section>`:''}<section class="v373-route-zone"><h3>${safe(T('timeline'))}</h3>${routes.map((r,i)=>routeTimelineHTML373(r,i,p)).join('')}</section><aside id="v373StepPanel" class="v373-step-panel"><h3>${safe(T('stepInfo'))}</h3><p>${safe(T('clickStep'))}</p></aside>${detailSections373(p,routes)}<p class="v29-warning">${safe(T('officialNote'))}</p><div class="v372-pdf-box v373-pdf-box"><p>${safe(T('pdfHelp'))}</p><button type="button" class="button pdf-button" id="v373PdfBtn">${safe(T('pdf'))}</button></div>${links(p.sources||[])}</article>`;
+    stage.querySelectorAll('[data-v373-step]').forEach(btn=>btn.onclick=()=>{ const panel=document.getElementById('v373StepPanel'); if(!panel) return; const info=stepExplanation(btn.dataset.v373Step,p); panel.innerHTML=`<h3>${safe(info.title)}</h3><p>${safe(info.body)}</p>${links(info.sources||p.sources||[])}`; panel.classList.add('active'); panel.scrollIntoView({behavior:'smooth',block:'nearest'}); });
+    document.getElementById('v373PdfBtn')?.addEventListener('click',()=>exportPDF('journeyPrintable','ITINERA · '+T('simTitle')));
+  }
+  function patchHeroAndChat(){
+    const badge=document.getElementById('updateBadge'); if(badge){ badge.textContent='ITINERA v0.37.3'; badge.title='Simulador con pasos literais, buscador visible, saídas profesionais e información despregable.'; }
+    const sim=document.getElementById('headerSimulatorBtn'); if(sim) sim.textContent=T('simTitle');
+    const chatHelp=document.querySelector('#asistente .chat-help'); if(chatHelp){ chatHelp.setAttribute('aria-hidden','true'); }
+    const chips=document.getElementById('questionChips'); if(chips) chips.innerHTML='';
+    const sugTitle=document.getElementById('chatSuggestionsTitle'); if(sugTitle) sugTitle.textContent='';
+    const desc=document.getElementById('chatDescription'); if(desc) desc.textContent='Pregunta en linguaxe natural. ItineraBot responderá coa base local de ITINERA e coas fontes dispoñibles.';
+  }
+  function apply373(){
+    syncStartFromGuided();
+    document.body.classList.add('v373');
+    renderAdventure = renderAdventure373;
+    renderAdventureResult = renderAdventureResult373;
+    simulateProgram = function(id){ const p=[...EXTRA_PROGRAMS, ...(state.data.studies||[])].find(x=>x.id===id); if(!p) return; state.adventure.selectedProgramId=id; state.adventure.goalText=p.name; if(!state.adventure.start) syncStartFromGuided(); if(!state.adventure.start) state.adventure.start='eso_cursando'; state.adventure.step=3; routeTo('aventura'); setTimeout(()=>renderAdventure(),80); };
+    patchHeroAndChat();
+    renderAdventure373();
+  }
+  document.addEventListener('click', (ev)=>{
+    const simAction = ev.target?.closest?.('[data-v372-action="sim"], [data-v372-sim], #headerSimulatorBtn, #heroSimulatorCta');
+    if(simAction){ syncStartFromGuided(); if(!state.adventure.start && localStorage.getItem(PROFILE_KEY)){ const st=profileToStart(localStorage.getItem(PROFILE_KEY)); if(st) state.adventure.start=st; } }
+  }, true);
+  const prevInit373 = init;
+  init = function(){ prevInit373(); setTimeout(apply373, 3900); };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(apply373,4300),{once:true}); else setTimeout(apply373,2600);
+  document.addEventListener('change',e=>{ if(e.target && e.target.id==='languageSelect') setTimeout(apply373,700); });
 })();
