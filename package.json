@@ -1,6 +1,6 @@
 {
   "name": "itinera-v0-25",
-  "version": "0.38-galego-filtros-universidade",
+  "version": "0.39-header-portada-galego-filtros",
   "private": true,
   "type": "module",
   "description": "ITINERA: buscador de estudos e deseñador de itinerarios académicos guiados.",

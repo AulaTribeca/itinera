@@ -422,10 +422,13 @@ ITINERA v0.37.1
 - No requiere cambios en Supabase ni SQL.
 
 
-ITINERA v0.38
-- Portada sen logo grande.
-- Botóns principais sen fondo, só con bordo e esquinas suavizadas.
-- Textos visibles normalizados a galego.
-- Filtros do buscador dependentes e excluíntes.
-- Carga dinámica desde Supabase para ampliar catálogo, incluído catálogo universitario cando está dispoñible.
-- Engadido diagnóstico SQL para comprobar cobertura de graos, másteres e doutoramentos das universidades galegas.
+ITINERA v0.39
+- Encabezado visualmente transparente y reducido únicamente a la marca ITINERA.
+- Eliminados del encabezado los botones, navegación, menú e idioma.
+- Portada sin logo grande y con mayor contraste.
+- Dos botones principales de portada sin fondo y con bordes gruesos, cuadrangulares y suavizados.
+- Los botones de portada navegan dentro de la misma ventana a Buscador de estudos y Comezar itinerario.
+- Idioma forzado a galego.
+- Normalización al galego de textos visibles y de los datos cargados en las fichas.
+- Filtros del buscador dependientes y excluyentes.
+- No requiere SQL nuevo.
