@@ -1727,3 +1727,339 @@ document.addEventListener('DOMContentLoaded', init);
   window.addEventListener('pageshow', boot);
   window.addEventListener('hashchange', () => { setRoute(); removeOld(); ensurePanel(); renderMap(); });
 })();
+
+
+
+/* ITINERA v0.53 · buscador propio con mapa filtrable, zoom e arrastre */
+(function(){
+  let catalog = null;
+  let mapData = null;
+  let points = [];
+  let records = [];
+  let locations = [];
+  let activeLayer = 'all';
+  let locked = null;
+  let hover = null;
+  let zoom = 1;
+  let pan = {x:0,y:0};
+  let drag = null;
+
+  const typeLabels = {
+    fpb:'FP básica',
+    programa_basico:'Programa formativo básico',
+    fpgm:'FP de grao medio',
+    fpgs:'FP de grao superior',
+    fp:'FP',
+    especializacion:'Curso de especialización',
+    grado:'Grao',
+    master:'Máster',
+    doctorado:'Doutoramento'
+  };
+  const typeColors = {
+    fpb:'#22a447', programa_basico:'#22a447', fpgm:'#22a447', fpgs:'#22a447', fp:'#22a447', especializacion:'#0f7a69',
+    grado:'#1670e4', master:'#f39c12', doctorado:'#e53935'
+  };
+  const typeOrder = {fpb:1,programa_basico:2,fpgm:3,fpgs:4,fp:5,especializacion:6,grado:7,master:8,doctorado:9};
+
+  function route(){ return (location.hash || '#inicio').replace('#','') || 'inicio'; }
+  function setRoute(){
+    const r = route();
+    document.body.setAttribute('data-route', r);
+    document.documentElement.setAttribute('data-initial-route', r);
+    document.querySelector('.app-header')?.setAttribute('hidden','');
+  }
+  function bindHome(){
+    document.querySelectorAll('.v53-home-card').forEach(a => {
+      if(a.dataset.bound) return;
+      a.dataset.bound = '1';
+      a.removeAttribute('target');
+      a.addEventListener('click', ev => { ev.preventDefault(); location.hash = a.getAttribute('href') || '#inicio'; });
+    });
+  }
+  async function load(){
+    if(catalog && mapData) return;
+    const [catRes,mapRes] = await Promise.all([
+      fetch('data/itinera-catalogo-v53.json?v=0.53'),
+      fetch('data/itinera-map-points-v53.json?v=0.53')
+    ]);
+    catalog = await catRes.json();
+    mapData = await mapRes.json();
+    records = catalog.records || [];
+    locations = catalog.locations || [];
+    points = mapData.points || [];
+  }
+  function unique(arr){ return Array.from(new Set(arr.filter(Boolean))).sort((a,b)=>String(a).localeCompare(String(b),'gl')); }
+  function norm(v){ return String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim(); }
+  function optionList(values, allLabel){ return `<option value="">${allLabel}</option>` + values.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join(''); }
+
+  function buildSearchApp(){
+    const buscar = document.getElementById('buscar');
+    if(!buscar || document.getElementById('v53SearchApp')) return;
+    buscar.innerHTML = `
+      <section id="v53SearchApp" class="v53-search-app">
+        <div class="v53-search-top">
+          <div>
+            <p class="eyebrow">Buscador de estudos</p>
+            <h1>Oferta académica en Galicia</h1>
+            <p>Consulta FP, graos, másteres e doutoramentos por localidade, provincia, centro, familia, nivel ou nome do estudo.</p>
+          </div>
+          <a class="v53-google-link" href="data/itinera-google-mymaps-import-v53.csv" download>Descargar CSV para Google My Maps</a>
+        </div>
+        <div class="v53-filter-panel">
+          <label><span>Buscar</span><input id="v53Text" type="search" placeholder="Ex.: Enfermaría, Vigo, CIFP, Sanidade…"></label>
+          <label><span>Tipo de estudo</span><select id="v53Type"></select></label>
+          <label><span>Provincia</span><select id="v53Province"></select></label>
+          <label><span>Localidade</span><select id="v53Locality"></select></label>
+          <label><span>Familia ou rama</span><select id="v53Family"></select></label>
+          <label><span>Centro ou sede</span><select id="v53Center"></select></label>
+          <button type="button" id="v53Clear" class="v53-clear">Limpar filtros</button>
+        </div>
+        <section class="v53-map-panel">
+          <div class="v53-map-head">
+            <div>
+              <p class="eyebrow">Mapa interactivo</p>
+              <h2>Localización da oferta</h2>
+              <p>Arrastra o mapa para desprazarte. Usa o zoom para separar puntos próximos. Ao facer clic nun punto, a información queda fixa ata que selecciones outro.</p>
+            </div>
+            <div class="v53-map-tools">
+              <button type="button" data-zoom="-">− Zoom</button>
+              <button type="button" data-zoom="+">+ Zoom</button>
+              <button type="button" data-zoom="reset">Restablecer</button>
+              <button type="button" id="v53Unlock">Desbloquear</button>
+            </div>
+          </div>
+          <div class="v53-layers">
+            <button type="button" data-layer="all" class="active">Mapa xeral</button>
+            <button type="button" data-layer="fpgm">FP grao medio</button>
+            <button type="button" data-layer="fpgs">FP grao superior</button>
+            <button type="button" data-layer="grado">Graos</button>
+            <button type="button" data-layer="master">Másteres</button>
+            <button type="button" data-layer="doctorado">Doutoramentos</button>
+          </div>
+          <div class="v53-map-grid">
+            <div class="v53-map-viewport" id="v53Viewport">
+              <div class="v53-map-inner" id="v53MapInner">
+                <img id="v53MapImage" src="assets/galicia-offer-general-v53.png" alt="Mapa da oferta académica en Galicia">
+                <div class="v53-map-points" id="v53Points"></div>
+                <div class="v53-tooltip" id="v53Tooltip" hidden></div>
+              </div>
+            </div>
+            <aside class="v53-side" id="v53Side">
+              <h3>Selecciona unha localidade</h3>
+              <p>Pasa o cursor por riba dun punto para previsualizar a oferta. Fai clic para fixala no panel.</p>
+            </aside>
+          </div>
+          <div class="v53-legend">
+            <span><i style="background:#22a447"></i>FP</span>
+            <span><i style="background:#1670e4"></i>Grao</span>
+            <span><i style="background:#f39c12"></i>Máster</span>
+            <span><i style="background:#e53935"></i>Doutoramento</span>
+          </div>
+        </section>
+        <section class="v53-results-panel">
+          <div class="v53-results-head"><h2>Resultados</h2><p id="v53Count"></p></div>
+          <div id="v53Results" class="v53-results"></div>
+        </section>
+      </section>`;
+    bindSearchEvents();
+  }
+  function populateFilters(){
+    const typeEl = document.getElementById('v53Type');
+    const provinceEl = document.getElementById('v53Province');
+    const locEl = document.getElementById('v53Locality');
+    const famEl = document.getElementById('v53Family');
+    const centerEl = document.getElementById('v53Center');
+    if(!typeEl) return;
+    typeEl.innerHTML = `<option value="">Todos</option>` + Object.entries(typeLabels).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+    provinceEl.innerHTML = optionList(unique(records.map(r=>r.provincia)), 'Todas');
+    locEl.innerHTML = optionList(unique(records.map(r=>r.localidade)), 'Todas');
+    famEl.innerHTML = optionList(unique(records.map(r=>r.familia)), 'Todas');
+    centerEl.innerHTML = optionList(unique(records.map(r=>r.centro).filter(Boolean)), 'Todos');
+  }
+  function filters(){
+    return {
+      q:norm(document.getElementById('v53Text')?.value||''),
+      tipo:document.getElementById('v53Type')?.value||'',
+      provincia:document.getElementById('v53Province')?.value||'',
+      localidade:document.getElementById('v53Locality')?.value||'',
+      familia:document.getElementById('v53Family')?.value||'',
+      centro:document.getElementById('v53Center')?.value||''
+    };
+  }
+  function filteredRecords(){
+    const f=filters();
+    return records.filter(r => {
+      const text = norm([r.nome,r.localidade,r.provincia,r.centro,r.familia,r.nivel,r.universidade,r.campus].join(' '));
+      return (!f.q || text.includes(f.q)) &&
+        (!f.tipo || r.tipo===f.tipo || (f.tipo==='fp' && ['fp','fpb','programa_basico','fpgm','fpgs','especializacion'].includes(r.tipo))) &&
+        (!f.provincia || r.provincia===f.provincia) &&
+        (!f.localidade || r.localidade===f.localidade) &&
+        (!f.familia || r.familia===f.familia) &&
+        (!f.centro || r.centro===f.centro);
+    });
+  }
+  function visiblePoints(){
+    const recs=filteredRecords();
+    const locSet = new Set(recs.map(r=>r.localidade));
+    const typeSetByLoc = {};
+    recs.forEach(r => { (typeSetByLoc[r.localidade] ||= new Set()).add(r.tipo); });
+    return points.filter(p => {
+      if(!locSet.has(p.localidade)) return false;
+      if(activeLayer==='all') return true;
+      const ts = typeSetByLoc[p.localidade] || new Set();
+      if(activeLayer==='fp') return Array.from(ts).some(t=>['fp','fpb','programa_basico','fpgm','fpgs','especializacion'].includes(t));
+      return ts.has(activeLayer);
+    });
+  }
+  function render(){
+    renderMap();
+    renderResults();
+  }
+  function renderMap(){
+    const img = document.getElementById('v53MapImage');
+    const mapImages = (mapData && mapData.map_images) || {};
+    if(img) img.src = mapImages[activeLayer] || mapImages.all || 'assets/galicia-offer-general-v53.png';
+    const host=document.getElementById('v53Points');
+    if(!host) return;
+    const pts=visiblePoints();
+    host.innerHTML = pts.map((p,i)=>{
+      const color = markerColor(p);
+      return `<button type="button" class="v53-point ${locked&&locked.localidade===p.localidade?'locked':''}" data-i="${i}" style="left:${p.x}%;top:${p.y}%;--dot:${color}" aria-label="${esc(p.localidade)}"></button>`;
+    }).join('');
+    host.querySelectorAll('.v53-point').forEach(btn => {
+      btn.addEventListener('mouseenter', ev => {
+        const p=pts[Number(btn.dataset.i)];
+        hover=p; showTooltip(ev,p); if(!locked) renderSide(p,false);
+      });
+      btn.addEventListener('mousemove', ev => showTooltip(ev, pts[Number(btn.dataset.i)]));
+      btn.addEventListener('mouseleave', () => { hideTooltip(); hover=null; });
+      btn.addEventListener('click', ev => {
+        ev.preventDefault();
+        locked = pts[Number(btn.dataset.i)];
+        document.querySelectorAll('.v53-point').forEach(b=>b.classList.remove('locked'));
+        btn.classList.add('locked');
+        renderSide(locked,true);
+      });
+    });
+  }
+  function markerColor(p){
+    const ts = p.types || [];
+    if(activeLayer!=='all') return typeColors[activeLayer] || '#22a447';
+    if(ts.includes('doctorado')) return typeColors.doctorado;
+    if(ts.includes('master')) return typeColors.master;
+    if(ts.includes('grado')) return typeColors.grado;
+    return '#22a447';
+  }
+  function recordsForLocation(loc){
+    return filteredRecords().filter(r=>r.localidade===loc).sort((a,b)=>(typeOrder[a.tipo]||99)-(typeOrder[b.tipo]||99)||String(a.familia).localeCompare(String(b.familia),'gl')||String(a.nome).localeCompare(String(b.nome),'gl'));
+  }
+  function renderSide(p, fixed){
+    const side=document.getElementById('v53Side');
+    if(!side) return;
+    if(!p){ side.innerHTML='<h3>Selecciona unha localidade</h3><p>Pasa o cursor por riba dun punto para previsualizar a oferta. Fai clic para fixala no panel.</p>'; return; }
+    const recs=recordsForLocation(p.localidade);
+    const grouped=groupRecs(recs);
+    side.innerHTML = `<p class="eyebrow">${fixed?'Selección fixa':'Localidade'}</p><h3>${esc(p.localidade)}</h3><p>${recs.length} estudos atopados cos filtros actuais.</p><div class="v53-side-actions"><button type="button" id="v53UseLocality">Filtrar localidade</button><a href="https://www.google.com/maps/search/${encodeURIComponent(p.localidade+', Galicia')}" target="_blank" rel="noopener noreferrer">Abrir en Google Maps</a></div>${renderGrouped(grouped, 60)}`;
+    side.querySelector('#v53UseLocality')?.addEventListener('click',()=>{ const el=document.getElementById('v53Locality'); if(el){el.value=p.localidade; render();}});
+  }
+  function groupRecs(recs){
+    const groups={};
+    recs.forEach(r=>{
+      const level=r.nivel || typeLabels[r.tipo] || r.tipo;
+      const fam=r.familia || 'Outros';
+      groups[level] ||= {};
+      groups[level][fam] ||= [];
+      groups[level][fam].push(r);
+    });
+    return groups;
+  }
+  function renderGrouped(groups, limit){
+    let html='';
+    let count=0;
+    Object.keys(groups).sort((a,b)=>a.localeCompare(b,'gl')).forEach(level=>{
+      html += `<section class="v53-block"><strong>${esc(level)}</strong>`;
+      Object.keys(groups[level]).sort((a,b)=>a.localeCompare(b,'gl')).forEach(fam=>{
+        html += `<details open><summary>${esc(fam)}</summary><ul>`;
+        groups[level][fam].forEach(r=>{
+          if(count++ < limit){
+            html += `<li><b>${esc(r.nome)}</b>${r.centro?` · ${esc(r.centro)}`:''}${r.prazas?` · ${esc(r.prazas)} prazas`:''}</li>`;
+          }
+        });
+        html += `</ul></details>`;
+      });
+      html += `</section>`;
+    });
+    if(count>limit) html += `<p class="v53-more">Hai máis resultados. Usa os filtros para afinar a busca.</p>`;
+    return html || '<p>Non hai estudos cos filtros actuais.</p>';
+  }
+  function renderResults(){
+    const recs=filteredRecords();
+    const count=document.getElementById('v53Count');
+    if(count) count.textContent = `${recs.length} rexistros · ${new Set(recs.map(r=>r.localidade)).size} localidades`;
+    const host=document.getElementById('v53Results');
+    if(!host) return;
+    const byLoc={};
+    recs.forEach(r=>(byLoc[r.localidade] ||= []).push(r));
+    const locs=Object.keys(byLoc).sort((a,b)=>a.localeCompare(b,'gl')).slice(0,30);
+    host.innerHTML = locs.map(loc=>{
+      const grouped=groupRecs(byLoc[loc].sort((a,b)=>(typeOrder[a.tipo]||99)-(typeOrder[b.tipo]||99)));
+      return `<article class="v53-result-location"><h3>${esc(loc)}</h3>${renderGrouped(grouped, 25)}</article>`;
+    }).join('') || '<p>Non hai resultados cos filtros actuais.</p>';
+  }
+  function showTooltip(ev,p){
+    const tt=document.getElementById('v53Tooltip'); const inner=document.getElementById('v53MapInner');
+    if(!tt||!inner||!p) return;
+    const recs=recordsForLocation(p.localidade);
+    tt.innerHTML=`<strong>${esc(p.localidade)}</strong><small>${recs.length} estudos cos filtros actuais</small>`;
+    tt.hidden=false;
+    const rect=inner.getBoundingClientRect();
+    tt.style.left=Math.max(12, Math.min(rect.width-260, ev.clientX-rect.left+12))+'px';
+    tt.style.top=Math.max(12, Math.min(rect.height-120, ev.clientY-rect.top+12))+'px';
+  }
+  function hideTooltip(){ const tt=document.getElementById('v53Tooltip'); if(tt) tt.hidden=true; }
+  function bindSearchEvents(){
+    ['v53Text','v53Type','v53Province','v53Locality','v53Family','v53Center'].forEach(id=>{
+      document.getElementById(id)?.addEventListener(id==='v53Text'?'input':'change',()=>{locked=null; render();});
+    });
+    document.getElementById('v53Clear')?.addEventListener('click',()=>{
+      ['v53Text','v53Type','v53Province','v53Locality','v53Family','v53Center'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
+      locked=null; render();
+    });
+    document.querySelectorAll('[data-layer]').forEach(btn=>btn.addEventListener('click',()=>{
+      activeLayer=btn.dataset.layer||'all';
+      document.querySelectorAll('[data-layer]').forEach(b=>b.classList.toggle('active',b===btn));
+      locked=null; render();
+    }));
+    document.querySelectorAll('[data-zoom]').forEach(btn=>btn.addEventListener('click',()=>{
+      const z=btn.dataset.zoom;
+      if(z==='+') zoom=Math.min(3,zoom+.25); else if(z==='-') zoom=Math.max(1,zoom-.25); else {zoom=1; pan={x:0,y:0};}
+      applyTransform();
+    }));
+    document.getElementById('v53Unlock')?.addEventListener('click',()=>{locked=null; document.querySelectorAll('.v53-point').forEach(b=>b.classList.remove('locked')); renderSide(null,false);});
+    const viewport=document.getElementById('v53Viewport');
+    const inner=document.getElementById('v53MapInner');
+    if(viewport&&inner){
+      viewport.addEventListener('pointerdown',ev=>{drag={x:ev.clientX,y:ev.clientY,px:pan.x,py:pan.y}; viewport.setPointerCapture(ev.pointerId); viewport.classList.add('dragging');});
+      viewport.addEventListener('pointermove',ev=>{if(!drag)return; pan.x=drag.px+(ev.clientX-drag.x); pan.y=drag.py+(ev.clientY-drag.y); applyTransform();});
+      viewport.addEventListener('pointerup',ev=>{drag=null; viewport.classList.remove('dragging');});
+      viewport.addEventListener('wheel',ev=>{ if(!ev.ctrlKey && !ev.metaKey) return; ev.preventDefault(); zoom=Math.max(1,Math.min(3,zoom+(ev.deltaY<0?.15:-.15))); applyTransform(); },{passive:false});
+    }
+  }
+  function applyTransform(){ const inner=document.getElementById('v53MapInner'); if(inner) inner.style.transform=`translate(${pan.x}px,${pan.y}px) scale(${zoom})`; }
+  function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+  function option(v){return `<option value="${esc(v)}">${esc(v)}</option>`;}
+
+  async function boot(){
+    setRoute();
+    document.querySelector('.app-header')?.setAttribute('hidden','');
+    document.querySelectorAll('#v41StudyMap,.v41-study-map-slot,.v41-map-card,#v48MapPanel,#v50MapPanel,#v52MapPanel').forEach(el=>el.remove());
+    bindHome();
+    await load();
+    buildSearchApp();
+    populateFilters();
+    render();
+  }
+  document.addEventListener('DOMContentLoaded', boot);
+  window.addEventListener('pageshow', boot);
+  window.addEventListener('hashchange',()=>{setRoute(); setTimeout(boot,30);});
+})();
