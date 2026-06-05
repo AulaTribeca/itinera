@@ -8,10 +8,15 @@ const esc = v => String(v ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt
 const uniq = arr => Array.from(new Set(arr.filter(Boolean))).sort((a,b)=>String(a).localeCompare(String(b),'gl'));
 
 function route(){
-  const hash = (location.hash || '#inicio').replace('#','') || 'inicio';
+  const raw = (location.hash || '#inicio').replace('#','') || 'inicio';
+  const sectionAnchors = ['ligazons','preguntas','recursos'];
+  const hash = sectionAnchors.includes(raw) ? 'buscar' : raw;
   $$('.view').forEach(v => v.classList.toggle('active', v.id === hash));
   document.body.dataset.route = hash;
   if(hash === 'buscar') renderResults();
+  if(sectionAnchors.includes(raw)){
+    setTimeout(() => document.getElementById(raw)?.scrollIntoView({behavior:'smooth', block:'start'}), 80);
+  }
 }
 window.addEventListener('hashchange', route);
 

@@ -17,3 +17,12 @@ Proxecto completo reinstalable.
 ## Instalación
 
 Sube o contido desta carpeta á raíz do repositorio. Non mestures con ficheiros antigos.
+
+
+## Actualización v0.59
+
+- Encabezado visible só nas páxinas internas.
+- A portada queda sen encabezado.
+- O encabezado incorpora accesos a Buscador, Itinerario, Ligazóns oficiais e Preguntas frecuentes.
+- Axustouse a procura fóra do mapa para non expandirse cara á dereita.
+- O buscador e o mapa quedan contidos nun ancho máximo máis estable.

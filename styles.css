@@ -100,3 +100,182 @@ input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(200,
   #plannerOutput{position:absolute!important;left:0!important;top:0!important;width:100%!important;border:0!important;box-shadow:none!important}
   .route-options,.button-row,.site-footer,.planner-form,.page-head{display:none!important}
 }
+
+
+/* ITINERA v0.59 · encabezado en páxinas internas e buscador axustado */
+.app-topbar{
+  position:sticky;
+  top:0;
+  z-index:40;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  width:100%;
+  padding:.72rem clamp(1rem,2.4vw,2rem);
+  background:rgba(255,254,249,.92);
+  border-bottom:1px solid rgba(11,51,43,.13);
+  box-shadow:0 10px 34px rgba(11,51,43,.08);
+  backdrop-filter:blur(10px);
+}
+body[data-route="inicio"] .app-topbar{
+  display:none;
+}
+.topbar-brand{
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  text-decoration:none;
+  min-width:max-content;
+}
+.topbar-brand img{
+  width:38px;
+  height:38px;
+  object-fit:contain;
+}
+.topbar-brand strong{
+  display:block;
+  font-family:var(--serif);
+  color:var(--ink);
+  letter-spacing:.14em;
+  line-height:1;
+}
+.topbar-brand small{
+  display:block;
+  color:var(--muted);
+  font-size:.76rem;
+  font-weight:800;
+}
+.topbar-nav{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:.45rem;
+  flex-wrap:wrap;
+}
+.topbar-nav a{
+  text-decoration:none;
+  color:var(--ink);
+  border:1px solid rgba(11,51,43,.14);
+  background:rgba(255,255,255,.66);
+  border-radius:999px;
+  padding:.52rem .78rem;
+  font-weight:950;
+  font-size:.92rem;
+}
+.topbar-nav a:hover,
+.topbar-nav a:focus-visible{
+  border-color:var(--gold);
+  background:#fff;
+  outline:0;
+}
+
+/* A portada segue sen encabezado e sen interferencias */
+body[data-route="inicio"]{
+  overflow-x:hidden;
+}
+
+/* Páxinas internas con espazo para o encabezado, sen desbordamento horizontal */
+.content-view{
+  padding-top:clamp(.85rem,1.4vw,1.15rem);
+  overflow-x:hidden;
+}
+.page-head.compact{
+  width:min(1440px,calc(100vw - 2rem));
+}
+
+/* Reparto real en dúas metades e sen expansión á dereita */
+.search-split{
+  width:min(1440px,calc(100vw - 2rem))!important;
+  max-width:1440px!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  gap:1rem!important;
+  overflow:hidden!important;
+}
+.map-half,
+.search-half{
+  min-width:0!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+}
+.google-map{
+  width:100%!important;
+  max-width:100%!important;
+}
+.search-half{
+  display:flex;
+  flex-direction:column;
+}
+.filters{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+.filters label{
+  min-width:0!important;
+}
+.filters input,
+.filters select{
+  min-width:0!important;
+  max-width:100%!important;
+}
+.results{
+  max-height:calc(72vh - 320px)!important;
+  overflow:auto!important;
+  min-width:0!important;
+}
+.result-card{
+  overflow-wrap:anywhere;
+}
+
+/* As seccións de recursos quedan accesibles desde o encabezado e con ancoraxe clara */
+#ligazons,
+#preguntas{
+  scroll-margin-top:92px;
+}
+.footer-section{
+  width:min(1440px,calc(100vw - 2rem))!important;
+}
+.resource-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+.faq-section{
+  margin-bottom:1.2rem;
+}
+
+@media(max-width:1180px){
+  .search-split{
+    grid-template-columns:1fr!important;
+    width:min(980px,calc(100vw - 1.4rem))!important;
+  }
+  .google-map{
+    height:520px!important;
+    min-height:460px!important;
+  }
+  .results{
+    max-height:none!important;
+  }
+}
+@media(max-width:760px){
+  .app-topbar{
+    position:static;
+    align-items:flex-start;
+    flex-direction:column;
+  }
+  .topbar-nav{
+    justify-content:flex-start;
+  }
+  .topbar-nav a{
+    font-size:.86rem;
+    padding:.48rem .65rem;
+  }
+  .filters{
+    grid-template-columns:1fr!important;
+  }
+  .search-split,
+  .footer-section,
+  .page-head.compact{
+    width:min(100%,calc(100vw - 1rem))!important;
+  }
+  .resource-grid{
+    grid-template-columns:1fr!important;
+  }
+}

@@ -13,6 +13,20 @@
 <body>
   <a class="skip-link" href="#main">Saltar ao contido principal</a>
 
+  <header class="app-topbar" id="appTopbar" aria-label="Navegación principal de ITINERA">
+    <a class="topbar-brand" href="#inicio" aria-label="Ir á portada de ITINERA">
+      <img src="assets/itinera-logo-mark.png" alt="">
+      <span><strong>ITINERA</strong><small>Orientación académica</small></span>
+    </a>
+    <nav class="topbar-nav" aria-label="Seccións principais">
+      <a href="#buscar">Buscador de estudos</a>
+      <a href="#itinerario">Deseñar itinerario</a>
+      <a href="#ligazons">Ligazóns oficiais</a>
+      <a href="#preguntas">Preguntas frecuentes</a>
+    </nav>
+  </header>
+
+
   <main id="main">
     <section class="view home-view active" id="inicio" aria-label="Portada de ITINERA">
       <div class="home-bg" aria-hidden="true"></div>
@@ -115,7 +129,7 @@
   </main>
 
   <footer class="site-footer" id="recursos">
-    <section class="footer-section official-links">
+    <section class="footer-section official-links" id="ligazons">
       <div class="footer-title">
         <p class="eyebrow">Ligazóns oficiais</p>
         <h2>Sitios oficiais guiados</h2>
@@ -124,7 +138,7 @@
       <div class="resource-grid" id="officialLinks"></div>
     </section>
 
-    <section class="footer-section faq-section">
+    <section class="footer-section faq-section" id="preguntas">
       <div class="footer-title">
         <p class="eyebrow">Preguntas frecuentes</p>
         <h2>Guía completa de orientación</h2>
