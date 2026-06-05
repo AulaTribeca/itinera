@@ -1,6 +1,6 @@
 {
   "name": "itinera-v0-25",
-  "version": "0.49-correccion-limpieza-vistas-mapa",
+  "version": "0.51-mapas-fp-medio-superior-integrados",
   "private": true,
   "type": "module",
   "description": "ITINERA: buscador de estudos e deseñador de itinerarios académicos guiados.",

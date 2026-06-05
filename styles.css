@@ -1598,3 +1598,85 @@ html[data-initial-route="itinerario"] .content-view{padding-top:1rem !important;
 .v48-map-legend{margin-top:.65rem !important;}
 .filter-card,.results-card,.wizard-card,.route-output-card{border-radius:18px !important;}
 @media(max-width:900px){.v49-home-actions{grid-template-columns:1fr !important;width:min(360px,90vw) !important;gap:1rem !important;}.v48-map-grid{grid-template-columns:1fr !important;}.v48-map-stage{max-height:none !important;}.v48-map-side{max-height:none !important;}}
+
+
+/* ITINERA v50 · portada final, mapa único y fijación de localidad */
+:root{
+  --v50-ink:#0b332b;
+  --v50-bg:#fbfaf6;
+  --v50-paper:#fffef9;
+  --v50-line:rgba(11,51,43,.13);
+  --v50-gold:#c8a23c;
+}
+html, body{background:var(--v50-bg)!important;color:var(--v50-ink)!important;}
+html[data-initial-route="buscar"] #inicio,
+html[data-initial-route="itinerario"] #inicio{display:none!important;}
+html[data-initial-route="buscar"] #buscar,
+html[data-initial-route="itinerario"] #itinerario{display:block!important;}
+body[data-route="buscar"] .app-header,
+body[data-route="itinerario"] .app-header,
+html[data-initial-route="buscar"] .app-header,
+html[data-initial-route="itinerario"] .app-header{display:none!important;}
+body[data-route="buscar"] #buscar>.section-hero,
+body[data-route="itinerario"] #itinerario>.section-hero,
+html[data-initial-route="buscar"] #buscar>.section-hero,
+html[data-initial-route="itinerario"] #itinerario>.section-hero{display:none!important;}
+body[data-route="buscar"] .content-view,
+body[data-route="itinerario"] .content-view,
+html[data-initial-route="buscar"] .content-view,
+html[data-initial-route="itinerario"] .content-view{padding-top:1rem!important;}
+.v50-home{min-height:100vh!important;position:relative!important;overflow:hidden!important;background:var(--v50-bg)!important;display:none!important;place-items:center!important;}
+.v50-home.active{display:grid!important;}
+.v50-home-bg{position:absolute!important;inset:0!important;background-image:linear-gradient(180deg,rgba(251,250,246,.04),rgba(251,250,246,.38) 70%,rgba(251,250,246,.86)),url("assets/home-map-bg.png")!important;background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important;animation:v50HomeMotion 26s ease-in-out infinite alternate!important;z-index:0!important;}
+@keyframes v50HomeMotion{from{transform:scale(1.015) translate3d(-10px,-6px,0)}to{transform:scale(1.055) translate3d(12px,8px,0)}}
+.v50-home-brand{position:absolute!important;top:clamp(22px,4vw,58px)!important;left:clamp(22px,4vw,70px)!important;z-index:2!important;background:rgba(255,254,249,.68)!important;border:1px solid rgba(11,51,43,.1)!important;border-radius:10px!important;padding:.55rem .85rem!important;backdrop-filter:blur(7px)!important;box-shadow:0 18px 45px rgba(11,51,43,.08)!important;}
+.v50-home-brand img{display:block!important;height:48px!important;width:auto!important;object-fit:contain!important;}
+.v50-home-actions{position:relative!important;z-index:2!important;display:grid!important;grid-template-columns:repeat(2,minmax(235px,300px))!important;gap:2rem!important;align-items:center!important;justify-content:center!important;width:min(760px,92vw)!important;}
+.v50-home-card{aspect-ratio:1/1!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;text-decoration:none!important;border-radius:18px!important;padding:1.25rem!important;background:rgba(255,254,249,.58)!important;border:1px solid rgba(11,51,43,.12)!important;box-shadow:0 28px 80px rgba(11,51,43,.11)!important;backdrop-filter:blur(7px)!important;transition:transform .18s ease,background .18s ease!important;}
+.v50-home-card:hover,.v50-home-card:focus-visible{transform:translateY(-6px)!important;background:rgba(255,254,249,.78)!important;outline:0!important;}
+.v50-home-card strong{font-family:Inter,system-ui,sans-serif!important;color:var(--v50-ink)!important;text-transform:uppercase!important;letter-spacing:.12em!important;line-height:1.18!important;font-size:clamp(1.45rem,2.7vw,2.18rem)!important;font-weight:950!important;}
+#v41StudyMap,.v41-study-map-slot,.v41-map-card,#v48MapPanel{display:none!important;}
+#v50MapPanel{max-width:1500px!important;margin:0 auto 1rem!important;padding:1rem!important;border-radius:18px!important;background:rgba(255,254,249,.94)!important;border:1px solid var(--v50-line)!important;box-shadow:0 18px 55px rgba(11,51,43,.08)!important;}
+.v50-map-head{display:flex!important;align-items:flex-end!important;justify-content:space-between!important;gap:1rem!important;margin-bottom:.75rem!important;}
+.v50-map-head h2{font-family:var(--serif)!important;font-size:clamp(1.35rem,2.3vw,2rem)!important;margin:.2rem 0!important;color:var(--v50-ink)!important;}
+.v50-map-head p:not(.eyebrow){margin:0!important;color:#50615b!important;max-width:68rem!important;}
+.v50-map-grid{display:grid!important;grid-template-columns:minmax(0,1.42fr) minmax(315px,.78fr)!important;gap:.85rem!important;align-items:start!important;}
+.v50-map-stage{position:relative!important;aspect-ratio:1491/1055!important;max-height:62vh!important;min-height:0!important;overflow:hidden!important;border-radius:14px!important;border:1px solid rgba(11,51,43,.10)!important;background:url("assets/galicia-offer-map-v50.png") center/contain no-repeat #f7f6f2!important;}
+.v50-map-overlay{position:absolute!important;inset:0!important;}
+.v50-point{position:absolute!important;transform:translate(-50%,-50%)!important;border:0!important;background:transparent!important;padding:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;cursor:pointer!important;z-index:3!important;}
+.v50-point::before{content:""!important;display:block!important;width:18px!important;height:18px!important;border-radius:999px!important;background:rgba(255,255,255,.01)!important;}
+.v50-point::after{content:""!important;position:absolute!important;width:10px!important;height:10px!important;border-radius:50%!important;background:var(--dot,#2db84d)!important;box-shadow:0 0 0 2px rgba(255,255,255,.96),0 3px 14px rgba(0,0,0,.18)!important;}
+.v50-point:hover::before,.v50-point.active::before,.v50-point.locked::before{box-shadow:0 0 0 3px rgba(11,51,43,.22)!important;background:rgba(255,255,255,.22)!important;}
+.v50-map-tooltip{position:absolute!important;z-index:9!important;max-width:250px!important;pointer-events:none!important;background:rgba(9,34,46,.95)!important;color:#fff!important;border-radius:12px!important;padding:.7rem .8rem!important;box-shadow:0 18px 45px rgba(0,0,0,.24)!important;}
+.v50-map-tooltip strong{display:block!important}.v50-map-tooltip small{display:block!important;opacity:.86!important;margin-top:.18rem!important;line-height:1.35!important;}
+.v50-map-side{max-height:62vh!important;overflow:auto!important;border-radius:14px!important;border:1px solid rgba(11,51,43,.10)!important;background:#fff!important;padding:1rem!important;}
+.v50-map-side h3{font-family:var(--serif)!important;color:var(--v50-ink)!important;margin:.1rem 0 .35rem!important;}
+.v50-side-actions{display:flex!important;gap:.45rem!important;flex-wrap:wrap!important;margin:.7rem 0!important;}
+.v50-block{border-top:1px solid rgba(11,51,43,.1)!important;margin-top:.7rem!important;padding-top:.7rem!important;}
+.v50-block strong{color:#14324a!important}.v50-block ul{margin:.35rem 0 0!important;padding-left:1rem!important}.v50-block li{margin:.22rem 0!important;}
+.v50-legend{display:flex!important;gap:1rem!important;flex-wrap:wrap!important;margin-top:.65rem!important;color:#36524d!important;font-weight:800!important;}
+.v50-legend i{display:inline-block!important;width:12px!important;height:12px!important;margin-right:.42rem!important;border-radius:50%!important;vertical-align:middle!important;}
+.filter-card,.results-card,.wizard-card,.route-output-card{border-radius:18px!important;}
+@media(max-width:900px){.v50-home-actions{grid-template-columns:1fr!important;width:min(360px,90vw)!important;gap:1rem!important}.v50-map-grid{grid-template-columns:1fr!important}.v50-map-stage{max-height:none!important}.v50-map-side{max-height:none!important}}
+
+
+/* ITINERA v51 · controles de capas FP */
+.v51-layer-controls{
+  display:flex!important;
+  gap:.55rem!important;
+  flex-wrap:wrap!important;
+  margin:.35rem 0 .85rem!important;
+}
+.v51-layer-controls button{
+  border:1px solid rgba(11,51,43,.15)!important;
+  background:#fff!important;
+  color:#0b332b!important;
+  border-radius:999px!important;
+  padding:.62rem .9rem!important;
+  font-weight:900!important;
+  cursor:pointer!important;
+}
+.v51-layer-controls button.active{
+  background:#0b332b!important;
+  color:#fff!important;
+}

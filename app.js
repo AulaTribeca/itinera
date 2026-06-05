@@ -1330,3 +1330,193 @@ document.addEventListener('DOMContentLoaded', init);
     setTimeout(compactSearchV49, 250);
   });
 })();
+
+
+/* ITINERA v50 · mapa único con puntos FP pequeños y bloqueo por clic */
+(function(){
+  let v50Points = [];
+  let v50LocationIndex = new Map();
+  let v50Locked = null;
+  const colours = {fp:'#2db84d',grado:'#1670e4',master:'#f39c12',doctorado:'#e53935'};
+
+  function routeV50(){ return (location.hash || '#inicio').replace('#','') || 'inicio'; }
+  function setRouteV50(){
+    const r = routeV50();
+    document.documentElement.setAttribute('data-initial-route', r);
+    document.body.setAttribute('data-route', r);
+    const header = document.querySelector('.app-header');
+    if(header) header.hidden = (r === 'buscar' || r === 'itinerario');
+  }
+  function removeOldMapsV50(){
+    document.querySelectorAll('#v41StudyMap,.v41-study-map-slot,.v41-map-card,#v48MapPanel').forEach(el => el.remove());
+  }
+  function initHomeV50(){
+    document.querySelectorAll('.v50-home-card').forEach(a => {
+      if(a.dataset.v50bound) return;
+      a.dataset.v50bound='1';
+      a.removeAttribute('target');
+      a.addEventListener('click', ev => {
+        ev.preventDefault();
+        location.hash = a.getAttribute('href') || '#inicio';
+      });
+    });
+  }
+  async function loadMapDataV50(){
+    try{
+      const res = await fetch('data/itinera-map-points-v51.json?v=0.51');
+      if(!res.ok) throw new Error('sen mapa v50');
+      const data = await res.json();
+      v50Points = data.points || []; window.__ITINERA_V50_POINTS__ = v50Points;
+      v50LocationIndex = new Map((data.catalog_locations || []).map(loc => [loc.name, loc]));
+      buildMapV50();
+    }catch(e){ console.warn('[v50]', e); }
+  }
+  function ensureMapPanelV50(){
+    const buscar = document.getElementById('buscar');
+    if(!buscar || document.getElementById('v50MapPanel')) return;
+    const panel = document.createElement('section');
+    panel.id = 'v50MapPanel';
+    panel.innerHTML = `
+      <div class="v50-map-head">
+        <div><p class="eyebrow">Mapa interactivo</p><h2>Oferta de estudos por localidade</h2><p>Pasa o cursor polos puntos. Fai clic para deixar fixa unha localidade ou punto de oferta no panel dereito.</p></div>
+        <button type="button" class="plain-button" id="v50Unlock">Desbloquear selección</button>
+      </div>
+      <div class="v50-map-grid">
+        <div class="v50-map-stage" aria-label="Mapa da oferta de estudos en Galicia">
+          <div class="v50-map-overlay" id="v50Overlay"></div>
+          <div class="v50-map-tooltip" id="v50Tooltip" hidden></div>
+        </div>
+        <aside class="v50-map-side" id="v50Side"><h3>Selecciona un punto</h3><p>Pasa o cursor ou fai clic sobre unha localidade para consultar a oferta dispoñible.</p></aside>
+      </div>
+      <div class="v50-legend"><span><i style="background:#2db84d"></i>FP</span><span><i style="background:#1670e4"></i>Grao</span><span><i style="background:#f39c12"></i>Máster</span><span><i style="background:#e53935"></i>Doutoramento</span></div>`;
+    const layout = buscar.querySelector('.search-layout');
+    if(layout) layout.insertAdjacentElement('beforebegin', panel);
+    else buscar.appendChild(panel);
+    panel.querySelector('#v50Unlock').addEventListener('click', () => {
+      v50Locked = null;
+      document.querySelectorAll('.v50-point').forEach(p => p.classList.remove('locked','active'));
+      renderSideV50(null);
+    });
+  }
+  function buildMapV50(){
+    ensureMapPanelV50();
+    const overlay = document.getElementById('v50Overlay');
+    if(!overlay) return;
+    overlay.innerHTML = v50Points.map((p,idx) => `<button type="button" class="v50-point" data-i="${idx}" style="left:${p.x}%;top:${p.y}%;--dot:${colours[p.type]||'#2db84d'}" aria-label="${escapeAttr(p.location || 'Punto de oferta')}"></button>`).join('');
+    overlay.querySelectorAll('.v50-point').forEach(btn => {
+      btn.addEventListener('mouseenter', ev => {
+        const p = v50Points[Number(btn.dataset.i)];
+        showTipV50(ev, p);
+        if(!v50Locked) renderSideV50(p);
+      });
+      btn.addEventListener('mousemove', ev => {
+        const p = v50Points[Number(btn.dataset.i)];
+        showTipV50(ev, p);
+      });
+      btn.addEventListener('mouseleave', () => hideTipV50());
+      btn.addEventListener('click', ev => {
+        ev.preventDefault();
+        const p = v50Points[Number(btn.dataset.i)];
+        v50Locked = p;
+        document.querySelectorAll('.v50-point').forEach(x => x.classList.remove('locked','active'));
+        btn.classList.add('locked','active');
+        renderSideV50(p, true);
+      });
+    });
+  }
+  function showTipV50(ev,p){
+    const tt = document.getElementById('v50Tooltip');
+    const stage = document.querySelector('.v50-map-stage');
+    if(!tt || !stage || !p) return;
+    const label = typeLabelV50(p.type);
+    tt.innerHTML = `<strong>${escapeHtml(p.location || label)}</strong><small>${label}${p.generic ? ' · punto detectado no mapa' : ''}</small>`;
+    tt.hidden = false;
+    const rect = stage.getBoundingClientRect();
+    tt.style.left = Math.max(10, Math.min(rect.width-260, ev.clientX-rect.left+12)) + 'px';
+    tt.style.top = Math.max(10, Math.min(rect.height-110, ev.clientY-rect.top+12)) + 'px';
+  }
+  function hideTipV50(){ const tt=document.getElementById('v50Tooltip'); if(tt) tt.hidden=true; }
+  function renderSideV50(p, locked=false){
+    const side = document.getElementById('v50Side');
+    if(!side) return;
+    if(!p){ side.innerHTML = '<h3>Selecciona un punto</h3><p>Pasa o cursor ou fai clic sobre unha localidade para consultar a oferta dispoñible.</p>'; return; }
+    const loc = v50LocationIndex.get(p.location);
+    if(loc){
+      const groups = {};
+      (loc.studies||[]).forEach(s => (groups[s.level_label || typeLabelV50(s.type)] ||= []).push(s));
+      side.innerHTML = `<p class="eyebrow">${locked?'Selección fixa':'Localidade'}</p><h3>${escapeHtml(loc.name)}</h3><p>${loc.count || (loc.studies||[]).length} estudos ou rexistros identificados no catálogo cargado.</p><div class="v50-side-actions"><button type="button" class="plain-button" id="v50FilterLocation">Filtrar no buscador</button></div>${Object.entries(groups).map(([level,items]) => `<section class="v50-block"><strong>${escapeHtml(level)}</strong><ul>${items.slice(0,26).map(s => `<li>${escapeHtml(s.study_name || '')}${s.center ? ' · '+escapeHtml(s.center) : ''}</li>`).join('')}</ul></section>`).join('')}`;
+      const btn = side.querySelector('#v50FilterLocation');
+      if(btn) btn.addEventListener('click', () => {
+        const locFilter = document.getElementById('localityFilter');
+        if(locFilter){ locFilter.value = loc.name; locFilter.dispatchEvent(new Event('change')); }
+      });
+      return;
+    }
+    side.innerHTML = `<p class="eyebrow">${locked?'Selección fixa':'Punto detectado'}</p><h3>${escapeHtml(p.location || 'Punto de oferta')}</h3><p>${typeLabelV50(p.type)} detectada no mapa achegado. Para non inventar unha localidade nin estudos concretos, este punto queda ligado á fonte oficial de oferta.</p><div class="v50-side-actions"><a class="secondary-link" href="https://www.edu.xunta.gal/fp/webfm_send/11286" target="_blank" rel="noopener noreferrer">Abrir oferta FP por concello</a></div>`;
+  }
+  function typeLabelV50(t){ return ({fp:'FP',grado:'Grao',master:'Máster',doctorado:'Doutoramento'}[t] || t || 'Oferta'); }
+  function escapeHtml(v){ return String(v??'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])); }
+  function escapeAttr(v){ return escapeHtml(v); }
+
+  const observer = new MutationObserver(() => removeOldMapsV50());
+  document.addEventListener('DOMContentLoaded', () => {
+    setRouteV50(); initHomeV50(); removeOldMapsV50(); ensureMapPanelV50(); loadMapDataV50();
+    observer.observe(document.body,{childList:true,subtree:true});
+  });
+  window.addEventListener('hashchange', () => { setRouteV50(); removeOldMapsV50(); ensureMapPanelV50(); setTimeout(removeOldMapsV50,200); });
+  window.addEventListener('pageshow', () => { setRouteV50(); initHomeV50(); removeOldMapsV50(); ensureMapPanelV50(); });
+})();
+
+
+/* ITINERA v51 · capas FP medio/superior con mapas etiquetados */
+(function(){
+  let activeLayerV51 = "all";
+  function setMapBackgroundV51(){
+    const stage = document.querySelector(".v50-map-stage");
+    if(!stage) return;
+    if(activeLayerV51 === "fpgm"){
+      stage.style.backgroundImage = 'url("assets/galicia-fp-medio-v51.png")';
+    }else if(activeLayerV51 === "fpgs"){
+      stage.style.backgroundImage = 'url("assets/galicia-fp-superior-v51.png")';
+    }else{
+      stage.style.backgroundImage = 'url("assets/galicia-offer-map-v50.png")';
+    }
+  }
+  function filterMarkersV51(){
+    document.querySelectorAll(".v50-point").forEach(btn => {
+      const i = Number(btn.dataset.i);
+      const p = (window.__ITINERA_V50_POINTS__ || [])[i];
+      if(!p){ return; }
+      const show = activeLayerV51 === "all" || p.type === activeLayerV51;
+      btn.style.display = show ? "inline-flex" : "none";
+    });
+  }
+  function addLayerControlsV51(){
+    const panel = document.getElementById("v50MapPanel");
+    if(!panel || document.getElementById("v51LayerControls")) return;
+    const controls = document.createElement("div");
+    controls.id = "v51LayerControls";
+    controls.className = "v51-layer-controls";
+    controls.innerHTML = `
+      <button type="button" data-v51-layer="all" class="active">Mapa xeral</button>
+      <button type="button" data-v51-layer="fpgm">FP grao medio</button>
+      <button type="button" data-v51-layer="fpgs">FP grao superior</button>
+    `;
+    const head = panel.querySelector(".v50-map-head");
+    if(head) head.insertAdjacentElement("afterend", controls);
+    controls.querySelectorAll("button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        activeLayerV51 = btn.dataset.v51Layer || "all";
+        controls.querySelectorAll("button").forEach(b => b.classList.toggle("active", b === btn));
+        setMapBackgroundV51();
+        filterMarkersV51();
+      });
+    });
+  }
+  const observer = new MutationObserver(() => { addLayerControlsV51(); setMapBackgroundV51(); filterMarkersV51(); });
+  document.addEventListener("DOMContentLoaded", () => {
+    observer.observe(document.body,{childList:true,subtree:true});
+    addLayerControlsV51();
+    setTimeout(() => { addLayerControlsV51(); setMapBackgroundV51(); filterMarkersV51(); }, 600);
+  });
+})();
