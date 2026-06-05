@@ -1,20 +1,11 @@
 {
-  "name": "itinera-v0-25",
-  "version": "0.56-proyecto-completo-google-maps-reinstalable",
+  "name": "itinera-v057-clean",
+  "version": "0.57.0",
   "private": true,
-  "type": "module",
-  "description": "ITINERA: buscador de estudos con Google My Maps e deseñador de itinerarios académicos guiados.",
-  "dependencies": {
-    "@supabase/supabase-js": "^2.45.4",
-    "ws": "^8.18.0",
-    "xlsx": "^0.18.5",
-    "pdf-parse": "^1.1.1"
-  },
+  "description": "ITINERA: orientación académica con Google My Maps e itinerarios guiados en galego.",
   "scripts": {
-    "import:official": "node tools/official-load/import-official-catalogs.mjs",
-    "import:seed": "node tools/official-load/import-official-catalogs.mjs --seed-only",
-    "import:macrointegral": "node tools/official-load/import-v022-macrointegral.mjs",
-    "import:all": "node tools/official-load/import-official-catalogs.mjs && node tools/official-load/import-v022-macrointegral.mjs",
-    "import:definitive": "node tools/official-load/import-v022-macrointegral.mjs"
-  }
+    "start": "python3 -m http.server 4173",
+    "check": "node --check app.js"
+  },
+  "devDependencies": {}
 }
