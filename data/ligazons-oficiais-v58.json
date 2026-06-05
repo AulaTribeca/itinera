@@ -1,0 +1,116 @@
+[
+  {
+    "categoria": "FP",
+    "titulo": "Oferta oficial de Formación Profesional da Xunta",
+    "url": "https://www.edu.xunta.gal/fp/oferta-fp",
+    "descricion": "Punto de entrada á oferta oficial de FP en Galicia: ciclos, modalidades, centros, prazas e documentos de consulta."
+  },
+  {
+    "categoria": "FP",
+    "titulo": "Admisión en Formación Profesional",
+    "url": "https://www.edu.xunta.gal/fp/admision",
+    "descricion": "Información sobre prazos, solicitudes, baremación, listaxes, matrícula e procedementos de admisión en FP."
+  },
+  {
+    "categoria": "FP",
+    "titulo": "Oferta ordinaria por provincia e concello",
+    "url": "https://www.edu.xunta.gal/fp/webfm_send/11286",
+    "descricion": "PDF oficial coas ensinanzas de FP sostidas con fondos públicos, clasificadas por provincia e concello."
+  },
+  {
+    "categoria": "FP",
+    "titulo": "Catálogo de familias profesionais",
+    "url": "https://www.edu.xunta.gal/fp/familias-profesionais",
+    "descricion": "Consulta das familias profesionais, ciclos asociados e ámbitos de actividade."
+  },
+  {
+    "categoria": "Universidade",
+    "titulo": "CIUG - Comisión Interuniversitaria de Galicia",
+    "url": "https://ciug.gal/",
+    "descricion": "Información sobre PAU, preinscrición universitaria, notas, ponderacións, prazas e acceso ao Sistema Universitario de Galicia."
+  },
+  {
+    "categoria": "Universidade",
+    "titulo": "Preinscrición no Sistema Universitario de Galicia",
+    "url": "https://ciug.gal/preinscripcion",
+    "descricion": "Portal de consulta para prazos, solicitude de praza, listaxes de admitidos, reclamacións e matrícula."
+  },
+  {
+    "categoria": "Universidade",
+    "titulo": "Universidade de Santiago de Compostela - estudos",
+    "url": "https://www.usc.gal/gl/estudos",
+    "descricion": "Graos, dobres graos, másteres e doutoramentos da USC, con información de centros, plans e acceso."
+  },
+  {
+    "categoria": "Universidade",
+    "titulo": "Universidade da Coruña - estudos",
+    "url": "https://www.udc.gal/gl/ensino/",
+    "descricion": "Oferta de graos, másteres, doutoramentos, centros, campus e información académica da UDC."
+  },
+  {
+    "categoria": "Universidade",
+    "titulo": "Universidade de Vigo - estudos",
+    "url": "https://www.uvigo.gal/estudar",
+    "descricion": "Oferta de graos, másteres, doutoramentos e información dos campus de Vigo, Ourense e Pontevedra."
+  },
+  {
+    "categoria": "Bolsas",
+    "titulo": "Bolsas xerais do Ministerio de Educación",
+    "url": "https://www.becaseducacion.gob.es/",
+    "descricion": "Solicitude e consulta das bolsas xerais para estudos postobrigatorios, universitarios e non universitarios."
+  },
+  {
+    "categoria": "Bolsas",
+    "titulo": "Bolsas e axudas para alumnado con necesidade específica de apoio educativo",
+    "url": "https://www.becaseducacion.gob.es/becas-y-ayudas/ayudas-apoyo-educativo.html",
+    "descricion": "Información oficial sobre axudas NEAE, requisitos, prazos e tramitación."
+  },
+  {
+    "categoria": "Empregabilidade",
+    "titulo": "TodoFP",
+    "url": "https://www.todofp.es/",
+    "descricion": "Información estatal sobre FP, familias profesionais, títulos, acreditación de competencias e orientación profesional."
+  },
+  {
+    "categoria": "Empregabilidade",
+    "titulo": "SEPE - Observatorio das Ocupacións",
+    "url": "https://www.sepe.es/HomeSepe/que-es-el-sepe/observatorio.html",
+    "descricion": "Datos sobre mercado laboral, ocupacións, perfís profesionais e empregabilidade."
+  },
+  {
+    "categoria": "Empregabilidade",
+    "titulo": "Instituto Galego das Cualificacións",
+    "url": "https://emprego.xunta.gal/portal/gl/cualificacions/",
+    "descricion": "Información sobre cualificacións profesionais, acreditación de competencias e relación entre formación e emprego."
+  },
+  {
+    "categoria": "Normativa",
+    "titulo": "Portal educativo da Xunta de Galicia",
+    "url": "https://www.edu.xunta.gal/portal/",
+    "descricion": "Novas, normativa, calendarios, convocatorias e información xeral do sistema educativo galego."
+  },
+  {
+    "categoria": "Normativa",
+    "titulo": "BOE",
+    "url": "https://www.boe.es/",
+    "descricion": "Consulta de normativa estatal oficial: leis educativas, reais decretos, convocatorias e disposicións."
+  },
+  {
+    "categoria": "Normativa",
+    "titulo": "DOG",
+    "url": "https://www.xunta.gal/diario-oficial-galicia",
+    "descricion": "Consulta do Diario Oficial de Galicia: ordes, convocatorias, admisións, prazos e normativa autonómica."
+  },
+  {
+    "categoria": "Acceso",
+    "titulo": "UNEDasiss",
+    "url": "https://unedasiss.uned.es/",
+    "descricion": "Información para determinados perfís de acceso internacional á universidade española."
+  },
+  {
+    "categoria": "Acceso",
+    "titulo": "Ministerio de Universidades",
+    "url": "https://www.universidades.gob.es/",
+    "descricion": "Información xeral sobre sistema universitario, bolsas, acceso, títulos e estatísticas."
+  }
+]

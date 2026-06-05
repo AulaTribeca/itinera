@@ -1,0 +1,432 @@
+[
+  {
+    "pregunta": "Que diferenza hai entre FP básica, FP de grao medio e FP de grao superior?",
+    "resposta": "A FP básica é unha vía inicial de formación profesional vinculada á obtención de competencias básicas e profesionais. O grao medio conduce a un título de técnica ou técnico e adoita accederse con ESO ou vías equivalentes. O grao superior conduce a técnica ou técnico superior e permite acceder á universidade, con posible recoñecemento de créditos segundo normativa e universidade.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Podo chegar a un grao universitario desde a ESO sen facer Bacharelato?",
+    "resposta": "Si, é posible a través dunha vía profesional progresiva: ESO, ciclo de grao medio, ciclo de grao superior e acceso á universidade desde o título de técnica ou técnico superior. A vía adoita ser máis longa ca Bacharelato máis PAU, pero pode ser moi adecuada se se quere unha formación práctica e unha saída profesional intermedia.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que vía é máis rápida para chegar a un grao universitario?",
+    "resposta": "En xeral, desde a ESO a vía máis rápida adoita ser Bacharelato, PAU e grao universitario. A vía por FP pode levar máis tempo, pero ofrece cualificación profesional intermedia, experiencia práctica e acceso posterior a graos relacionados.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é a PAU?",
+    "resposta": "A PAU é a proba de acceso á universidade. A cualificación de admisión pode mellorarse mediante materias que ponderan 0,1 ou 0,2 segundo o grao concreto e os parámetros aprobados para o curso correspondente.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que significa que unha materia pondera 0,2?",
+    "resposta": "Significa que esa materia pode sumar ata 2 puntos adicionais na nota de admisión se se supera e se aplica ao grao escollido. Unha materia con ponderación 0,1 pode sumar ata 1 punto adicional. Por iso é importante escoller materias coherentes co grao obxectivo.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Como escollo o Bacharelato se quero estudar un grao concreto?",
+    "resposta": "Cómpre mirar as materias que ponderan mellor para ese grao, a rama de coñecemento e os requisitos de preparación. Por exemplo, para moitos graos de saúde pesan Bioloxía, Química e Matemáticas II; para enxeñarías adoitan ser importantes Matemáticas II, Física, Debuxo técnico II e Tecnoloxía e enxeñaría II.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que son as ponderacións?",
+    "resposta": "Son coeficientes oficiais aplicados a determinadas materias da PAU para calcular a nota de admisión a cada grao universitario. Poden variar por grao, curso e sistema universitario.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Teño que consultar sempre as ponderacións oficiais?",
+    "resposta": "Si. ITINERA pode orientar, pero a decisión debe comprobarse no documento oficial de ponderacións do curso de acceso e na CIUG ou organismo competente.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é unha nota de corte?",
+    "resposta": "É a nota da última persoa admitida nun grao nun proceso concreto. Non é unha nota fixa nin unha garantía futura, senón unha referencia histórica que pode subir ou baixar cada curso.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que diferenza hai entre prazas e notas de corte?",
+    "resposta": "As prazas indican cantos lugares ofrece unha titulación. A nota de corte resulta da demanda e das notas das persoas admitidas. Moitas prazas non implican necesariamente baixa nota de corte se hai moita demanda.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Podo solicitar varios graos na preinscrición?",
+    "resposta": "Si. Normalmente ordénanse as preferencias. É fundamental poñer primeiro o que realmente se quere estudar, porque a orde pode condicionar as adxudicacións.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é un dobre grao?",
+    "resposta": "É unha programación que permite cursar dous graos de forma combinada, cun plan específico e máis carga académica ca un grao simple.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é un grao aberto?",
+    "resposta": "É unha vía que permite iniciar estudos dentro dunha área ampla e decidir posteriormente unha titulación concreta segundo a normativa e a oferta da universidade.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é un PCEO?",
+    "resposta": "É un Programa Conxunto de Estudos Oficiais, unha modalidade organizada para cursar de forma coordinada dúas titulacións oficiais.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Podo cambiar de grao unha vez empezado?",
+    "resposta": "Pode ser posible mediante traslado, cambio de estudos, recoñecemento de créditos ou nova admisión, pero depende da normativa, prazas e expediente.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Podo acceder a un máster desde calquera grao?",
+    "resposta": "Non sempre. Cada máster ten requisitos de acceso, perfís preferentes e criterios de admisión. Hai que consultar a ficha oficial do máster.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que diferenza hai entre máster oficial e título propio?",
+    "resposta": "O máster oficial ten validez académica oficial e pode dar acceso ao doutoramento. Un título propio é unha ensinanza da universidade ou entidade, pero non ten a mesma natureza oficial.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é un doutoramento?",
+    "resposta": "É a etapa de investigación avanzada que conduce á tese doutoral. Require cumprir requisitos de acceso e admisión nun programa de doutoramento.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é unha familia profesional?",
+    "resposta": "É un conxunto de ciclos de FP relacionados cun ámbito produtivo, por exemplo Sanidade, Informática e comunicacións, Administración e xestión ou Hostalaría e turismo.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Podo pasar dun ciclo medio a un ciclo superior?",
+    "resposta": "Si, o título de técnica ou técnico de grao medio permite acceder a ciclos de grao superior, aínda que cómpre revisar criterios de admisión e preferencia.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Podo pasar dun ciclo superior á universidade?",
+    "resposta": "Si. O título de técnica ou técnico superior permite acceder á universidade. Para mellorar a nota de admisión poden realizarse materias específicas da PAU segundo procedemento vixente.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Hai recoñecemento de créditos desde FP superior a grao?",
+    "resposta": "Pode habelo en graos relacionados, pero depende de táboas e acordos de cada universidade e titulación.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é a FP dual intensiva?",
+    "resposta": "É unha modalidade na que unha parte importante da formación se desenvolve en empresa ou organismo equiparado, segundo convenio e condicións da convocatoria.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é a oferta modular?",
+    "resposta": "É unha forma de cursar módulos profesionais de ciclos de FP, útil para persoas adultas ou para completar formación de maneira parcial.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é a formación acelerada?",
+    "resposta": "É unha modalidade ou programa de formación orientado a obter competencias profesionais nun período reducido, segundo oferta oficial e requisitos concretos.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é un curso de especialización de FP?",
+    "resposta": "É unha formación posterior a determinados ciclos de FP que permite especializarse nun ámbito profesional concreto.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Como sei que centro ofrece un ciclo?",
+    "resposta": "Debe consultarse a oferta oficial de FP por provincia, concello, centro e ciclo. En ITINERA o mapa de Google My Maps permite ver os centros e localidades importados.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Como podo saber se unha titulación ten saída laboral?",
+    "resposta": "Convén consultar datos de empregabilidade, observatorios laborais, prácticas, competencias profesionais, demanda do sector e continuidade formativa.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Debo escoller só polo emprego?",
+    "resposta": "Non. O emprego é relevante, pero tamén importan capacidades, intereses, esforzo esperado, estilo de aprendizaxe, mobilidade, recursos, saúde e proxecto vital.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que fago se non sei que estudar?",
+    "resposta": "É recomendable explorar áreas, descartar opcións, probar tarefas reais, revisar materias que se che dan ben, falar con profesionais e deseñar varias rutas alternativas.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é a modalidade de Bacharelato máis adecuada para Ciencias da Saúde?",
+    "resposta": "Xeralmente Ciencias e Tecnoloxía con materias como Bioloxía, Química e Matemáticas II, pero hai que mirar o grao concreto e as ponderacións oficiais.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que Bacharelato adoita encaixar con Enxeñaría?",
+    "resposta": "Ciencias e Tecnoloxía, priorizando Matemáticas II, Física, Debuxo técnico II ou Tecnoloxía e enxeñaría II segundo o grao concreto.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que Bacharelato adoita encaixar con Dereito, ADE ou Economía?",
+    "resposta": "Humanidades e Ciencias Sociais, con especial atención a Empresa e deseño de modelos de negocio, Matemáticas aplicadas ás ciencias sociais II, Xeografía ou materias que ponderen no grao escollido.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que Bacharelato adoita encaixar con Belas Artes ou Deseño?",
+    "resposta": "A modalidade de Artes pode ser moi coherente, con materias artísticas que ponderen segundo o grao. Cómpre comprobar os parámetros oficiais.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que pasa se escollín materias que non ponderan para o grao que quero?",
+    "resposta": "Aínda podes acceder se tes nota suficiente, pero podes perder capacidade de mellorar a nota de admisión. Debes revisar alternativas e valorar presentarte a materias máis favorables se é posible.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Podo presentarme a materias da PAU que non cursei en Bacharelato?",
+    "resposta": "Pode depender da normativa da convocatoria. Debe comprobarse nas instrucións oficiais da PAU e da CIUG.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é a fase de admisión da PAU?",
+    "resposta": "É a parte que permite mellorar a nota de admisión mediante materias ponderables para os graos solicitados.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é a nota de admisión?",
+    "resposta": "É a nota empregada para ordenar solicitudes nun grao. Pode combinar a nota de acceso e as materias ponderadas, segundo a fórmula oficial.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que documento debo mirar para as ponderacións en Galicia?",
+    "resposta": "O documento oficial de parámetros de ponderación do Sistema Universitario de Galicia para o curso correspondente.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "As ponderacións cambian cada ano?",
+    "resposta": "Poden cambiar. Por iso ITINERA inclúe o documento de 2026-2027 e permite descargalo, pero sempre cómpre revisar a versión oficial vixente.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "As notas de corte serven para predicir o futuro?",
+    "resposta": "Só orientan. Non garanten admisión porque dependen da demanda, das prazas e das notas do alumnado en cada convocatoria.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Podo pedir bolsa se estudo FP?",
+    "resposta": "Si, segundo requisitos económicos, académicos e de matrícula da convocatoria correspondente.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Podo pedir bolsa se estudo universidade?",
+    "resposta": "Si, existen bolsas xerais e outras axudas. Deben revisarse prazos, requisitos, créditos matriculados e rendemento académico.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que son as bolsas NEAE?",
+    "resposta": "Son axudas para alumnado con necesidade específica de apoio educativo, con requisitos e procedemento propio.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é unha simultaneidade de estudos?",
+    "resposta": "É cursar dous estudos de maneira combinada ou simultánea, baixo unha oferta ou autorización específica.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é un campus?",
+    "resposta": "É o espazo universitario onde se sitúan facultades, escolas e servizos. Unha universidade pode ter varios campus en diferentes cidades.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é un centro adscrito?",
+    "resposta": "É un centro vinculado a unha universidade para impartir determinados estudos, baixo condicións académicas específicas.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que diferenza hai entre universidade pública e privada?",
+    "resposta": "A titularidade, prezos, procedementos de admisión e organización poden variar. A oficialidade do título debe comprobarse sempre.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Como comparo dous graos parecidos?",
+    "resposta": "Revisa plan de estudos, prácticas, saídas, campus, metodoloxía, recoñecemento profesional, notas de corte, prazas e materias ponderables.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Como comparo dous ciclos de FP parecidos?",
+    "resposta": "Mira módulos, familia profesional, centros, modalidade, prácticas, continuidade a grao superior e empregos asociados.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é unha competencia profesional?",
+    "resposta": "É a capacidade de realizar tarefas profesionais con coñecementos, habilidades e responsabilidade nun contexto laboral.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é unha cualificación profesional?",
+    "resposta": "É un referente oficial de competencias que pode estar vinculado a certificados, ciclos e acreditación de experiencia laboral.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é a acreditación de competencias?",
+    "resposta": "É un procedemento para recoñecer competencias profesionais adquiridas por experiencia laboral ou formación non formal.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "É mellor estudar preto da casa ou desprazarse?",
+    "resposta": "Depende de recursos, transporte, custo, calidade da oferta, encaixe co proxecto e apoio familiar. ITINERA debe axudar a comparar rutas realistas.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que pasa se non consigo praza no meu primeiro grao?",
+    "resposta": "Debes revisar listaxes, agardar movementos, valorar outras preferencias, repetir PAU, escoller unha vía FP relacionada ou iniciar outro grao con posible cambio posterior.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que pasa se non consigo praza nun ciclo?",
+    "resposta": "Podes revisar listaxes, buscar outro centro, outra modalidade, outro ciclo da mesma familia ou preparar mellor a admisión para o curso seguinte.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Como se deben interpretar os itinerarios de ITINERA?",
+    "resposta": "Como orientación estruturada, non como resolución administrativa. A decisión final debe contrastarse coas fontes oficiais e, se é preciso, cun orientador ou orientadora.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Por que ITINERA ofrece varias vías para chegar ao mesmo estudo?",
+    "resposta": "Porque unha meta pode alcanzarse por camiños distintos: Bacharelato e PAU, FP de grao superior, ciclos encadeados, estudos de adultos ou cambio de itinerario.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Como podo saber que ruta tarda máis?",
+    "resposta": "O deseñador mostra unha duración estimada por anos. Bacharelato máis PAU adoita ser máis breve para chegar a un grao, mentres a vía FP pode engadir anos pero achega titulación profesional intermedia.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que significa que unha ruta é máis prudente?",
+    "resposta": "Que deixa máis saídas intermedias, reduce risco ou permite cambiar de dirección sen perder todo o avanzado.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que significa que unha ruta é máis directa?",
+    "resposta": "Que chega antes á meta se todo vai ben, aínda que pode depender máis da nota de admisión e das prazas.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que debo facer antes de matricularme?",
+    "resposta": "Comprobar prazos oficiais, requisitos, documentación, custos, transporte, horarios, compatibilidades e fonte oficial da titulación.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Podo usar ITINERA para orientar a miña familia?",
+    "resposta": "Si, pero as decisións deben tomarse con información oficial, escoitando á persoa estudante e evitando impor rutas que non encaixen co seu perfil.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Onde podo comprobar a oferta real dun centro?",
+    "resposta": "Na web oficial da Xunta para FP ou na web oficial da universidade correspondente para estudos universitarios.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Onde podo consultar as ponderacións se quero Medicina, Enfermaría ou Psicoloxía?",
+    "resposta": "No documento oficial de ponderacións da CIUG/SUG. ITINERA mostra as materias que ponderan para cada grao recollido no PDF de 2026-2027.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Onde podo consultar dobres graos?",
+    "resposta": "Nas webs das universidades e nos anexos oficiais de oferta universitaria. ITINERA tamén recolle simultaneidades e graos abertos presentes no documento de ponderacións.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que miro nunha ficha dun grao?",
+    "resposta": "Plan de estudos, créditos, prácticas, centro, campus, saídas, requisitos, notas de corte e ponderacións.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que miro nunha ficha dun ciclo de FP?",
+    "resposta": "Módulos, duración, centro, modalidade, prazas, prácticas, familia profesional e continuidade formativa.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que significa modalidade presencial?",
+    "resposta": "Que a formación se desenvolve fundamentalmente no centro educativo, con asistencia ordinaria.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que significa modalidade a distancia?",
+    "resposta": "Que parte ou toda a formación se realiza mediante ferramentas telemáticas, segundo a organización oficial da oferta.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que significa oferta sostida con fondos públicos?",
+    "resposta": "Que a ensinanza forma parte da oferta pública ou concertada financiada con fondos públicos, segundo a clasificación oficial.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é unha listaxe de admitidos?",
+    "resposta": "É a relación de persoas que obteñen praza nun proceso de admisión. Pode haber listaxes provisionais, definitivas e movementos de agarda.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é unha reclamación de admisión?",
+    "resposta": "É o procedemento para corrixir erros ou alegar contra unha listaxe, dentro dos prazos oficiais.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é unha matrícula condicionada?",
+    "resposta": "É unha matrícula sometida a cumprir algún requisito pendente, segundo normativa concreta.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é unha praza reservada?",
+    "resposta": "É unha praza destinada a determinados cupos ou vías de acceso, segundo a convocatoria.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é un cupo de acceso?",
+    "resposta": "É unha vía de entrada diferenciada nun proceso de admisión, por exemplo por Bacharelato, FP, maiores de idade ou titulación previa.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Debo mirar só a cidade?",
+    "resposta": "Non. Tamén importan centro, horarios, transporte, calidade do encaixe académico, prácticas e continuidade.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que fago se hai moitos estudos co mesmo nome?",
+    "resposta": "Compara centro, universidade, plan de estudos, idioma, prácticas, campus e saídas.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é a empregabilidade dun estudo?",
+    "resposta": "É a relación entre a formación e as oportunidades de emprego, pero debe analizarse con datos e non con impresións.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Un estudo con moita saída sempre é bo para min?",
+    "resposta": "Non necesariamente. Debe encaixar coas túas capacidades, intereses, saúde, recursos e disposición ao esforzo.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é unha vía longa pero segura?",
+    "resposta": "Unha ruta que tarda máis, pero permite conseguir títulos intermedios e cambiar de rumbo con menos perda.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Que é unha vía curta pero esixente?",
+    "resposta": "Unha ruta que chega antes, pero depende máis de nota, prazas e rendemento académico continuado.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Como se usa o mapa de ITINERA?",
+    "resposta": "Activa capas no panel do mapa, busca marcadores e abre cada punto para ver centros e estudos asociados.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Por que hai que revisar Google My Maps?",
+    "resposta": "Porque a xeolocalización automática pode situar mal centros con nomes ambiguos. A revisión manual mellora a precisión.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Podo descargar as ponderacións?",
+    "resposta": "Si. O deseñador inclúe un botón para descargar o PDF oficial de ponderacións 2026-2027.",
+    "categoria": "Orientación"
+  },
+  {
+    "pregunta": "Podo imprimir o itinerario?",
+    "resposta": "Si. O botón de PDF abre a impresión do navegador, onde podes gardar como PDF.",
+    "categoria": "Orientación"
+  }
+]

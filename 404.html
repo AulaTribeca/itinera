@@ -4,146 +4,143 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ITINERA | Orientación académica</title>
-  <meta name="description" content="ITINERA: orientación académica, mapa de estudos e deseño de itinerarios formativos en Galicia.">
   <meta name="theme-color" content="#fbfaf6">
+  <meta name="description" content="ITINERA: mapa, buscador e deseñador de itinerarios académicos en Galicia.">
   <link rel="icon" type="image/png" href="assets/favicon-itinera.png">
   <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
-  <link rel="stylesheet" href="styles.css?v=0.57">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <a class="skip-link" href="#main">Saltar ao contido principal</a>
 
-  <main id="main" class="app-shell">
-    <section id="inicio" class="view home-view active" aria-labelledby="homeTitle">
+  <main id="main">
+    <section class="view home-view active" id="inicio" aria-label="Portada de ITINERA">
       <div class="home-bg" aria-hidden="true"></div>
-
-      <a class="brand-card" href="#inicio" aria-label="ITINERA, orientación académica">
-        <img src="assets/itinera-logo-mark.png" alt="" aria-hidden="true">
-        <span class="brand-copy">
-          <strong>ITINERA</strong>
-          <small>Orientación académica</small>
-        </span>
+      <a class="brand" href="#inicio" aria-label="Volver á portada">
+        <img src="assets/itinera-logo-mark.png" alt="">
+        <span><strong>ITINERA</strong><small>Orientación académica</small></span>
       </a>
-
-      <div class="home-content">
-        <h1 id="homeTitle" class="visually-hidden">ITINERA</h1>
-        <nav class="home-actions" aria-label="Accesos principais">
-          <a class="home-button" href="#buscar"><span>Buscador de estudos</span></a>
-          <a class="home-button" href="#itinerario"><span>Deseñar itinerario</span></a>
-        </nav>
-      </div>
-
-      <footer class="home-footer" aria-label="Información de ITINERA">
-        <div>
-          <strong>Tribeca Academia</strong>
-          <span>Ecosistema educativo Tribeca</span>
-        </div>
-        <p>ITINERA acompaña a toma de decisións académicas con criterio pedagóxico, información verificable e rutas comprensibles.</p>
-        <span>CC BY-NC-SA 4.0</span>
-      </footer>
+      <nav class="home-actions" aria-label="Accesos principais">
+        <a class="home-card" href="#buscar"><strong>Buscador de estudos</strong></a>
+        <a class="home-card" href="#itinerario"><strong>Deseñar itinerario</strong></a>
+      </nav>
     </section>
 
-    <section id="buscar" class="view page-view" aria-labelledby="mapTitle">
-      <div class="page-bg" aria-hidden="true"></div>
-      <div class="map-layout">
-        <header class="map-intro">
-          <div>
-            <p class="eyebrow">Buscador de estudos</p>
-            <h1 id="mapTitle">Mapa interactivo da oferta de estudos en Galicia</h1>
-            <p>Consulta a oferta de FP básica, FP de grao medio, FP de grao superior, graos universitarios, másteres e doutoramentos no mapa personalizado de Google My Maps.</p>
+    <section class="view content-view" id="buscar" aria-label="Buscador de estudos">
+      <div class="page-head compact">
+        <p class="eyebrow">Buscador de estudos</p>
+        <h1>Mapa e procura avanzada da oferta académica</h1>
+        <p>Consulta o mapa de Google My Maps e usa os filtros propios de ITINERA para localizar estudos por tipo, provincia, localidade, centro, familia ou texto libre.</p>
+      </div>
+      <section class="search-split">
+        <article class="map-half">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Mapa preciso</p>
+              <h2>Oferta xeolocalizada</h2>
+            </div>
+            <a class="button secondary" target="_blank" rel="noopener" href="https://www.google.com/maps/d/viewer?mid=1qWFM93eXZ6AdlOX6VB2OM03QP5tcI8o">Abrir en Google Maps</a>
           </div>
-          <a class="external-link" href="https://www.google.com/maps/d/viewer?mid=1qWFM93eXZ6AdlOX6VB2OM03QP5tcI8o" target="_blank" rel="noopener noreferrer">Abrir en Google Maps</a>
-        </header>
+          <iframe class="google-map" src="https://www.google.com/maps/d/embed?mid=1qWFM93eXZ6AdlOX6VB2OM03QP5tcI8o&ehbc=2E312F" title="ITINERA - Mapa de estudos en Galicia" loading="lazy"></iframe>
+        </article>
 
-        <section class="map-card" aria-label="Mapa de estudos de ITINERA">
-          <iframe
-            src="https://www.google.com/maps/d/embed?mid=1qWFM93eXZ6AdlOX6VB2OM03QP5tcI8o&ehbc=2E312F"
-            title="ITINERA · Oferta de estudos en Galicia"
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            allowfullscreen>
-          </iframe>
-        </section>
-
-        <section class="map-help" aria-label="Como usar o mapa">
-          <article>
-            <strong>Capas do mapa</strong>
-            <p>Activa ou desactiva as capas de FP básica, FP de grao medio, FP de grao superior, graos, másteres e doutoramentos desde o panel do propio mapa.</p>
-          </article>
-          <article>
-            <strong>Marcadores</strong>
-            <p>Fai clic nun marcador para ver localidade, centro ou sede, familias ou ramas e estudos asociados.</p>
-          </article>
-          <article>
-            <strong>Precisión</strong>
-            <p>A localización depende da xeocodificación de Google My Maps. Os puntos ambiguos deben revisarse directamente no mapa de Google.</p>
-          </article>
-        </section>
-      </div>
+        <article class="search-half">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Procura fóra do mapa</p>
+              <h2>Filtrar estudos</h2>
+            </div>
+            <button class="button ghost" id="clearFilters" type="button">Limpar</button>
+          </div>
+          <form class="filters" id="filters">
+            <label>Texto libre<input id="q" type="search" placeholder="Ex.: Enfermaría, Sanidade, Vigo, CIFP..."></label>
+            <label>Tipo de estudo<select id="tipo"></select></label>
+            <label>Provincia<select id="provincia"></select></label>
+            <label>Localidade<select id="localidade"></select></label>
+            <label>Familia ou rama<select id="familia"></select></label>
+            <label>Centro ou sede<select id="centro"></select></label>
+          </form>
+          <div class="results-head"><strong id="count">0 resultados</strong><span id="status">Carga inicial...</span></div>
+          <div class="results" id="results"></div>
+        </article>
+      </section>
     </section>
 
-    <section id="itinerario" class="view page-view" aria-labelledby="routeTitle">
-      <div class="page-bg" aria-hidden="true"></div>
-      <div class="route-layout">
-        <header class="route-intro">
-          <p class="eyebrow">Guía por pasos</p>
-          <h1 id="routeTitle">Comeza onde estás e chega onde queres</h1>
-          <p>Escolle o teu punto de partida e unha meta. ITINERA devolverache unha ruta prudente, comprensible e editable para orientar a decisión académica.</p>
-        </header>
+    <section class="view content-view" id="itinerario" aria-label="Deseñador de itinerario">
+      <div class="page-head">
+        <p class="eyebrow">Deseñador de itinerario</p>
+        <h1>Escolle unha meta e compara vías reais</h1>
+        <p>Introduce o estudo que queres alcanzar. ITINERA propón rutas, mostra duración estimada, materias de Bacharelato e ponderacións PAU cando a meta é un grao universitario.</p>
+      </div>
 
-        <form class="route-card" id="routeForm">
-          <label>
-            <span>Situación actual</span>
-            <select id="startPoint" required>
-              <option value="">Selecciona unha opción</option>
-              <option value="sen_eso">Aínda non teño o título de ESO</option>
-              <option value="eso">Teño o título de ESO</option>
-              <option value="fp_medio">Estou nun ciclo de FP de grao medio ou xa o rematei</option>
-              <option value="bacharelato">Teño Bacharelato ou estou cursándoo</option>
-              <option value="fp_superior">Estou nun ciclo de FP de grao superior ou xa o rematei</option>
-              <option value="grao">Teño un grao universitario ou estou cursándoo</option>
-              <option value="adultos">Quero retomar estudos sendo persoa adulta</option>
+      <section class="planner">
+        <aside class="planner-form">
+          <label>Situación actual
+            <select id="startPoint">
+              <option value="eso">Estou cursando ESO ou veño de rematala</option>
+              <option value="bach">Estou en Bacharelato</option>
+              <option value="fpgm">Teño ou quero facer FP de grao medio</option>
+              <option value="fpgs">Teño ou quero facer FP de grao superior</option>
+              <option value="adulto">Son persoa adulta e quero retomar estudos</option>
             </select>
           </label>
-
-          <label>
-            <span>Meta principal</span>
-            <select id="goalPoint" required>
-              <option value="">Selecciona unha meta</option>
-              <option value="fp_basica">Entrar en FP básica ou programas formativos</option>
-              <option value="fp_medio">Chegar a FP de grao medio</option>
-              <option value="fp_superior">Chegar a FP de grao superior</option>
-              <option value="universidade">Chegar á universidade</option>
-              <option value="master">Chegar a un máster</option>
-              <option value="doctorado">Chegar a doutoramento</option>
-              <option value="reorientacion">Cambiar de itinerario ou profesión</option>
+          <label>Estudo concreto que queres alcanzar
+            <input id="targetStudy" list="studyList" placeholder="Ex.: Medicina, Enxeñaría Informática, Enfermaría...">
+            <datalist id="studyList"></datalist>
+          </label>
+          <label>Prioridade principal
+            <select id="priority">
+              <option value="tempo">Chegar no menor tempo posible</option>
+              <option value="seguridade">Ter titulacións intermedias e máis seguridade</option>
+              <option value="practica">Aprender cunha vía máis práctica</option>
+              <option value="nota">Optimizar nota de admisión</option>
             </select>
           </label>
+          <div class="button-row">
+            <button class="button primary" id="buildRoute" type="button">Xerar itinerario</button>
+            <button class="button secondary" id="printPlan" type="button">Xerar PDF</button>
+          </div>
+          <a class="download-link" href="docs/ponderacions_2026.pdf" download>Descargar ponderacións oficiais 2026-2027</a>
+        </aside>
 
-          <label>
-            <span>Preferencia</span>
-            <select id="preferencePoint">
-              <option value="equilibrada">Ruta equilibrada</option>
-              <option value="rapida">Ruta máis directa posible</option>
-              <option value="prudente">Ruta con máis seguridade académica</option>
-              <option value="adultos">Ruta compatible con estudos de persoas adultas</option>
-            </select>
-          </label>
-
-          <button class="primary-action" type="submit">Xerar ruta orientativa</button>
-        </form>
-
-        <section id="routeOutput" class="route-output" aria-live="polite">
+        <article class="planner-output" id="plannerOutput">
           <div class="empty-state">
-            <img src="assets/itinera-logo-mark.png" alt="" aria-hidden="true">
+            <img src="assets/itinera-logo-mark.png" alt="">
             <h2>O teu itinerario aparecerá aquí</h2>
-            <p>Completa os campos para ver unha proposta inicial con pasos concretos e advertencias de revisión.</p>
+            <p>Completa os campos para ver rutas comparadas, pasos ampliables, duración estimada e materias recomendadas.</p>
           </div>
-        </section>
-      </div>
+        </article>
+      </section>
     </section>
   </main>
 
-  <script src="app.js?v=0.57" defer></script>
+  <footer class="site-footer" id="recursos">
+    <section class="footer-section official-links">
+      <div class="footer-title">
+        <p class="eyebrow">Ligazóns oficiais</p>
+        <h2>Sitios oficiais guiados</h2>
+        <p>Accesos ordenados e explicados para comprobar prazos, oferta, admisión, bolsas, ponderacións e empregabilidade.</p>
+      </div>
+      <div class="resource-grid" id="officialLinks"></div>
+    </section>
+
+    <section class="footer-section faq-section">
+      <div class="footer-title">
+        <p class="eyebrow">Preguntas frecuentes</p>
+        <h2>Guía completa de orientación</h2>
+        <p>Preguntas e respostas sobre FP, Bacharelato, PAU, graos, másteres, bolsas, empregabilidade e elección de itinerarios.</p>
+      </div>
+      <input class="faq-search" id="faqSearch" type="search" placeholder="Buscar nas preguntas frecuentes...">
+      <div class="faq-list" id="faqList"></div>
+    </section>
+
+    <div class="footer-bottom">
+      <span>Tribeca Academia · Ecosistema educativo Tribeca</span>
+      <span>ITINERA acompaña a toma de decisións con información verificable e rutas comprensibles.</span>
+      <span>CC BY-NC-SA 4.0</span>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
 </body>
 </html>
