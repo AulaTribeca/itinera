@@ -1,6 +1,6 @@
 {
   "name": "itinera-v0-25",
-  "version": "0.55-google-mymaps-embed",
+  "version": "0.56-proyecto-completo-google-maps-reinstalable",
   "private": true,
   "type": "module",
   "description": "ITINERA: buscador de estudos con Google My Maps e deseñador de itinerarios académicos guiados.",
