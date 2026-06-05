@@ -1231,3 +1231,102 @@ document.addEventListener('DOMContentLoaded', init);
     setTimeout(renderMapPanelV48, 250);
   });
 })();
+
+
+/* ITINERA v49 · corrección de portada, vistas sin encabezado y mapa único */
+(function(){
+  const routeFromLocationV49 = () => (location.hash || '#inicio').replace('#','') || 'inicio';
+
+  function setRouteClassV49(){
+    const route = routeFromLocationV49();
+    document.documentElement.setAttribute('data-initial-route', route);
+    document.body.setAttribute('data-route', route);
+  }
+
+  function fixHomeLinksV49(){
+    document.querySelectorAll('.v49-home-card').forEach(card => {
+      if(card.dataset.v49bound) return;
+      card.dataset.v49bound = '1';
+      card.addEventListener('click', ev => {
+        ev.preventDefault();
+        const hash = card.getAttribute('href') || '#inicio';
+        window.open(`${window.location.pathname}${hash}`, '_blank', 'noopener,noreferrer');
+      });
+    });
+  }
+
+  function removeOldMapV49(){
+    document.getElementById('v41StudyMap')?.remove();
+    document.querySelectorAll('.v41-study-map-slot,.v41-map-card').forEach(el => el.remove());
+  }
+
+  function compactSearchV49(){
+    const route = routeFromLocationV49();
+    if(route === 'buscar' || route === 'itinerario'){
+      document.querySelector('.app-header')?.setAttribute('hidden','');
+    }else{
+      document.querySelector('.app-header')?.removeAttribute('hidden');
+    }
+
+    if(route === 'buscar'){
+      const hero = document.querySelector('#buscar > .section-hero');
+      if(hero) hero.style.display = 'none';
+      const panel = document.getElementById('v48MapPanel');
+      const layout = document.querySelector('#buscar .search-layout');
+      if(panel && layout && panel.nextElementSibling !== layout){
+        layout.insertAdjacentElement('beforebegin', panel);
+      }
+      const title = document.querySelector('#v48MapPanel .v48-map-copy h2');
+      if(title) title.textContent = 'Mapa interactivo da oferta de estudos';
+      const lead = document.querySelector('#v48MapPanel .v48-map-copy p:not(.eyebrow)');
+      if(lead) lead.textContent = 'Pasa o cursor polos puntos para ver a localidade e a oferta dispoñible. Fai clic para aplicar o filtro no buscador.';
+    }
+
+    if(route === 'itinerario'){
+      const hero = document.querySelector('#itinerario > .section-hero');
+      if(hero) hero.style.display = 'none';
+    }
+
+    removeOldMapV49();
+    fixHomeLinksV49();
+  }
+
+  const prevRouteFromHashV49 = typeof routeFromHash === 'function' ? routeFromHash : null;
+  if(prevRouteFromHashV49){
+    routeFromHash = function(){
+      prevRouteFromHashV49();
+      setRouteClassV49();
+      compactSearchV49();
+      setTimeout(compactSearchV49, 80);
+      setTimeout(compactSearchV49, 450);
+    };
+  }
+
+  const prevRenderSearchV49 = typeof renderSearch === 'function' ? renderSearch : null;
+  if(prevRenderSearchV49){
+    renderSearch = function(){
+      prevRenderSearchV49();
+      compactSearchV49();
+      removeOldMapV49();
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    setRouteClassV49();
+    compactSearchV49();
+    setTimeout(compactSearchV49, 120);
+    setTimeout(compactSearchV49, 800);
+  });
+
+  window.addEventListener('hashchange', () => {
+    setRouteClassV49();
+    compactSearchV49();
+    setTimeout(compactSearchV49, 120);
+  });
+
+  window.addEventListener('pageshow', () => {
+    setRouteClassV49();
+    compactSearchV49();
+    setTimeout(compactSearchV49, 250);
+  });
+})();
