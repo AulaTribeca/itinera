@@ -2063,3 +2063,112 @@ document.addEventListener('DOMContentLoaded', init);
   window.addEventListener('pageshow', boot);
   window.addEventListener('hashchange',()=>{setRoute(); setTimeout(boot,30);});
 })();
+
+
+/* ITINERA v0.55 · integración de Google My Maps */
+(function(){
+  const GOOGLE_MAP_EMBED = "https://www.google.com/maps/d/embed?mid=1qWFM93eXZ6AdlOX6VB2OM03QP5tcI8o&ehbc=2E312F";
+  const GOOGLE_MAP_OPEN = "https://www.google.com/maps/d/viewer?mid=1qWFM93eXZ6AdlOX6VB2OM03QP5tcI8o";
+
+  function routeV55(){
+    return (location.hash || '#inicio').replace('#','') || 'inicio';
+  }
+
+  function setRouteV55(){
+    const route = routeV55();
+    document.documentElement.setAttribute('data-initial-route', route);
+    document.body.setAttribute('data-route', route);
+    const header = document.querySelector('.app-header');
+    if(header) header.hidden = true;
+  }
+
+  function bindHomeV55(){
+    document.querySelectorAll('.v53-home-card,.v52-home-card,.v50-home-card').forEach(link => {
+      if(link.dataset.v55Bound) return;
+      link.dataset.v55Bound = '1';
+      link.removeAttribute('target');
+      link.addEventListener('click', ev => {
+        ev.preventDefault();
+        const href = link.getAttribute('href') || '#inicio';
+        location.hash = href;
+      });
+    });
+  }
+
+  function renderGoogleMapV55(){
+    const buscar = document.getElementById('buscar');
+    if(!buscar) return;
+    if(buscar.dataset.v55GoogleMap === '1') return;
+    buscar.dataset.v55GoogleMap = '1';
+    buscar.innerHTML = `
+      <section class="v55-google-map-shell" aria-labelledby="v55GoogleTitle">
+        <div class="v55-google-map-hero">
+          <div>
+            <p class="eyebrow">Buscador de estudos</p>
+            <h1 id="v55GoogleTitle">Mapa interactivo da oferta de estudos en Galicia</h1>
+            <p>Consulta nun mapa de Google My Maps a oferta dispoñible de FP básica, FP de grao medio, FP de grao superior, graos universitarios, másteres e doutoramentos. Activa ou desactiva as capas do mapa para filtrar por tipo de estudo.</p>
+          </div>
+          <a class="v55-open-map" href="${GOOGLE_MAP_OPEN}" target="_blank" rel="noopener noreferrer">Abrir en Google Maps</a>
+        </div>
+
+        <div class="v55-map-card">
+          <iframe
+            class="v55-google-map"
+            src="${GOOGLE_MAP_EMBED}"
+            title="ITINERA · Oferta de estudos en Galicia"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <div class="v55-map-notes" aria-label="Instrucións de uso do mapa">
+          <article>
+            <strong>Capas dispoñibles</strong>
+            <p>Usa o panel do mapa para activar ou ocultar FP básica, FP de grao medio, FP de grao superior, graos, másteres e doutoramentos.</p>
+          </article>
+          <article>
+            <strong>Consulta por marcador</strong>
+            <p>Fai clic nun marcador para ver a localidade, centro ou sede, tipo de estudo, familias ou ramas e estudos asociados.</p>
+          </article>
+          <article>
+            <strong>Revisión xeográfica</strong>
+            <p>A xeolocalización faise con Google My Maps a partir dos centros, sedes e localidades importadas. Os puntos ambiguos deben revisarse no propio mapa de Google.</p>
+          </article>
+        </div>
+      </section>
+    `;
+  }
+
+  function cleanLegacyMapsV55(){
+    document.querySelectorAll('#v41StudyMap,#v48MapPanel,#v50MapPanel,#v52MapPanel,#v53SearchApp,.v41-study-map-slot,.v41-map-card').forEach(el => el.remove());
+  }
+
+  function bootV55(){
+    setRouteV55();
+    bindHomeV55();
+    if(routeV55() === 'buscar') {
+      cleanLegacyMapsV55();
+      renderGoogleMapV55();
+    }
+  }
+
+  const observer = new MutationObserver(() => {
+    const route = routeV55();
+    if(route === 'buscar') {
+      cleanLegacyMapsV55();
+      renderGoogleMapV55();
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    bootV55();
+    observer.observe(document.body, {childList:true, subtree:true});
+  });
+  window.addEventListener('pageshow', bootV55);
+  window.addEventListener('hashchange', () => {
+    setRouteV55();
+    setTimeout(bootV55, 0);
+    setTimeout(bootV55, 120);
+  });
+})();

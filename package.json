@@ -1,9 +1,9 @@
 {
   "name": "itinera-v0-25",
-  "version": "0.53-catalogo-completo-mapa-filtrable",
+  "version": "0.55-google-mymaps-embed",
   "private": true,
   "type": "module",
-  "description": "ITINERA: buscador de estudos e deseñador de itinerarios académicos guiados.",
+  "description": "ITINERA: buscador de estudos con Google My Maps e deseñador de itinerarios académicos guiados.",
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
     "ws": "^8.18.0",
