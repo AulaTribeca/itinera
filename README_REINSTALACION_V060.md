@@ -26,3 +26,13 @@ Sube o contido desta carpeta á raíz do repositorio. Non mestures con ficheiros
 - O encabezado incorpora accesos a Buscador, Itinerario, Ligazóns oficiais e Preguntas frecuentes.
 - Axustouse a procura fóra do mapa para non expandirse cara á dereita.
 - O buscador e o mapa quedan contidos nun ancho máximo máis estable.
+
+
+## Actualización v0.60
+
+- Corrixido o encabezado interno.
+- A portada queda sen encabezado.
+- Ligazóns oficiais e Preguntas frecuentes deixan de formar parte do pé de páxina e pasan a ser páxinas internas accesibles desde o encabezado.
+- O pé de páxina queda reducido a información breve.
+- Corrixido o tamaño do logotipo do encabezado.
+- Axustada a anchura da procura fóra do mapa para evitar expansión horizontal.

@@ -1,8 +1,8 @@
 {
   "name": "itinera-v58",
-  "version": "0.59.0",
+  "version": "0.60.0",
   "private": true,
-  "description": "ITINERA: mapa, buscador, recursos oficiais e deseñador de itinerarios académicos en Galicia.",
+  "description": "ITINERA: buscador, itinerarios, ligazóns oficiais e preguntas frecuentes en páxinas internas.",
   "scripts": {
     "start": "python -m http.server 8080"
   }

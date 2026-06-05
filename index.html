@@ -6,11 +6,11 @@
   <title>ITINERA | Orientación académica</title>
   <meta name="theme-color" content="#fbfaf6">
   <meta name="description" content="ITINERA: mapa, buscador e deseñador de itinerarios académicos en Galicia.">
-  <link rel="icon" type="image/png" href="assets/favicon-itinera.png">
-  <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/png" href="assets/favicon-itinera.png?v=0.60">
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico?v=0.60">
+  <link rel="stylesheet" href="styles.css?v=0.60">
 </head>
-<body>
+<body data-route="inicio">
   <a class="skip-link" href="#main">Saltar ao contido principal</a>
 
   <header class="app-topbar" id="appTopbar" aria-label="Navegación principal de ITINERA">
@@ -25,7 +25,6 @@
       <a href="#preguntas">Preguntas frecuentes</a>
     </nav>
   </header>
-
 
   <main id="main">
     <section class="view home-view active" id="inicio" aria-label="Portada de ITINERA">
@@ -126,28 +125,28 @@
         </article>
       </section>
     </section>
-  </main>
 
-  <footer class="site-footer" id="recursos">
-    <section class="footer-section official-links" id="ligazons">
-      <div class="footer-title">
+    <section class="view content-view resources-view" id="ligazons" aria-label="Ligazóns oficiais">
+      <div class="page-head compact">
         <p class="eyebrow">Ligazóns oficiais</p>
-        <h2>Sitios oficiais guiados</h2>
-        <p>Accesos ordenados e explicados para comprobar prazos, oferta, admisión, bolsas, ponderacións e empregabilidade.</p>
+        <h1>Sitios oficiais guiados</h1>
+        <p>Accesos ordenados e explicados para comprobar prazos, oferta, admisión, bolsas, ponderacións, normativa e empregabilidade.</p>
       </div>
       <div class="resource-grid" id="officialLinks"></div>
     </section>
 
-    <section class="footer-section faq-section" id="preguntas">
-      <div class="footer-title">
+    <section class="view content-view faq-view" id="preguntas" aria-label="Preguntas frecuentes">
+      <div class="page-head compact">
         <p class="eyebrow">Preguntas frecuentes</p>
-        <h2>Guía completa de orientación</h2>
+        <h1>Guía completa de orientación</h1>
         <p>Preguntas e respostas sobre FP, Bacharelato, PAU, graos, másteres, bolsas, empregabilidade e elección de itinerarios.</p>
       </div>
       <input class="faq-search" id="faqSearch" type="search" placeholder="Buscar nas preguntas frecuentes...">
       <div class="faq-list" id="faqList"></div>
     </section>
+  </main>
 
+  <footer class="site-footer">
     <div class="footer-bottom">
       <span>Tribeca Academia · Ecosistema educativo Tribeca</span>
       <span>ITINERA acompaña a toma de decisións con información verificable e rutas comprensibles.</span>
@@ -155,6 +154,6 @@
     </div>
   </footer>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=0.60"></script>
 </body>
 </html>

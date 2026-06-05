@@ -8,15 +8,15 @@ const esc = v => String(v ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt
 const uniq = arr => Array.from(new Set(arr.filter(Boolean))).sort((a,b)=>String(a).localeCompare(String(b),'gl'));
 
 function route(){
-  const raw = (location.hash || '#inicio').replace('#','') || 'inicio';
-  const sectionAnchors = ['ligazons','preguntas','recursos'];
-  const hash = sectionAnchors.includes(raw) ? 'buscar' : raw;
-  $$('.view').forEach(v => v.classList.toggle('active', v.id === hash));
-  document.body.dataset.route = hash;
-  if(hash === 'buscar') renderResults();
-  if(sectionAnchors.includes(raw)){
-    setTimeout(() => document.getElementById(raw)?.scrollIntoView({behavior:'smooth', block:'start'}), 80);
-  }
+  const hash = (location.hash || '#inicio').replace('#','') || 'inicio';
+  const valid = ['inicio','buscar','itinerario','ligazons','preguntas'];
+  const active = valid.includes(hash) ? hash : 'inicio';
+  $$('.view').forEach(v => v.classList.toggle('active', v.id === active));
+  document.body.dataset.route = active;
+  if(active === 'buscar') renderResults();
+  if(active === 'preguntas') renderFaq();
+  if(active === 'ligazons') renderLinks();
+  window.scrollTo({top:0, behavior:'instant'});
 }
 window.addEventListener('hashchange', route);
 
