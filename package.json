@@ -1,6 +1,6 @@
 {
   "name": "itinera-v0-25",
-  "version": "0.51-mapas-fp-medio-superior-integrados",
+  "version": "0.52-interfaz-mapa-zoom-portada-nitida",
   "private": true,
   "type": "module",
   "description": "ITINERA: buscador de estudos e deseñador de itinerarios académicos guiados.",

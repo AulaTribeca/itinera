@@ -1520,3 +1520,210 @@ document.addEventListener('DOMContentLoaded', init);
     setTimeout(() => { addLayerControlsV51(); setMapBackgroundV51(); filterMarkersV51(); }, 600);
   });
 })();
+
+
+/* ITINERA v0.52 · mapa único, zoom, selección fija y portada sin encabezado */
+(function(){
+  let mapData = null;
+  let allPoints = [];
+  let catalogLocations = new Map();
+  let activeLayer = 'all';
+  let lockedPoint = null;
+  let zoom = 1;
+  const colours = {fp:'#2db84d',fpgm:'#2db84d',fpgs:'#2db84d',grado:'#1670e4',master:'#f39c12',doctorado:'#e53935'};
+  const layerImages = {
+    all: 'assets/galicia-offer-map-v50.png',
+    fpgm: 'assets/galicia-fp-medio-v51.png',
+    fpgs: 'assets/galicia-fp-superior-v51.png'
+  };
+
+  function currentRoute(){ return (location.hash || '#inicio').replace('#','') || 'inicio'; }
+  function setRoute(){
+    const route = currentRoute();
+    document.documentElement.setAttribute('data-initial-route', route);
+    document.body.setAttribute('data-route', route);
+    const header = document.querySelector('.app-header');
+    if(header) header.hidden = true;
+  }
+  function bindHome(){
+    document.querySelectorAll('.v52-home-card').forEach(a => {
+      if(a.dataset.v52bound) return;
+      a.dataset.v52bound = '1';
+      a.removeAttribute('target');
+      a.addEventListener('click', ev => {
+        ev.preventDefault();
+        location.hash = a.getAttribute('href') || '#inicio';
+      });
+    });
+  }
+  function removeOld(){
+    document.querySelectorAll('#v41StudyMap,.v41-study-map-slot,.v41-map-card,#v48MapPanel,#v50MapPanel').forEach(el => el.remove());
+    document.querySelector('#buscar > .section-hero')?.setAttribute('hidden','');
+    document.querySelector('#itinerario > .section-hero')?.setAttribute('hidden','');
+  }
+  async function loadData(){
+    if(mapData) return;
+    try{
+      const res = await fetch('data/itinera-map-points-v51.json?v=0.52');
+      if(!res.ok) throw new Error('non se puido cargar o mapa');
+      mapData = await res.json();
+      allPoints = mapData.points || [];
+      catalogLocations = new Map((mapData.catalog_locations || []).map(loc => [loc.name, loc]));
+    }catch(e){ console.warn('[ITINERA v52]', e); allPoints = []; catalogLocations = new Map(); }
+  }
+  function ensurePanel(){
+    const buscar = document.getElementById('buscar');
+    if(!buscar) return;
+    if(document.getElementById('v52MapPanel')) return;
+    const panel = document.createElement('section');
+    panel.id = 'v52MapPanel';
+    panel.innerHTML = `
+      <div class="v52-map-head">
+        <div>
+          <p class="eyebrow">Mapa interactivo</p>
+          <h2>Oferta de estudos por localidade</h2>
+          <p>Pasa o cursor polos puntos para ver unha síntese. Fai clic para deixar fixa unha localidade no panel dereito. Usa o zoom para separar puntos próximos.</p>
+        </div>
+        <div class="v52-map-tools">
+          <button type="button" id="v52ZoomOut">− Zoom</button>
+          <button type="button" id="v52ZoomIn">+ Zoom</button>
+          <button type="button" id="v52ResetZoom">Restablecer</button>
+          <button type="button" id="v52Unlock">Desbloquear selección</button>
+        </div>
+      </div>
+      <div class="v52-layer-controls" id="v52LayerControls">
+        <button type="button" data-layer="all" class="active">Mapa xeral</button>
+        <button type="button" data-layer="fpgm">FP grao medio</button>
+        <button type="button" data-layer="fpgs">FP grao superior</button>
+      </div>
+      <div class="v52-map-grid">
+        <div class="v52-map-viewport" id="v52Viewport">
+          <div class="v52-map-canvas" id="v52Canvas" style="--zoom:1">
+            <img id="v52MapImage" src="${layerImages.all}" alt="Mapa da oferta de estudos en Galicia">
+            <div class="v52-overlay" id="v52Overlay"></div>
+            <div class="v52-tooltip" id="v52Tooltip" hidden></div>
+          </div>
+        </div>
+        <aside class="v52-side" id="v52Side">
+          <h3>Selecciona un punto</h3>
+          <p>Pasa o cursor ou fai clic sobre unha localidade para consultar a oferta dispoñible. A selección queda fixa ata que premas noutro punto ou desbloquees.</p>
+        </aside>
+      </div>
+      <div class="v52-legend"><span><i style="background:#2db84d"></i>FP</span><span><i style="background:#1670e4"></i>Grao</span><span><i style="background:#f39c12"></i>Máster</span><span><i style="background:#e53935"></i>Doutoramento</span></div>`;
+    const layout = buscar.querySelector('.search-layout');
+    if(layout) layout.insertAdjacentElement('beforebegin', panel);
+    else buscar.prepend(panel);
+    panel.querySelector('#v52ZoomIn').addEventListener('click', () => setZoom(Math.min(2.6, zoom + .25)));
+    panel.querySelector('#v52ZoomOut').addEventListener('click', () => setZoom(Math.max(1, zoom - .25)));
+    panel.querySelector('#v52ResetZoom').addEventListener('click', () => setZoom(1));
+    panel.querySelector('#v52Unlock').addEventListener('click', () => {
+      lockedPoint = null;
+      document.querySelectorAll('.v52-point').forEach(p => p.classList.remove('locked','active'));
+      renderSide(null);
+    });
+    panel.querySelector('#v52Viewport').addEventListener('wheel', ev => {
+      if(!ev.ctrlKey) return;
+      ev.preventDefault();
+      setZoom(Math.max(1, Math.min(2.6, zoom + (ev.deltaY < 0 ? .15 : -.15))));
+    }, {passive:false});
+    panel.querySelectorAll('[data-layer]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeLayer = btn.dataset.layer || 'all';
+        panel.querySelectorAll('[data-layer]').forEach(b => b.classList.toggle('active', b === btn));
+        lockedPoint = null;
+        renderMap();
+        renderSide(null);
+      });
+    });
+  }
+  function setZoom(value){
+    zoom = value;
+    const canvas = document.getElementById('v52Canvas');
+    if(canvas) canvas.style.setProperty('--zoom', String(zoom));
+  }
+  function visiblePoints(){
+    if(activeLayer === 'all') return allPoints.filter(p => !['fpgm','fpgs'].includes(p.type) || p.location);
+    return allPoints.filter(p => p.type === activeLayer);
+  }
+  function renderMap(){
+    ensurePanel();
+    const img = document.getElementById('v52MapImage');
+    if(img) img.src = layerImages[activeLayer] || layerImages.all;
+    const overlay = document.getElementById('v52Overlay');
+    if(!overlay) return;
+    const pts = visiblePoints();
+    overlay.innerHTML = pts.map((p,i) => `<button type="button" class="v52-point" data-index="${i}" style="left:${p.x}%;top:${p.y}%;--dot:${colours[p.type]||'#2db84d'}" aria-label="${escapeAttr(pointTitle(p))}"></button>`).join('');
+    overlay.querySelectorAll('.v52-point').forEach(btn => {
+      btn.addEventListener('mouseenter', ev => {
+        const p = pts[Number(btn.dataset.index)];
+        showTooltip(ev, p);
+        if(!lockedPoint) renderSide(p);
+      });
+      btn.addEventListener('mousemove', ev => {
+        const p = pts[Number(btn.dataset.index)];
+        showTooltip(ev, p);
+      });
+      btn.addEventListener('mouseleave', hideTooltip);
+      btn.addEventListener('click', ev => {
+        ev.preventDefault();
+        const p = pts[Number(btn.dataset.index)];
+        lockedPoint = p;
+        document.querySelectorAll('.v52-point').forEach(x => x.classList.remove('locked','active'));
+        btn.classList.add('locked','active');
+        renderSide(p, true);
+      });
+    });
+  }
+  function pointTitle(p){
+    if(!p) return 'Oferta';
+    if(p.location && !/^Punto/i.test(p.location)) return p.location;
+    if(p.type === 'fpgm') return 'Localidade con oferta de FP de grao medio';
+    if(p.type === 'fpgs') return 'Localidade con oferta de FP de grao superior';
+    if(p.type === 'fp') return 'Localidade con oferta de FP';
+    return typeLabel(p.type);
+  }
+  function typeLabel(t){ return ({fp:'FP',fpgm:'FP de grao medio',fpgs:'FP de grao superior',grado:'Grao',master:'Máster',doctorado:'Doutoramento'}[t] || 'Oferta'); }
+  function showTooltip(ev,p){
+    const tt = document.getElementById('v52Tooltip');
+    const canvas = document.getElementById('v52Canvas');
+    if(!tt || !canvas || !p) return;
+    tt.innerHTML = `<strong>${escapeHtml(pointTitle(p))}</strong><small>${escapeHtml(typeLabel(p.type))}</small>`;
+    tt.hidden = false;
+    const rect = canvas.getBoundingClientRect();
+    tt.style.left = Math.max(10, Math.min(rect.width-270, ev.clientX-rect.left+12)) + 'px';
+    tt.style.top = Math.max(10, Math.min(rect.height-120, ev.clientY-rect.top+12)) + 'px';
+  }
+  function hideTooltip(){ const tt=document.getElementById('v52Tooltip'); if(tt) tt.hidden=true; }
+  function renderSide(p, locked=false){
+    const side = document.getElementById('v52Side');
+    if(!side) return;
+    if(!p){
+      side.innerHTML = `<h3>Selecciona un punto</h3><p>Pasa o cursor ou fai clic sobre unha localidade para consultar a oferta dispoñible. A selección queda fixa ata que premas noutro punto ou desbloquees.</p>`;
+      return;
+    }
+    const title = pointTitle(p);
+    const loc = catalogLocations.get(p.location);
+    if(loc){
+      const groups = {};
+      (loc.studies||[]).forEach(s => (groups[s.level_label || typeLabel(s.type)] ||= []).push(s));
+      side.innerHTML = `<p class="eyebrow">${locked?'Selección fixa':'Localidade'}</p><h3>${escapeHtml(loc.name)}</h3><p>${loc.count || (loc.studies||[]).length} estudos ou rexistros identificados no catálogo cargado.</p><div class="v52-side-actions"><button type="button" class="plain-button" id="v52FilterLocation">Filtrar no buscador</button></div>${Object.entries(groups).map(([level,items]) => `<section class="v52-block"><strong>${escapeHtml(level)}</strong><ul>${items.slice(0,32).map(s => `<li>${escapeHtml(s.study_name || '')}${s.center ? ' · '+escapeHtml(s.center) : ''}</li>`).join('')}</ul></section>`).join('')}`;
+      side.querySelector('#v52FilterLocation')?.addEventListener('click', () => {
+        const locFilter = document.getElementById('localityFilter');
+        if(locFilter){ locFilter.value = loc.name; locFilter.dispatchEvent(new Event('change')); }
+      });
+      return;
+    }
+    side.innerHTML = `<p class="eyebrow">${locked?'Selección fixa':'Oferta localizada'}</p><h3>${escapeHtml(title)}</h3><p>${escapeHtml(typeLabel(p.type))} dispoñible nesta localización do mapa achegado. Para manter o rigor, cando non hai catálogo de centro/localidade importado non se inventan ciclos nin centros concretos.</p><section class="v52-block"><strong>Consulta oficial necesaria</strong><ul><li>Oferta de FP por concello e centro na fonte oficial da Xunta.</li><li>Comprobar sempre curso, modalidade, prazas e centro antes de orientar ao alumnado.</li></ul></section><div class="v52-side-actions"><a class="secondary-link" href="https://www.edu.xunta.gal/fp/webfm_send/11286" target="_blank" rel="noopener noreferrer">Abrir oferta FP por concello</a></div>`;
+  }
+  function escapeHtml(v){ return String(v??'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])); }
+  function escapeAttr(v){ return escapeHtml(v); }
+
+  const observer = new MutationObserver(() => { removeOld(); ensurePanel(); });
+  async function boot(){
+    setRoute(); bindHome(); removeOld(); ensurePanel(); await loadData(); renderMap();
+    observer.observe(document.body,{childList:true,subtree:true});
+  }
+  document.addEventListener('DOMContentLoaded', boot);
+  window.addEventListener('pageshow', boot);
+  window.addEventListener('hashchange', () => { setRoute(); removeOld(); ensurePanel(); renderMap(); });
+})();
